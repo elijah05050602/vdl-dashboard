@@ -5043,7 +5043,7 @@ en:
         one: "1 day overdue"
         other: "%{count} days overdue"
       open_dashboard: "Open the dashboard"
-      overdue: "Overdue at the firm"
+      overdue: "Overdue in your matters"
       reminders: "Your deadlines that need attention"
       subject:
         one: "%{app_title} - 1 deadline needs your attention"

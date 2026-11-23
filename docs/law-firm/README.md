@@ -18,10 +18,10 @@ Branding is set by configuration, not code, so upstream merges stay easy. See `l
 Every user gets one email a day at 7:00 in their own time zone (set under My account, Settings; the firm default is Asia/Manila via `OPENPROJECT_USER__DEFAULT__TIMEZONE`) about open **Court deadline** and **Hearing** work packages. It is sent only when there is something to report, and has three parts:
 
 - **Your deadlines that need attention:** deadlines you are assigned to, accountable for or watching that are due in 14, 7, 3 or 1 days, due today, or overdue.
-- **Overdue at the firm:** every overdue deadline you can see.
-- **Coming up in the next 14 days:** every upcoming deadline you can see.
+- **Overdue in your matters:** every overdue deadline in the matters (projects) you are a member of.
+- **Coming up in the next 14 days:** every upcoming deadline in the matters you are a member of.
 
-People can stop it by turning off **Daily email reminders** under My account, Notifications, Email reminders. Email delivery must be configured under Administration, Emails and notifications.
+People can stop it by turning off **Daily email reminders** under My account, Notifications, Email reminders. Email delivery must be configured under Administration, Emails and notifications. The digest names clients and matters, so send it only through an SMTP server that uses TLS (Data Privacy Act of 2012, RA 10173).
 
 Settings (change them with environment variables, for example `OPENPROJECT_DEADLINE__REMINDER__DAYS="[14, 7, 3, 1, 0]"`):
 

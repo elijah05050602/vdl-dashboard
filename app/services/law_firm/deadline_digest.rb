@@ -63,12 +63,12 @@ module LawFirm
 
     def upcoming
       @upcoming ||= entries_for(
-        deadlines.where(due_date: today..(today + Setting.deadline_digest_days_ahead.to_i.days))
+        in_my_matters(deadlines).where(due_date: today..(today + Setting.deadline_digest_days_ahead.to_i.days))
       )
     end
 
     def overdue
-      @overdue ||= entries_for(deadlines.where(due_date: ...today))
+      @overdue ||= entries_for(in_my_matters(deadlines).where(due_date: ...today))
     end
 
     private
@@ -81,6 +81,10 @@ module LawFirm
         .where.not(due_date: nil)
         .includes(:project, :type, :status, :assigned_to)
         .order(:due_date, :id)
+    end
+
+    def in_my_matters(scope)
+      scope.where(project_id: Member.where(principal: [user, *user.groups], entity_type: nil).select(:project_id))
     end
 
     def reminder_dates
