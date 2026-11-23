@@ -42,7 +42,7 @@ module DemoData
     end
 
     def seed_data!
-      # Seed only for those projects that provide a `kanban` key, i.e. 'harlow-v-brightline' in standard edition.
+      # Seed only for those projects that provide a `kanban` key, i.e. 'dela-cruz-v-bayanihan' in standard edition.
       if board_data = project_data.lookup("boards.kanban")
         print_status "    ↳ Creating demo status board" do
           seed_kanban_board(board_data)

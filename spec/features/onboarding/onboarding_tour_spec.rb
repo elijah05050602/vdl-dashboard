@@ -32,7 +32,7 @@ require "spec_helper"
 RSpec.describe "onboarding tour for new users", :js do
   let(:user) { create(:admin) }
   let(:project) do
-    create(:project, :with_internal_wiki, name: "Harlow v. Brightline", identifier: "harlow-v-brightline", public: true,
+    create(:project, :with_internal_wiki, name: "Dela Cruz v. Bayanihan", identifier: "dela-cruz-v-bayanihan", public: true,
                                           enabled_module_names: %w[work_package_tracking gantt]).reload
   end
 

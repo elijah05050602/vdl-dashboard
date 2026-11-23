@@ -46,7 +46,7 @@ export function wpFullViewOnboardingTourSteps():OnboardingStep[] {
     {
       containerClass: '-dark -hidden-arrow',
       onBeforeStart() {
-        window.location.href = `${window.location.origin}/projects/harlow-v-brightline/gantt`;
+        window.location.href = `${window.location.origin}/projects/dela-cruz-v-bayanihan/gantt`;
       },
     },
   ];

@@ -39,7 +39,7 @@ export function homescreenOnboardingTourSteps():OnboardingStep[] {
     {
       containerClass: '-dark -hidden-arrow',
       onBeforeStart() {
-        window.location.href = `${window.location.origin}/projects/harlow-v-brightline/work_packages?start_onboarding_tour=true`;
+        window.location.href = `${window.location.origin}/projects/dela-cruz-v-bayanihan/work_packages?start_onboarding_tour=true`;
       },
     },
   ];

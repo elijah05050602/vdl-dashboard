@@ -248,7 +248,7 @@ RSpec.describe RootSeeder,
     end
 
     it "adds members to the demo project directly and through their department" do
-      demo_project = Project.find_by(identifier: "harlow-v-brightline")
+      demo_project = Project.find_by(identifier: "dela-cruz-v-bayanihan")
 
       marko = root_seeder.seed_data.find_reference(:user__marko_marketing) # direct member
       finance = root_seeder.seed_data.find_reference(:department__finance_administration) # group member
@@ -269,11 +269,11 @@ RSpec.describe RootSeeder,
       data = root_seeder.seed_data
 
       # Assigned to an individual user (direct project member).
-      expect(data.find_reference(:harlow__review_logs).assigned_to)
+      expect(data.find_reference(:delacruz__review_records).assigned_to)
         .to eq(data.find_reference(:user__wanda_web))
 
       # Assigned to a whole department (group member of the project).
-      expect(data.find_reference(:harlow__discovery).assigned_to)
+      expect(data.find_reference(:delacruz__discovery).assigned_to)
         .to eq(data.find_reference(:department__events_operations))
     end
 
@@ -301,7 +301,7 @@ RSpec.describe RootSeeder,
       qa_work_package = WorkPackage.find_by(assigned_to: tessa)
       expect(qa_work_package).to be_present
       # The QA task follows the document review task.
-      website = data.find_reference(:harlow__review_logs)
+      website = data.find_reference(:delacruz__review_records)
       expect(Relation.follows.exists?(from_id: qa_work_package.id, to_id: website.id)).to be true
     end
 
@@ -312,7 +312,7 @@ RSpec.describe RootSeeder,
     end
 
     it "adds a resource planner with its views and allocations to the demo project" do
-      demo_project = Project.find_by(identifier: "harlow-v-brightline")
+      demo_project = Project.find_by(identifier: "dela-cruz-v-bayanihan")
 
       expect(demo_project.enabled_module_names).to include("resource_management")
       planners = ResourcePlanner.where(project: demo_project)

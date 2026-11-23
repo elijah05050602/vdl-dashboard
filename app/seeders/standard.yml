@@ -193,15 +193,15 @@ labels:
   - reference: :label__waiting_on_client
     t_name: Waiting on client
 
-# Sample matters. All names, parties and facts are fictional.
+# Sample Philippine matters. All names, parties, case numbers and facts are fictional.
 projects:
-  harlow-v-brightline:
-    t_name: Harlow v. Brightline Logistics
-    identifier: harlow-v-brightline
+  dela-cruz-v-bayanihan:
+    t_name: Dela Cruz Trading v. Bayanihan Freight
+    identifier: dela-cruz-v-bayanihan
     status_code: on_track
-    t_status_explanation: Pleadings are complete and discovery has started. The next court date is the case management conference.
+    t_status_explanation: The complaint has been filed and served. Bayanihan Freight's answer is due in about three weeks.
     t_description: |-
-      Breach of contract suit. Our client, Dana Harlow (Harlow Home Goods), is suing Brightline Logistics for missed deliveries and unpaid credits under a 2-year freight agreement. Claimed damages are about $184,000 plus interest.
+      Civil Case No. R-MKT-25-01234-CV, Regional Trial Court of Makati City, Branch 142. Collection of sum of money and damages. Our client, Dela Cruz Trading (Ma. Lourdes Dela Cruz, proprietor), is suing Bayanihan Freight Services, Inc. for ₱4,850,000 in unpaid delivery credits under a 2-year trucking agreement, plus legal interest and attorney's fees.
     # Some people join the matter directly, others through their whole department (group).
     members:
       - principal: :user__marko_marketing
@@ -235,11 +235,11 @@ projects:
       - budgets
       - calendars
     news:
-      - t_title: Complaint filed and served
+      - t_title: Complaint filed and summons served
         t_summary: |
-          The complaint was filed and Brightline Logistics has been served.
-          Their answer is due in two weeks.
-        t_description: Discovery starts this week. See the Discovery work packages for who is doing what.
+          The complaint was filed with the RTC Makati and the sheriff served summons on Bayanihan Freight.
+          Their answer is due 30 calendar days from service.
+        t_description: Document review and the discovery requests start this week. See the Discovery work packages for who is doing what.
     types:
       - :default_type_task
       - :default_type_milestone
@@ -253,11 +253,11 @@ projects:
     t_categories:
       - Pleadings
       - Discovery
-      - Motions
-      - Settlement
+      - Pre-trial
+      - Mediation and JDR
     queries:
       - t_name: Case plan
-        reference: :harlow__query__case_plan
+        reference: :delacruz__query__case_plan
         status: open
         timeline: true
         sort_by: id
@@ -273,7 +273,7 @@ projects:
           - due_date
           - assigned_to
       - t_name: Deadlines and hearings
-        reference: :harlow__query__deadlines
+        reference: :delacruz__query__deadlines
         type:
           - :legal_type_court_deadline
           - :legal_type_hearing
@@ -287,7 +287,7 @@ projects:
           - status
           - due_date
       - t_name: Open tasks
-        reference: :harlow__query__open_tasks
+        reference: :delacruz__query__open_tasks
         status: open
         hierarchy: true
         sort_by: id
@@ -317,19 +317,19 @@ projects:
         lists:
           - t_name: "This week"
             work_packages:
-              - :harlow__review_logs
-              - :harlow__damages_research
+              - :delacruz__review_records
+              - :delacruz__interest_research
           - t_name: "Next week"
             work_packages:
-              - :harlow__interrogatories
+              - :delacruz__interrogatories
           - t_name: "Waiting on the client"
             work_packages:
-              - :harlow__declaration
+              - :delacruz__judicial_affidavit
       parent_child:
         t_name: "Case breakdown"
         parents:
-          - :harlow__pleadings
-          - :harlow__discovery
+          - :delacruz__pleadings
+          - :delacruz__discovery
     project-overview:
       row_count: 4
       column_count: 2
@@ -342,16 +342,17 @@ projects:
           options:
             t_name: "About this matter"
             t_text: |
-              **Client:** Dana Harlow, Harlow Home Goods
-              **Opposing party:** Brightline Logistics (counsel: Reyes & Okafor)
-              **Court:** Superior Court, Civil Division
-              **Matter type:** Commercial litigation, plaintiff
+              **Case:** Civil Case No. R-MKT-25-01234-CV
+              **Court:** Regional Trial Court, Makati City, Branch 142
+              **Client (plaintiff):** Dela Cruz Trading, Ma. Lourdes Dela Cruz, proprietor
+              **Defendant:** Bayanihan Freight Services, Inc. (counsel: Villaruel Tan & Associates)
+              **Amount claimed:** ₱4,850,000 plus legal interest and attorney's fees
 
               Useful views:
 
-              * [Case plan]({{opSetting:base_url}}/projects/harlow-v-brightline/work_packages?query_id=##query.id:harlow__query__case_plan) shows every task on a timeline.
-              * [Deadlines and hearings]({{opSetting:base_url}}/projects/harlow-v-brightline/work_packages?query_id=##query.id:harlow__query__deadlines) lists the court dates.
-              * [Open tasks]({{opSetting:base_url}}/projects/harlow-v-brightline/work_packages?query_id=##query.id:harlow__query__open_tasks) lists the work still to do.
+              * [Case plan]({{opSetting:base_url}}/projects/dela-cruz-v-bayanihan/work_packages?query_id=##query.id:delacruz__query__case_plan) shows every task on a timeline.
+              * [Deadlines and hearings]({{opSetting:base_url}}/projects/dela-cruz-v-bayanihan/work_packages?query_id=##query.id:delacruz__query__deadlines) lists the court dates.
+              * [Open tasks]({{opSetting:base_url}}/projects/dela-cruz-v-bayanihan/work_packages?query_id=##query.id:delacruz__query__open_tasks) lists the work still to do.
         - identifier: "project_status"
           start_row: 1
           end_row: 2
@@ -378,7 +379,7 @@ projects:
           end_column: 3
           options:
             t_name: "Deadlines and hearings"
-            queryId: "##query.id:harlow__query__deadlines"
+            queryId: "##query.id:delacruz__query__deadlines"
     # For all dates, the reference is the Monday of the current week
     # So
     # * start: 0 references Monday
@@ -386,7 +387,7 @@ projects:
     # * start: -7 references the Monday of last week
     work_packages:
       - start: -14
-        t_subject: Matter opened
+        t_subject: Matter opened and engagement letter signed
         description:
         status: :default_status_closed
         type: :default_type_milestone
@@ -394,21 +395,21 @@ projects:
         schedule_manually: true
       - start: -14
         t_subject: Pleadings
-        reference: :harlow__pleadings
+        reference: :delacruz__pleadings
         assigned_to: :user__adam_admin
         description: ""
         status: :default_status_in_progress
         type: :default_type_summary_task
-        duration: 29
+        duration: 38
         schedule_manually: false
         children:
           - start: -14
-            t_subject: Draft and file the complaint
-            reference: :harlow__complaint
+            t_subject: Draft and file the complaint and pay docket fees
+            reference: :delacruz__complaint
             assigned_to: :user__evan_events
             t_description: |-
-              Counts: breach of contract, breach of the implied covenant of good faith, and account stated.
-              Attach the freight agreement and the unpaid credit memos as exhibits.
+              Causes of action: collection of sum of money, breach of contract and damages.
+              Attach the trucking agreement, the unpaid credit memos and the final demand letter as annexes, with the verification and certification against forum shopping.
             status: :default_status_closed
             type: :legal_type_filing
             duration: 5
@@ -417,25 +418,25 @@ projects:
             done_ratio: 100
             schedule_manually: true
           - start: -7
-            t_subject: Serve the summons and complaint
+            t_subject: Summons served on Bayanihan Freight by the sheriff
             description: ""
             status: :default_status_closed
             type: :legal_type_court_deadline
             duration: 1
             schedule_manually: false
             relations:
-              - to: :harlow__complaint
+              - to: :delacruz__complaint
                 type: follows
-          - start: 14
-            t_subject: Brightline's answer due
-            t_description: Answer is due 21 days after service. If nothing is filed, prepare a request for entry of default.
+          - start: 23
+            t_subject: Answer of Bayanihan Freight due
+            t_description: The answer is due 30 calendar days from service of summons (Rule 11, 2019 Amended Rules of Civil Procedure). If nothing is filed, move to declare the defendant in default.
             status: :default_status_scheduled
             type: :legal_type_court_deadline
             duration: 1
             schedule_manually: true
       - start: 0
         t_subject: Discovery
-        reference: :harlow__discovery
+        reference: :delacruz__discovery
         assigned_to: :department__events_operations
         description: ""
         status: :default_status_in_progress
@@ -444,17 +445,17 @@ projects:
         schedule_manually: false
         children:
           - start: 0
-            t_subject: Review the client's shipping logs and invoices
-            reference: :harlow__review_logs
+            t_subject: Review the client's delivery receipts, invoices and credit memos
+            reference: :delacruz__review_records
             assigned_to: :user__wanda_web
             labels:
               - :label__billable
               - :label__privileged
             t_description: |-
-              Build a table of every missed or late delivery with the matching invoice and credit memo.
-              *   [x] 2024 shipping logs
-              *   [ ] 2025 shipping logs
-              *   [ ] Credit memos
+              Build a table of every missed or late delivery with the matching sales invoice and credit memo.
+              *   [x] 2024 delivery receipts
+              *   [ ] 2025 delivery receipts
+              *   [ ] Credit memos and statements of account
             status: :default_status_in_progress
             type: :legal_type_document_review
             duration: 5
@@ -463,12 +464,12 @@ projects:
             done_ratio: 40
             schedule_manually: true
           - start: 0
-            t_subject: Research damages and interest for late payment
-            reference: :harlow__damages_research
+            t_subject: Research legal interest and attorney's fees under the Civil Code
+            reference: :delacruz__interest_research
             assigned_to: :user__olga_ops
             labels:
               - :label__billable
-            description: ""
+            t_description: Check the 6% per annum legal interest rule on unpaid sums and when it starts to run (from extrajudicial demand or from filing).
             status: :default_status_in_progress
             type: :legal_type_legal_research
             duration: 4
@@ -477,19 +478,19 @@ projects:
             done_ratio: 30
             schedule_manually: true
           - start: 1
-            t_subject: Get a signed declaration from Ms. Harlow
-            reference: :harlow__declaration
+            t_subject: Get Ms. Dela Cruz's signed judicial affidavit
+            reference: :delacruz__judicial_affidavit
             assigned_to: :user__marko_marketing
             labels:
               - :label__waiting_on_client
-            t_description: Draft sent to the client. Waiting for her signature and the two missing delivery receipts.
+            t_description: Draft sent to the client. Waiting for her signature before a notary and the two missing delivery receipts.
             status: :legal_status_awaiting_client
             type: :legal_type_client_communication
             duration: 3
             schedule_manually: true
           - start: 7
-            t_subject: Draft the first set of interrogatories
-            reference: :harlow__interrogatories
+            t_subject: Draft written interrogatories to Bayanihan Freight
+            reference: :delacruz__interrogatories
             description: ""
             status: :legal_status_drafting
             type: :legal_type_filing
@@ -499,10 +500,10 @@ projects:
             done_ratio: 0
             schedule_manually: false
             relations:
-              - to: :harlow__review_logs
+              - to: :delacruz__review_records
                 type: follows
           - start: 7
-            t_subject: Draft requests for production of documents
+            t_subject: Draft the request for admission
             assigned_to: :user__tessa_tester
             description: ""
             status: :default_status_new
@@ -513,10 +514,10 @@ projects:
             done_ratio: 0
             schedule_manually: false
             relations:
-              - to: :harlow__review_logs
+              - to: :delacruz__review_records
                 type: follows
           - start: 11
-            t_subject: Initial disclosures due
+            t_subject: Serve the interrogatories and request for admission
             labels:
               - :label__urgent
             description: ""
@@ -531,25 +532,32 @@ projects:
         type: :legal_type_client_communication
         duration: 1
         schedule_manually: true
-      - start: 18
-        t_subject: Case management conference
-        t_description: Department 12, 9:00 AM. Bring the proposed discovery plan and trial-date availability.
+      - start: 25
+        t_subject: Pre-trial brief and judicial affidavits due
+        t_description: File and serve the pre-trial brief and the judicial affidavits of our witnesses at least 3 days before the pre-trial.
+        status: :default_status_scheduled
+        type: :legal_type_court_deadline
+        duration: 1
+        schedule_manually: true
+      - start: 32
+        t_subject: Pre-trial conference
+        t_description: RTC Makati, Branch 142, 8:30 AM. The client must attend or send a representative with a special power of attorney.
         status: :default_status_scheduled
         type: :legal_type_hearing
         duration: 1
         schedule_manually: true
-      - start: 32
-        t_subject: Hearing on motion to compel discovery
-        t_description: Only needed if Brightline does not answer the interrogatories on time.
-        status: :default_status_new
-        type: :legal_type_hearing
-        duration: 1
-        schedule_manually: true
       - start: 39
-        t_subject: Court-ordered mediation
+        t_subject: Court-annexed mediation at the Philippine Mediation Center
         description: ""
         status: :default_status_new
         type: :default_type_milestone
+        duration: 1
+        schedule_manually: true
+      - start: 46
+        t_subject: Judicial Dispute Resolution (JDR) conference
+        t_description: Only needed if mediation at the Philippine Mediation Center fails.
+        status: :default_status_new
+        type: :legal_type_hearing
         duration: 1
         schedule_manually: true
     t_wiki: |
@@ -559,26 +567,27 @@ projects:
 
       **Key facts**
 
-      * The freight agreement started on 1 March 2024 and runs for two years.
-      * Brightline missed or delayed 41 deliveries between May 2024 and June 2025.
-      * Brightline issued credit memos for 17 of them and never paid them.
+      * The trucking agreement started on 1 March 2024 and runs for two years.
+      * Bayanihan Freight missed or delayed 41 deliveries between May 2024 and June 2025.
+      * Bayanihan Freight issued credit memos for 17 of them, worth ₱4,850,000, and never paid them.
+      * Final demand letter sent on 15 August 2025 and received the next day.
 
       **Strategy**
 
-      * Lead with the account stated claim. The credit memos are Brightline's own documents.
-      * Ask for prejudgment interest from the date of each credit memo.
+      * Lead with the credit memos. They are Bayanihan Freight's own documents.
+      * Claim legal interest from the date of the final demand.
 
       **Contacts**
 
-      * Client: Dana Harlow, owner of Harlow Home Goods
-      * Opposing counsel: Priya Okafor, Reyes & Okafor
-  northwind-supply-agreement:
-    t_name: Northwind Bakery supply agreement
-    identifier: northwind-supply-agreement
+      * Client: Ma. Lourdes Dela Cruz, proprietor of Dela Cruz Trading
+      * Opposing counsel: Atty. Ramon Villaruel, Villaruel Tan & Associates
+  reyes-v-luzon-metalworks:
+    t_name: Reyes v. Luzon Metalworks
+    identifier: reyes-v-luzon-metalworks
     status_code: at_risk
-    t_status_explanation: The supplier wants a 90-day termination notice. The client needs at least 180 days, so this point is still open.
+    t_status_explanation: The position paper is due soon and we still need the client's signed affidavit.
     t_description: |-
-      Negotiating a 3-year master supply agreement between our client, Northwind Bakery Co., and its flour supplier, Golden Field Mills. Key points are price adjustments, delivery windows, food-safety warranties and termination.
+      NLRC NCR Case No. 11-14567-25. Illegal dismissal complaint before the Labor Arbiter. Our client, Jose Reyes, a machine operator for 6 years, was dismissed without a notice to explain or a hearing. We are asking for reinstatement with full backwages, or separation pay, plus 13th month pay differentials and attorney's fees.
     modules:
       - work_package_tracking
       - news
@@ -589,23 +598,26 @@ projects:
       - costs
       - calendars
     news:
-      - t_title: First draft received from Golden Field Mills
+      - t_title: Mandatory conference set
         t_summary: |
-          The supplier's counsel sent their first draft of the master supply agreement.
-        t_description: Review starts this week. The termination clause is the main concern.
+          The Labor Arbiter set the first mandatory conciliation and mediation conference.
+        t_description: The SEnA conference at DOLE did not end in a settlement, so the complaint was filed with the NLRC.
     types:
       - :default_type_task
       - :default_type_milestone
       - :default_type_summary_task
-      - :legal_type_contract_review
+      - :legal_type_court_deadline
+      - :legal_type_hearing
+      - :legal_type_filing
       - :legal_type_legal_research
+      - :legal_type_document_review
       - :legal_type_client_communication
     t_categories:
-      - Negotiation
-      - Compliance
+      - Conciliation
+      - Position papers
     queries:
-      - t_name: Negotiation plan
-        reference: :northwind__query__plan
+      - t_name: Case plan
+        reference: :reyes__query__plan
         timeline: true
         sort_by: id
         hierarchy: true
@@ -620,7 +632,7 @@ projects:
           - due_date
           - assigned_to
       - t_name: Open items
-        reference: :northwind__query__open_items
+        reference: :reyes__query__open_items
         status: open
         sort_by: id
         columns:
@@ -635,13 +647,13 @@ projects:
         lists:
           - t_name: "With us"
             work_packages:
-              - :northwind__redline
+              - :reyes__draft
           - t_name: "With the client"
             work_packages:
-              - :northwind__volumes
-          - t_name: "With the other side"
+              - :reyes__affidavit
+          - t_name: "For filing at the NLRC"
             work_packages:
-              - :northwind__call
+              - :reyes__file
     project-overview:
       row_count: 2
       column_count: 2
@@ -654,11 +666,11 @@ projects:
           options:
             t_name: "About this matter"
             t_text: |
-              **Client:** Northwind Bakery Co.
-              **Other side:** Golden Field Mills (counsel: Marsh Whitley LLP)
-              **Matter type:** Commercial contract negotiation
-
-              Open points: price adjustment formula, delivery windows, recall costs, termination notice.
+              **Case:** NLRC NCR Case No. 11-14567-25
+              **Forum:** National Labor Relations Commission, NCR Arbitration Branch
+              **Client (complainant):** Jose Reyes
+              **Respondent:** Luzon Metalworks Corp. (counsel: Atty. Carmela Ong)
+              **Claims:** Illegal dismissal, backwages, separation pay, 13th month pay differentials, attorney's fees
         - identifier: "project_status"
           start_row: 1
           end_row: 2
@@ -671,18 +683,39 @@ projects:
           end_column: 3
           options:
             t_name: "Open items"
-            queryId: "##query.id:northwind__query__open_items"
+            queryId: "##query.id:reyes__query__open_items"
     work_packages:
-      - start: -7
-        t_subject: "Intake and conflict check: Golden Field Mills"
+      - start: -14
+        t_subject: Intake interview with Mr. Reyes
         description: ""
         status: :default_status_closed
-        type: :legal_type_contract_review
-        duration: 2
+        type: :legal_type_client_communication
+        duration: 1
+        schedule_manually: true
+      - start: -10
+        t_subject: "SEnA conference at DOLE: no settlement"
+        description: ""
+        status: :default_status_closed
+        type: :legal_type_hearing
+        duration: 1
+        schedule_manually: true
+      - start: -7
+        t_subject: File the complaint for illegal dismissal at the NLRC
+        description: ""
+        status: :default_status_closed
+        type: :legal_type_filing
+        duration: 1
+        schedule_manually: true
+      - start: 2
+        t_subject: First mandatory conciliation and mediation conference
+        t_description: Before the Labor Arbiter, NLRC NCR, Quezon City, 10:00 AM. Bring the client's computation of backwages.
+        status: :default_status_scheduled
+        type: :legal_type_hearing
+        duration: 1
         schedule_manually: true
       - start: 0
-        t_subject: Negotiate the master supply agreement
-        reference: :northwind__negotiation
+        t_subject: Position paper
+        reference: :reyes__position_paper
         description: ""
         status: :default_status_in_progress
         type: :default_type_summary_task
@@ -690,25 +723,24 @@ projects:
         schedule_manually: false
         children:
           - start: 0
-            t_subject: Review the supplier's first draft
-            reference: :northwind__first_review
+            t_subject: Compile payslips, the termination letter and company memos
+            reference: :reyes__evidence
             labels:
               - :label__billable
             t_description: |-
-              Flag every clause that differs from the client's standard terms.
-              *   [x] Price and payment
-              *   [x] Delivery and acceptance
-              *   [ ] Warranties and recalls
-              *   [ ] Term and termination
-            status: :legal_status_partner_review
-            type: :legal_type_contract_review
+              *   [x] Payslips for the last 12 months
+              *   [x] Termination letter
+              *   [ ] Company memos on the incident
+              *   [ ] SSS employment history
+            status: :default_status_in_progress
+            type: :legal_type_document_review
             duration: 3
-            estimated_hours: 9
+            estimated_hours: 6
             remaining_hours: 2
-            done_ratio: 80
+            done_ratio: 70
             schedule_manually: true
           - start: 0
-            t_subject: Check food-safety warranty and recall obligations
+            t_subject: Research jurisprudence on just cause and the twin-notice rule
             description: ""
             status: :default_status_in_progress
             type: :legal_type_legal_research
@@ -718,8 +750,8 @@ projects:
             done_ratio: 50
             schedule_manually: true
           - start: 1
-            t_subject: Confirm volumes and delivery windows with the client
-            reference: :northwind__volumes
+            t_subject: Get Mr. Reyes's signed affidavit
+            reference: :reyes__affidavit
             labels:
               - :label__waiting_on_client
             description: ""
@@ -728,60 +760,64 @@ projects:
             duration: 3
             schedule_manually: true
           - start: 3
-            t_subject: Redline price, delivery and termination clauses
-            reference: :northwind__redline
+            t_subject: Draft the position paper
+            reference: :reyes__draft
             labels:
               - :label__urgent
             description: ""
             status: :legal_status_drafting
-            type: :legal_type_contract_review
+            type: :legal_type_filing
             duration: 2
-            estimated_hours: 6
-            remaining_hours: 6
+            estimated_hours: 8
+            remaining_hours: 8
             done_ratio: 0
             schedule_manually: false
             relations:
-              - to: :northwind__first_review
+              - to: :reyes__evidence
                 type: follows
           - start: 7
-            t_subject: Negotiation call with Golden Field Mills' counsel
-            reference: :northwind__call
+            t_subject: Compute backwages, separation pay and 13th month pay differentials
+            reference: :reyes__computation
             description: ""
             status: :default_status_new
             type: :default_type_task
             duration: 1
             schedule_manually: false
             relations:
-              - to: :northwind__redline
+              - to: :reyes__draft
                 type: follows
           - start: 8
-            t_subject: Final partner sign-off on the agreed text
-            reference: :northwind__final
+            t_subject: File and serve the position paper
+            reference: :reyes__file
             description: ""
             status: :default_status_new
-            type: :default_type_task
+            type: :legal_type_filing
             duration: 2
             schedule_manually: false
             relations:
-              - to: :northwind__call
+              - to: :reyes__computation
                 type: follows
       - start: 10
-        t_subject: Target signing date
+        t_subject: Position paper deadline set by the Labor Arbiter
+        description: ""
+        status: :default_status_scheduled
+        type: :legal_type_court_deadline
+        duration: 1
+        schedule_manually: true
+      - start: 21
+        t_subject: Reply to the respondent's position paper due
         description: ""
         status: :default_status_new
-        type: :default_type_milestone
+        type: :legal_type_court_deadline
         duration: 1
-        schedule_manually: false
-        relations:
-          - to: :northwind__final
-            type: follows
-  ellison-estate-plan:
-    t_name: Ellison estate plan
-    identifier: ellison-estate-plan
+        schedule_manually: true
+  santos-title-transfer:
+    t_name: Santos condominium title transfer
+    identifier: santos-title-transfer
     status_code: on_track
-    t_status_explanation: Asset review is under way. Drafting starts later this week.
+    t_status_explanation: The title is clean. The deed of absolute sale is being drafted.
     t_description: |-
-      Estate plan for Margaret Ellison: a revocable living trust, a pour-over will, a durable power of attorney and a health care directive. Assets include her home, a brokerage account and a cabin in another state.
+      Transfer of title for a condominium unit in Makati City sold by Spouses Antonio and Teresa Santos to our client, Bea Navarro, for ₱6,200,000. We handle the deed of absolute sale, the BIR taxes and eCAR, the local transfer tax, and the new Condominium Certificate of Title at the Registry of Deeds.
     modules:
       - work_package_tracking
       - news
@@ -794,17 +830,18 @@ projects:
       - :default_type_task
       - :default_type_milestone
       - :default_type_summary_task
+      - :legal_type_contract_review
       - :legal_type_filing
       - :legal_type_legal_research
       - :legal_type_document_review
       - :legal_type_client_communication
     t_categories:
-      - Trust
-      - Will
-      - Funding
+      - Deed of sale
+      - BIR
+      - Registry of Deeds
     queries:
-      - t_name: Estate plan timeline
-        reference: :ellison__query__timeline
+      - t_name: Transfer timeline
+        reference: :santos__query__timeline
         timeline: true
         sort_by: id
         hierarchy: true
@@ -829,10 +866,12 @@ projects:
           options:
             t_name: "About this matter"
             t_text: |
-              **Client:** Margaret Ellison
-              **Matter type:** Estate planning
+              **Client (buyer):** Bea Navarro
+              **Sellers:** Spouses Antonio and Teresa Santos
+              **Property:** Condominium unit, Makati City, CCT No. 012-2019001234
+              **Price:** ₱6,200,000
 
-              Documents: revocable living trust, pour-over will, durable power of attorney, health care directive.
+              Taxes: capital gains tax (6%) and documentary stamp tax (1.5%) at the BIR, and transfer tax at the Makati City Treasurer's Office.
         - identifier: "project_status"
           start_row: 1
           end_row: 2
@@ -844,42 +883,42 @@ projects:
           start_column: 1
           end_column: 3
           options:
-            t_name: "Estate plan timeline"
-            queryId: "##query.id:ellison__query__timeline"
+            t_name: "Transfer timeline"
+            queryId: "##query.id:santos__query__timeline"
     work_packages:
       - start: -7
-        t_subject: Initial consultation and asset questionnaire
+        t_subject: Meet buyer and sellers and collect the owner's copy of the title
         description: ""
         status: :default_status_closed
         type: :legal_type_client_communication
         duration: 1
         schedule_manually: true
       - start: 0
-        t_subject: Review deeds, account statements and beneficiary designations
-        reference: :ellison__asset_review
+        t_subject: Get a certified true copy of the title and check for liens
+        reference: :santos__title_check
         labels:
           - :label__billable
-        description: ""
+        t_description: Request the certified true copy from the Registry of Deeds of Makati City and check the annotations for mortgages, adverse claims or lis pendens.
         status: :default_status_in_progress
         type: :legal_type_document_review
         duration: 3
-        estimated_hours: 6
-        remaining_hours: 3
+        estimated_hours: 4
+        remaining_hours: 2
         done_ratio: 50
         schedule_manually: true
       - start: 0
-        t_subject: Confirm probate options for the out-of-state cabin
-        description: ""
+        t_subject: Compute capital gains tax, documentary stamp tax and transfer tax
+        t_description: Use the higher of the selling price and the BIR zonal value as the tax base.
         status: :default_status_new
         type: :legal_type_legal_research
         duration: 2
-        estimated_hours: 3
-        remaining_hours: 3
+        estimated_hours: 2
+        remaining_hours: 2
         done_ratio: 0
         schedule_manually: true
       - start: 3
-        t_subject: Draft the estate documents
-        reference: :ellison__drafting
+        t_subject: Prepare the sale documents
+        reference: :santos__documents
         description: ""
         status: :default_status_new
         type: :default_type_summary_task
@@ -887,21 +926,21 @@ projects:
         schedule_manually: false
         children:
           - start: 3
-            t_subject: Draft the revocable living trust
-            reference: :ellison__trust
+            t_subject: Draft the deed of absolute sale
+            reference: :santos__deed
             description: ""
             status: :legal_status_drafting
-            type: :legal_type_filing
+            type: :legal_type_contract_review
             duration: 2
-            estimated_hours: 8
-            remaining_hours: 8
+            estimated_hours: 4
+            remaining_hours: 4
             done_ratio: 0
             schedule_manually: false
             relations:
-              - to: :ellison__asset_review
+              - to: :santos__title_check
                 type: follows
           - start: 7
-            t_subject: Draft the pour-over will
+            t_subject: Prepare the BIR forms and supporting documents for the eCAR
             description: ""
             status: :default_status_new
             type: :legal_type_filing
@@ -911,52 +950,49 @@ projects:
             done_ratio: 0
             schedule_manually: false
             relations:
-              - to: :ellison__trust
+              - to: :santos__deed
                 type: follows
           - start: 7
-            t_subject: Draft the power of attorney and health care directive
+            t_subject: Get the real property tax clearance and condominium dues clearance
             description: ""
             status: :default_status_new
-            type: :legal_type_filing
+            type: :default_type_task
             duration: 3
-            estimated_hours: 3
-            remaining_hours: 3
-            done_ratio: 0
             schedule_manually: false
             relations:
-              - to: :ellison__trust
+              - to: :santos__deed
                 type: follows
       - start: 10
-        t_subject: Client review of the draft documents
-        reference: :ellison__client_review
+        t_subject: Signing and notarization of the deed of absolute sale
+        reference: :santos__signing
         description: ""
         status: :default_status_new
         type: :legal_type_client_communication
         duration: 2
         schedule_manually: false
         relations:
-          - to: :ellison__drafting
+          - to: :santos__documents
             type: follows
       - start: 14
-        t_subject: Signing and notarization appointment
-        reference: :ellison__signing
-        description: ""
+        t_subject: Pay capital gains tax and documentary stamp tax at the BIR
+        reference: :santos__bir_payment
+        t_description: Capital gains tax is due within 30 days of notarization. Documentary stamp tax is due by the 5th day of the following month.
         status: :default_status_new
         type: :default_type_milestone
         duration: 1
         schedule_manually: false
         relations:
-          - to: :ellison__client_review
+          - to: :santos__signing
             type: follows
       - start: 15
-        t_subject: Move the home and brokerage account into the trust
-        description: ""
+        t_subject: Pay transfer tax and register the sale at the Registry of Deeds
+        t_description: After the BIR releases the eCAR, pay the transfer tax at the Makati City Treasurer, then file at the Registry of Deeds for the new CCT in the client's name.
         status: :default_status_new
-        type: :default_type_task
+        type: :legal_type_filing
         duration: 4
         schedule_manually: false
         relations:
-          - to: :ellison__signing
+          - to: :santos__bir_payment
             type: follows
 
 statuses:

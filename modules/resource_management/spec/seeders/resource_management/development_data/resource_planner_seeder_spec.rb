@@ -73,11 +73,11 @@ RSpec.describe ResourceManagement::DevelopmentData::ResourcePlannerSeeder do
     )
 
     {
-      harlow__review_logs: setup_website,
-      harlow__damages_research: set_date,
-      harlow__declaration: invite_attendees,
-      harlow__discovery: follow_up,
-      harlow__interrogatories: upload,
+      delacruz__review_records: setup_website,
+      delacruz__interest_research: set_date,
+      delacruz__judicial_affidavit: invite_attendees,
+      delacruz__discovery: follow_up,
+      delacruz__interrogatories: upload,
       user__wanda_web: wanda,
       user__olga_ops: olga,
       user__adam_admin: adam

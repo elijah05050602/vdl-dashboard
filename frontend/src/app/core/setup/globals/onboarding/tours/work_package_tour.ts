@@ -50,7 +50,7 @@ export function wpOnboardingTourSteps():OnboardingStep[] {
       nextButton: { text: I18n.t('js.onboarding.buttons.next') },
       onNext() {
         const firstId = document.querySelectorAll('.inline-edit--display-field.id a ')[0].innerHTML;
-        window.location.href = `${window.location.origin}/projects/harlow-v-brightline/work_packages/${firstId}/activity`;
+        window.location.href = `${window.location.origin}/projects/dela-cruz-v-bayanihan/work_packages/${firstId}/activity`;
       },
     }
   ];

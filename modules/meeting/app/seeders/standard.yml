@@ -27,14 +27,14 @@
 #++
 
 projects:
-  harlow-v-brightline:
+  dela-cruz-v-bayanihan:
     meeting_series:
       - reference: :weekly_meeting
         t_title: Weekly case review
         duration: 60
         interval: 1
         frequency: :weekly
-        time_zone: "Europe/Berlin"
+        time_zone: "Asia/Manila"
         author: :openproject_admin
     meeting_agenda_items:
       - t_title: Deadlines this week
@@ -43,8 +43,8 @@ projects:
         author: :openproject_admin
         presenter: :openproject_admin
         duration: 10
-      - work_package: :harlow__discovery
-        t_notes: "**Today's topic**: Discovery status in Harlow v. Brightline Logistics."
+      - work_package: :delacruz__discovery
+        t_notes: "**Today's topic**: Discovery status in Dela Cruz Trading v. Bayanihan Freight."
         meeting: :weekly_meeting_template
         author: :openproject_admin
         presenter: :user__wanda_web

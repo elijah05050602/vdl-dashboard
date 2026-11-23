@@ -27,7 +27,7 @@
 #++
 
 projects:
-  harlow-v-brightline:
+  dela-cruz-v-bayanihan:
     resource_planner:
       t_name: Team allocations
       work_package_list:
