@@ -38,6 +38,10 @@ RSpec.describe DemoData::LawFirm::MatterTemplatesSeeder do
 
   before { seeder.seed! }
 
+  def soonest_working_day(date)
+    WorkPackages::Shared::WorkingDays.new.soonest_working_day(date)
+  end
+
   it "creates one template project per matter kind" do
     expect(Project.templated.pluck(:identifier)).to match_array(identifiers)
   end
@@ -60,9 +64,33 @@ RSpec.describe DemoData::LawFirm::MatterTemplatesSeeder do
     end
   end
 
-  it "keeps every successor on or after the soonest start allowed by its predecessor" do
+  it "starts every successor on the soonest working day allowed by its predecessor" do
     Relation.follows.includes(:from, :to).find_each do |relation|
-      expect(relation.successor.start_date).to eq(relation.successor_soonest_start)
+      expect(relation.successor.start_date).to eq(soonest_working_day(relation.successor_soonest_start))
+    end
+  end
+
+  it "counts court deadlines in calendar days from the step they follow" do
+    answer_due = WorkPackage.joins(:project)
+                            .find_by!(projects: { identifier: "template-ph-civil-case-rtc" }, subject: "Answer due")
+    summons = answer_due.follows_relations.first.predecessor
+
+    expect(answer_due.start_date).to eq(soonest_working_day(summons.due_date + 30.days))
+  end
+
+  it "keeps US-specific rules out of the templates" do
+    text = File.read(described_class::SEED_FILE)
+    expect(text).not_to match(/FRCP|EEOC|Rule 26\(f\)|statute of limitations|right-to-sue/i)
+  end
+
+  describe "with earlier US templates in the database" do
+    let!(:us_template) do
+      create(:project, identifier: "template-civil-litigation", templated: true, active: true)
+    end
+
+    it "archives them" do
+      described_class.new(basic_seed_data).seed!
+      expect(us_template.reload).not_to be_active
     end
   end
 
@@ -87,7 +115,7 @@ RSpec.describe DemoData::LawFirm::MatterTemplatesSeeder do
 
   describe "a matter created from a template" do
     let(:admin) { seeder.admin_user }
-    let(:template) { Project.find_by!(identifier: "template-contract-review") }
+    let(:template) { Project.find_by!(identifier: "template-ph-contract-review") }
     let(:matter) do
       Projects::CopyService
         .new(source: template, user: admin)
@@ -119,7 +147,7 @@ RSpec.describe DemoData::LawFirm::MatterTemplatesSeeder do
       end
 
       Relation.follows.where(from_id: matter.work_packages.select(:id)).find_each do |relation|
-        expect(relation.successor.start_date).to eq(relation.successor_soonest_start)
+        expect(relation.successor.start_date).to eq(soonest_working_day(relation.successor_soonest_start))
       end
     end
   end

@@ -1,0 +1,49 @@
+# Philippine national holidays seeded as non-working days, so that court deadlines
+# that fall on them roll over to the next working day (Rules of Court, Rule 22, Sec. 1).
+#
+# Sources:
+#   2026: Proclamation No. 1006, s. 2025; Eid'l Fitr (Proclamation No. 1189, s. 2026)
+#         and Eid'l Adha (Proclamation No. 1264, s. 2026).
+#   2027: Proclamation No. 1427, s. 2026. Eid'l Fitr and Eid'l Adha are proclaimed
+#         separately once their dates are fixed: add them here or under
+#         Administration > Calendars and dates > Working days when announced.
+#
+# Only days that are clearly non-working nationwide are listed. Special working days
+# (EDSA anniversary), local holidays and court closures are left out: a day missing
+# here can only make a deadline earlier, never later. Add local holidays and Supreme
+# Court-declared closures in Administration as they are announced.
+holidays:
+  - { date: 2026-01-01, name: "New Year's Day" }
+  - { date: 2026-02-17, name: "Chinese New Year" }
+  - { date: 2026-03-20, name: "Eid'l Fitr" }
+  - { date: 2026-04-02, name: "Maundy Thursday" }
+  - { date: 2026-04-03, name: "Good Friday" }
+  - { date: 2026-04-04, name: "Black Saturday" }
+  - { date: 2026-04-09, name: "Araw ng Kagitingan" }
+  - { date: 2026-05-01, name: "Labor Day" }
+  - { date: 2026-05-27, name: "Eid'l Adha" }
+  - { date: 2026-06-12, name: "Independence Day" }
+  - { date: 2026-08-21, name: "Ninoy Aquino Day" }
+  - { date: 2026-08-31, name: "National Heroes Day" }
+  - { date: 2026-11-01, name: "All Saints' Day" }
+  - { date: 2026-11-02, name: "All Souls' Day" }
+  - { date: 2026-11-30, name: "Bonifacio Day" }
+  - { date: 2026-12-08, name: "Feast of the Immaculate Conception" }
+  - { date: 2026-12-24, name: "Christmas Eve" }
+  - { date: 2026-12-25, name: "Christmas Day" }
+  - { date: 2026-12-30, name: "Rizal Day" }
+  - { date: 2026-12-31, name: "Last Day of the Year" }
+  - { date: 2027-01-01, name: "New Year's Day" }
+  - { date: 2027-03-25, name: "Maundy Thursday" }
+  - { date: 2027-03-26, name: "Good Friday" }
+  - { date: 2027-04-09, name: "Araw ng Kagitingan" }
+  - { date: 2027-05-01, name: "Labor Day" }
+  - { date: 2027-06-12, name: "Independence Day" }
+  - { date: 2027-08-21, name: "Ninoy Aquino Day" }
+  - { date: 2027-08-30, name: "National Heroes Day" }
+  - { date: 2027-11-01, name: "All Saints' Day" }
+  - { date: 2027-11-30, name: "Bonifacio Day" }
+  - { date: 2027-12-08, name: "Feast of the Immaculate Conception" }
+  - { date: 2027-12-25, name: "Christmas Day" }
+  - { date: 2027-12-30, name: "Rizal Day" }
+  - { date: 2027-12-31, name: "Last Day of the Year" }

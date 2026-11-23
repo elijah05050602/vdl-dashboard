@@ -1172,14 +1172,16 @@ time_entry_activities:
     position: 3
   - t_name: Court appearance
     position: 4
-  - t_name: Discovery and document review
+  - t_name: Document review
     position: 5
   - t_name: Negotiation
     position: 6
-  - t_name: Travel
+  - t_name: Notarial work
     position: 7
-  - t_name: Administrative (non-billable)
+  - t_name: Travel
     position: 8
+  - t_name: Administrative (non-billable)
+    position: 9
 
 types:
   - reference: :default_type_task
@@ -1225,6 +1227,7 @@ types:
     enabled_in_new_projects: true
     color_name: "red-9"
     is_milestone: true
+    lag_in_calendar_days: true
     position: 8
   - reference: :legal_type_hearing
     t_name: Hearing
@@ -1452,7 +1455,8 @@ welcome:
 
     Getting started:
 
-    * Open a matter and add its **Court deadlines** and **Hearings** so they appear on the calendar and Gantt chart.
+    * Start a new matter from a template (civil case, nullity or annulment, NLRC labor case, preliminary investigation, SEC registration, land title transfer, extrajudicial settlement, notarial work or contract review).
+    * Add the matter's **Court deadlines** and **Hearings** so they appear on the calendar and Gantt chart. Court deadlines count calendar days and move to the next working day when they fall on a weekend or holiday (Rule 22, Sec. 1). Always verify them against the rules and the date of receipt.
     * Track drafting with **Filing** and **Contract review** work packages, moving them through Drafting, Partner review and Filed.
     * Log time against each matter with the legal activities (Legal research, Drafting, Court appearance and more) to feed billing reports.
     * Use **Client communication** work packages to record what is waiting on the client.

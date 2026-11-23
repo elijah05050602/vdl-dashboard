@@ -181,8 +181,15 @@ module Costs
     end
 
     initializer "costs.settings" do
-      ::Settings::Definition.add "costs_currency", default: "€", format: :string
-      ::Settings::Definition.add "costs_currency_format", default: "%n %u", format: :string, allowed: ["%u %n", "%n %u"]
+      ::Settings::Definition.add "costs_currency",
+                                 default: "€",
+                                 default_by_env: { development: "₱", production: "₱" },
+                                 format: :string
+      ::Settings::Definition.add "costs_currency_format",
+                                 default: "%n %u",
+                                 default_by_env: { development: "%u %n", production: "%u %n" },
+                                 format: :string,
+                                 allowed: ["%u %n", "%n %u"]
       ::Settings::Definition.add "allow_tracking_start_and_end_times", default: false, format: :boolean
       ::Settings::Definition.add "enforce_tracking_start_and_end_times", default: false, format: :boolean
       ::Settings::Definition.add "time_entries_max_hours_per_entry", default: 0, format: :integer, allowed: (0..)

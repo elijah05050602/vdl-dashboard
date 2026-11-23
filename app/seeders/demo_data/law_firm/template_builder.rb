@@ -121,7 +121,7 @@ module DemoData
       def create_step(item, parent:)
         predecessor = predecessor_for(item)
         lag = item["lag"].to_i
-        start_date = start_date_for(predecessor, lag)
+        start_date = start_date_for(predecessor, item)
         due_date = milestone?(item) ? start_date : working_days.due_date(start_date, step_duration(item))
 
         work_package = WorkPackage.create!(
@@ -164,10 +164,21 @@ module DemoData
         end
       end
 
-      def start_date_for(predecessor, lag)
+      def start_date_for(predecessor, item)
         return working_days.soonest_working_day(Date.current) if predecessor.nil?
 
-        working_days.soonest_working_day(working_days.with_lag(predecessor.due_date || predecessor.start_date, lag))
+        predecessor_date = predecessor.due_date || predecessor.start_date
+        lag = item["lag"].to_i
+        soonest_start = if calendar_day_lag?(item)
+                          predecessor_date + [lag, 1].max
+                        else
+                          working_days.with_lag(predecessor_date, lag)
+                        end
+        working_days.soonest_working_day(soonest_start)
+      end
+
+      def calendar_day_lag?(item)
+        seed_data.find_reference(item["type"]).lag_in_calendar_days?
       end
 
       def milestone?(item)

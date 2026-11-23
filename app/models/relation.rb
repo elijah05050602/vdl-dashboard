@@ -176,10 +176,19 @@ class Relation < ApplicationRecord
   end
 
   def successor_soonest_start
-    if follows? && predecessor_date
-      days = WorkPackages::Shared::WorkingDays.new
-      days.with_lag(predecessor_date, lag)
+    return unless follows? && predecessor_date
+
+    if lag_in_calendar_days?
+      predecessor_date + [lag.to_i, 1].max
+    else
+      WorkPackages::Shared::WorkingDays.new.with_lag(predecessor_date, lag)
     end
+  end
+
+  # Philippine reglementary periods (Rules of Court, Rule 22, Sec. 1) run in calendar days.
+  # Callers roll the result forward to the next working day.
+  def lag_in_calendar_days?
+    !!successor&.type&.lag_in_calendar_days?
   end
 
   def <=>(other)

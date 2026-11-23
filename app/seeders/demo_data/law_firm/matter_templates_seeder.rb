@@ -43,6 +43,7 @@ module DemoData
       ]
 
       def seed_data!
+        retire_templates
         pending_templates.each do |template_data|
           print_status "   -Creating matter template: #{template_data['name']}"
           TemplateBuilder.new(template_data, seed_data:, user: admin_user).create!
@@ -50,7 +51,11 @@ module DemoData
       end
 
       def applicable?
-        pending_templates.any? && super
+        (pending_templates.any? || templates_to_retire.exists?) && super
+      end
+
+      def dependencies
+        [PhilippineHolidaysSeeder]
       end
 
       def all_required_references
@@ -59,10 +64,29 @@ module DemoData
       end
 
       def templates
-        @templates ||= YAML.load_file(SEED_FILE).fetch("matter_templates").values
+        @templates ||= seed_file.fetch("matter_templates").values
+      end
+
+      def retired_identifiers
+        seed_file.fetch("retired_templates", [])
       end
 
       private
+
+      def seed_file
+        @seed_file ||= YAML.load_file(SEED_FILE)
+      end
+
+      def templates_to_retire
+        Project.templated.active.where(identifier: retired_identifiers)
+      end
+
+      def retire_templates
+        templates_to_retire.find_each do |project|
+          print_status "   -Archiving replaced matter template: #{project.name}"
+          project.update!(active: false)
+        end
+      end
 
       def pending_templates
         templates.reject { |template_data| Project.exists?(identifier: template_data["identifier"]) }

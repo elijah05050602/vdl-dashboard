@@ -247,6 +247,29 @@ RSpec.describe Relation do
       end
     end
 
+    context "with a follows relation whose successor type counts the lag in calendar days" do
+      let(:court_deadline) { create(:type, lag_in_calendar_days: true) }
+
+      let_work_packages(<<~TABLE)
+        subject       | MTWTFSSmtw | predecessors
+        main          | X░ ░ ░░ ░  |
+        follower_lag0 |  ░ ░ ░░ ░  | follows main with lag 0
+        follower_lag3 |  ░ ░ ░░ ░  | follows main with lag 3
+        follower_lag6 |  ░ ░ ░░ ░  | follows main with lag 6
+      TABLE
+
+      before do
+        set_work_week("monday", "wednesday", "friday")
+        [follower_lag0, follower_lag3, follower_lag6].each { it.update_column(:type_id, court_deadline.id) }
+      end
+
+      it "returns the predecessor date plus the lag in calendar days, ignoring non-working days" do
+        expect(_table.relation(successor: "follower_lag0").reload.successor_soonest_start).to eq(_table.tuesday)
+        expect(_table.relation(successor: "follower_lag3").reload.successor_soonest_start).to eq(_table.thursday)
+        expect(_table.relation(successor: "follower_lag6").reload.successor_soonest_start).to eq(_table.sunday)
+      end
+    end
+
     context "with a follows relation with a lag, non-working days, and followers ignoring non-working days" do
       let_work_packages(<<~TABLE)
         subject       | MTWTFSSmtw | days counting     | predecessors
