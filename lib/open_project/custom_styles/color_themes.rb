@@ -35,8 +35,8 @@ module OpenProject::CustomStyles
 
     DEPRECATED_MAIN_MENU_COLOR = "#333739"
     PRIMER_PRIMARY_BUTTON_COLOR = "#1F883D"
-    ACCENT_COLOR = "#0F41B5"
-    DEFAULT_HEADER_BG_COLOR = "#0F41B5"
+    ACCENT_COLOR = "#1F3A5F"
+    DEFAULT_HEADER_BG_COLOR = "#2E2829"
 
     THEMES = [
       {
@@ -46,7 +46,7 @@ module OpenProject::CustomStyles
           "accent-color" => ACCENT_COLOR,
           "header-bg-color" => DEFAULT_HEADER_BG_COLOR,
           "main-menu-bg-color" => "#FFFFFF",
-          "main-menu-bg-selected-background" => "#0F41B5"
+          "main-menu-bg-selected-background" => "#1F3A5F"
         }
       },
       {
