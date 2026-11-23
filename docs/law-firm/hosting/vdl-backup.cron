@@ -1,0 +1,3 @@
+# /etc/cron.d/vdl-backup : every night at 1:30 AM Manila time
+CRON_TZ=Asia/Manila
+30 1 * * * root /usr/local/sbin/vdl-backup >> /var/log/vdl-backup.log 2>&1
