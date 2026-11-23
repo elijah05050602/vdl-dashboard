@@ -39,7 +39,7 @@ The welcome text is seeded only on a fresh database. On an existing one, change 
 
 ## Deadline reminders and daily digest
 
-Every user gets one email a day at 7:00 in their own time zone (set under My account, Settings; the firm default is Asia/Manila via `OPENPROJECT_USER__DEFAULT__TIMEZONE`) about open **Court deadline** and **Hearing** work packages. It is sent only when there is something to report, and has three parts:
+Every user gets one email a day at 7:00 in their own time zone (set under My account, Settings; the firm default time zone is Asia/Manila) about open **Court deadline** and **Hearing** work packages. It is sent only when there is something to report, and has three parts:
 
 - **Your deadlines that need attention:** deadlines you are assigned to, accountable for or watching that are due in 14, 7, 3 or 1 days, due today, or overdue.
 - **Overdue in your matters:** every overdue deadline in the matters (projects) you are a member of.
@@ -58,12 +58,6 @@ Settings (change them with environment variables, for example `OPENPROJECT_DEADL
 | `deadline_reminder_types` | `["Court deadline", "Hearing"]` |
 
 OpenProject's own date alerts (the bell icon) keep working alongside this, with each user's settings under My account, Notifications.
-
-## Philippine holidays
-
-Run `bundle exec rake law_firm:ph_holidays` to add this year's and next year's Philippine regular holidays and special non-working days as non-working days (`rake "law_firm:ph_holidays[2028]"` for one year). Chinese New Year, Eid'l Fitr and Eid'l Adha are proclaimed each year, so add those by hand under Administration, Calendars and dates, Working days and hours, and check the list against the year's proclamation.
-
-The task does not move dates already entered. Under the Rules of Court, a deadline that falls on a holiday moves to the next working day: check those by hand.
 
 ## License
 
