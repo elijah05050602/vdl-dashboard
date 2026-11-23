@@ -58,8 +58,10 @@ See COPYRIGHT and LICENSE files for more details.
       <% end %>
     <% end %>
     <% entries.each do |entry| %>
-      <% box.with_row(classes: ["court-calendar--entry", ("-closed" if entry.closed?)].compact.join(" "),
-                      test_selector: "court-calendar-entry") do %>
+      <% box.with_row(
+           classes: ["court-calendar--entry", ("-closed" if entry.closed?)].compact.join(" "),
+           test_selector: "court-calendar-entry"
+         ) do %>
         <%= render Primer::Box.new(display: :flex, style: "gap: 16px;") do %>
           <%= render Primer::Box.new(style: "min-width: 72px;", font_weight: :bold) do %>
             <%= entry.time || t("court_calendar.no_time") %>

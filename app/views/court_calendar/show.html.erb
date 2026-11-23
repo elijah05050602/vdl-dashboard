@@ -62,15 +62,23 @@ See COPYRIGHT and LICENSE files for more details.
   <%= hidden_field_tag :view, @calendar.view %>
   <%= hidden_field_tag :date, @calendar.date.iso8601 %>
   <%= render Primer::Box.new(display: :flex, flex_wrap: :wrap, align_items: :flex_end, mb: 3, style: "gap: 8px;") do %>
-    <%= render(Primer::Alpha::Select.new(name: :lawyer, label: t("court_calendar.filter_lawyer"), input_width: :medium,
-                                         data: { test_selector: "court-calendar-lawyer" })) do |lawyer_select| %>
+    <%= render(
+          Primer::Alpha::Select.new(
+            name: :lawyer, label: t("court_calendar.filter_lawyer"), input_width: :medium,
+            data: { test_selector: "court-calendar-lawyer" }
+          )
+        ) do |lawyer_select| %>
       <% lawyer_select.option(value: "", label: t("court_calendar.all_lawyers")) %>
       <% @calendar.lawyer_options.each do |principal| %>
         <% lawyer_select.option(value: principal.id, label: principal.name, selected: @calendar.lawyer_id == principal.id) %>
       <% end %>
     <% end %>
-    <%= render(Primer::Alpha::Select.new(name: :court, label: t("court_calendar.filter_court"), input_width: :medium,
-                                         data: { test_selector: "court-calendar-court" })) do |court_select| %>
+    <%= render(
+          Primer::Alpha::Select.new(
+            name: :court, label: t("court_calendar.filter_court"), input_width: :medium,
+            data: { test_selector: "court-calendar-court" }
+          )
+        ) do |court_select| %>
       <% court_select.option(value: "", label: t("court_calendar.all_courts")) %>
       <% @calendar.court_options.each do |option| %>
         <% court_select.option(value: option.id, label: option.value, selected: @calendar.court_id == option.id) %>
@@ -87,22 +95,34 @@ See COPYRIGHT and LICENSE files for more details.
 
 <%= render Primer::Box.new(display: :flex, flex_wrap: :wrap, align_items: :center, justify_content: :space_between, mb: 2, style: "gap: 8px;") do %>
   <%= render Primer::Box.new(display: :flex, align_items: :center, style: "gap: 8px;") do %>
-    <%= render(Primer::Beta::IconButton.new(tag: :a, href: court_calendar_link(date: @calendar.previous_date.iso8601),
-                                            icon: :"chevron-left", "aria-label": t("court_calendar.previous"))) %>
+    <%= render(
+          Primer::Beta::IconButton.new(
+            tag: :a, href: court_calendar_link(date: @calendar.previous_date.iso8601),
+            icon: :"chevron-left", "aria-label": t("court_calendar.previous")
+          )
+        ) %>
     <%= render(Primer::Beta::Button.new(tag: :a, href: court_calendar_link(date: current_user.today.iso8601))) do %>
       <%= t("court_calendar.today") %>
     <% end %>
-    <%= render(Primer::Beta::IconButton.new(tag: :a, href: court_calendar_link(date: @calendar.next_date.iso8601),
-                                            icon: :"chevron-right", "aria-label": t("court_calendar.next"))) %>
+    <%= render(
+          Primer::Beta::IconButton.new(
+            tag: :a, href: court_calendar_link(date: @calendar.next_date.iso8601),
+            icon: :"chevron-right", "aria-label": t("court_calendar.next")
+          )
+        ) %>
     <%= render Primer::Beta::Heading.new(tag: :h2, font_size: 3, test_selector: "court-calendar-period") do %>
       <%= render partial: "court_calendar/period_title", locals: { calendar: @calendar } %>
     <% end %>
   <% end %>
   <%= render Primer::Box.new(display: :flex, style: "gap: 4px;", test_selector: "court-calendar-views") do %>
     <% LawFirm::CourtCalendar::VIEWS.each do |view| %>
-      <%= render(Primer::Beta::Button.new(tag: :a, href: court_calendar_link(view:),
-                                          scheme: view == @calendar.view ? :primary : :default,
-                                          "aria-current": (view == @calendar.view ? "page" : nil))) do %>
+      <%= render(
+            Primer::Beta::Button.new(
+              tag: :a, href: court_calendar_link(view:),
+              scheme: view == @calendar.view ? :primary : :default,
+              "aria-current": (view == @calendar.view ? "page" : nil)
+            )
+          ) do %>
         <%= t("court_calendar.views.#{view}") %>
       <% end %>
     <% end %>
