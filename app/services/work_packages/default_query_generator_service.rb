@@ -32,6 +32,8 @@ module ::WorkPackages
     DEFAULT_QUERY = :all_open
     QUERY_OPTIONS = [
       DEFAULT_QUERY,
+      :upcoming_deadlines,
+      :overdue_deadlines,
       :to_do,
       :in_progress,
       :latest_activity,
@@ -117,6 +119,32 @@ module ::WorkPackages
         )
       end
 
+      def upcoming_deadlines_query(project)
+        deadlines_query(project, { "n" => "dueDate", "o" => "<t+", "v" => [LawFirm::Deadlines::LOOKAHEAD_DAYS.to_s] })
+      end
+
+      def overdue_deadlines_query(project)
+        deadlines_query(project, { "n" => "dueDate", "o" => "<t-", "v" => ["1"] })
+      end
+
+      def deadlines_query(project, date_filter)
+        type_ids = LawFirm::Deadlines.type_ids(project)
+        return if type_ids.empty?
+
+        columns = %w[id type subject status dueDate assignee]
+        columns.insert(1, "project") if project.blank?
+
+        DEFAULT_PARAMS.merge(
+          {
+            c: columns,
+            t: "dueDate:asc,id:asc",
+            f: [{ "n" => "type", "o" => "=", "v" => type_ids },
+                { "n" => "status", "o" => "o", "v" => [] },
+                date_filter]
+          }
+        )
+      end
+
       def summary_query
         {}
       end
@@ -161,6 +189,10 @@ module ::WorkPackages
 
       def assign_params(query_key, project)
         case query_key
+        when :upcoming_deadlines
+          upcoming_deadlines_query(project)
+        when :overdue_deadlines
+          overdue_deadlines_query(project)
         when :to_do
           to_do_query
         when :in_progress

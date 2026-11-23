@@ -30,6 +30,7 @@ module ::Gantt
     DEFAULT_QUERY = :all_open
     QUERY_OPTIONS = [
       DEFAULT_QUERY,
+      :court_deadlines_and_hearings,
       :milestones
     ].freeze
 
@@ -56,6 +57,8 @@ module ::Gantt
         case query_key
         when DEFAULT_QUERY
           self.class.all_open_query(@project)
+        when :court_deadlines_and_hearings
+          self.class.court_deadlines_and_hearings_query(@project)
         when :milestones
           self.class.milestones_query(@project)
         end
@@ -82,6 +85,17 @@ module ::Gantt
 
         default_with_filter["f"] = [{ "n" => "type", "o" => "=", "v" => milestones }]
         default_with_filter
+      end
+
+      def court_deadlines_and_hearings_query(project)
+        type_ids = LawFirm::Deadlines.type_ids(project)
+        return if type_ids.empty?
+
+        add_columns(project).merge(
+          "t" => "dueDate:asc",
+          "f" => [{ "n" => "type", "o" => "=", "v" => type_ids },
+                  { "n" => "status", "o" => "o", "v" => [] }]
+        )
       end
 
       def add_columns(project)

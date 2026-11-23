@@ -1,0 +1,86 @@
+<%#-- copyright
+OpenProject is an open source project management software.
+Copyright (C) the OpenProject GmbH
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License version 3.
+
+OpenProject is a fork of ChiliProject, which is a fork of Redmine. The copyright follows:
+Copyright (C) 2006-2013 Jean-Philippe Lang
+Copyright (C) 2010-2013 the ChiliProject Team
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+See COPYRIGHT and LICENSE files for more details.
+++#%>
+
+<%=
+  widget_wrapper do |container|
+    if deadlines.empty?
+      render(Primer::Beta::Blankslate.new(test_selector: "upcoming-deadlines-widget-empty")) do |component|
+        component.with_visual_icon(icon: :calendar)
+        component.with_heading(tag: :h4).with_content(t("law_firm.deadlines.widget.empty_heading"))
+        component.with_description { t("law_firm.deadlines.widget.empty_description", days: LawFirm::Deadlines::LOOKAHEAD_DAYS) }
+      end
+    else
+      deadlines.each do |work_package|
+        container.with_row(test_selector: "upcoming-deadlines-widget-row") do
+          flex_layout(justify_content: :space_between, align_items: :flex_start) do |row|
+            row.with_column(mr: 2) do
+              component_collection do |body|
+                body.with_component(
+                  render(Primer::Beta::Link.new(href: work_package_path(work_package), font_weight: :bold)) { work_package.subject }
+                )
+                body.with_component(
+                  render(Primer::Beta::Text.new(tag: :p, color: :subtle, font_size: :small)) do
+                    [work_package.type.name, work_package.project.name].join(" · ")
+                  end
+                )
+              end
+            end
+            row.with_column(text_align: :right) do
+              component_collection do |body|
+                body.with_component(
+                  render(Primer::Beta::Label.new(scheme: date_scheme(work_package), test_selector: "upcoming-deadlines-widget-label")) do
+                    date_label(work_package)
+                  end
+                )
+                body.with_component(
+                  render(Primer::Beta::Text.new(tag: :p, color: overdue?(work_package) ? :danger : :subtle, font_size: :small)) do
+                    helpers.format_date(work_package.due_date)
+                  end
+                )
+              end
+            end
+          end
+        end
+      end
+    end
+
+    container.with_footer do
+      flex_layout(direction: :row) do |links|
+        if (upcoming = query_link(:upcoming_deadlines))
+          links.with_column(mr: 3) do
+            render(Primer::Beta::Link.new(href: upcoming)) { t("law_firm.deadlines.widget.view_upcoming") }
+          end
+        end
+        if (overdue = query_link(:overdue_deadlines))
+          links.with_column do
+            render(Primer::Beta::Link.new(href: overdue, scheme: :primary)) { t("law_firm.deadlines.widget.view_overdue") }
+          end
+        end
+      end
+    end
+  end
+%>
