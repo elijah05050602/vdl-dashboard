@@ -37,10 +37,6 @@ OpenProject::Static::Homescreen.manage :blocks do |blocks|
       if: Proc.new { Setting.welcome_on_homescreen? && Setting.welcome_text.present? }
     },
     {
-      name: "upcoming_deadlines",
-      if: Proc.new { User.current.logged? }
-    },
-    {
       name: "favorite_projects"
     },
     {
