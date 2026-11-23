@@ -1,0 +1,108 @@
+<%#-- copyright
+OpenProject is an open source project management software.
+Copyright (C) the OpenProject GmbH
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License version 3.
+
+OpenProject is a fork of ChiliProject, which is a fork of Redmine. The copyright follows:
+Copyright (C) 2006-2013 Jean-Philippe Lang
+Copyright (C) 2010-2013 the ChiliProject Team
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+See COPYRIGHT and LICENSE files for more details.
+
+++#%>
+
+<% html_title t(:label_client_registry) -%>
+
+<%=
+  render Primer::OpenProject::PageHeader.new do |header|
+    header.with_title { t(:label_client_registry) }
+    header.with_description { t("client_registry.caption") }
+    header.with_breadcrumbs([t(:label_client_registry)])
+    if User.current.allowed_globally?(:manage_client_registry)
+      header.with_action_button(
+        scheme: :primary,
+        mobile_icon: :plus,
+        mobile_label: t("client_registry.new_party"),
+        tag: :a,
+        href: new_party_path,
+        test_selector: "client-registry-new-party"
+      ) do |button|
+        button.with_leading_visual_icon(icon: :plus)
+        t("client_registry.new_party")
+      end
+    end
+  end
+%>
+
+<%= form_tag parties_path, method: :get do %>
+  <%= render Primer::Box.new(display: :flex, align_items: :flex_end, mb: 3, style: "gap: 8px; max-width: 640px;") do %>
+    <%= render Primer::Box.new(flex: 1) do %>
+      <%= render Primer::Alpha::TextField.new(
+            name: :q,
+            id: "client-registry-query",
+            label: t("client_registry.search_label"),
+            placeholder: t("client_registry.search_placeholder"),
+            value: @query,
+            full_width: true
+          ) %>
+    <% end %>
+    <%= render Primer::Beta::Button.new(type: :submit) do |button|
+          button.with_leading_visual_icon(icon: :search)
+          t("client_registry.search_submit")
+        end %>
+  <% end %>
+<% end %>
+
+<% if @parties.empty? %>
+  <%= render Primer::Beta::Blankslate.new(border: true, test_selector: "client-registry-empty") do |blankslate|
+        blankslate.with_visual_icon(icon: :people)
+        blankslate.with_heading(tag: :h3).with_content(
+          @query.present? ? t("client_registry.no_results", query: @query) : t("client_registry.no_parties")
+        )
+      end %>
+<% else %>
+  <%= render Primer::Beta::BorderBox.new(test_selector: "client-registry-parties") do |box| %>
+    <% box.with_header do %>
+      <%= render Primer::Box.new(display: :flex, font_weight: :bold) do %>
+        <%= render(Primer::Box.new(col: 5)) { t("client_registry.columns.name") } %>
+        <%= render(Primer::Box.new(col: 2)) { t("client_registry.columns.kind") } %>
+        <%= render(Primer::Box.new(col: 2)) { t("client_registry.columns.tin") } %>
+        <%= render(Primer::Box.new(col: 3)) { t("client_registry.columns.matters") } %>
+      <% end %>
+    <% end %>
+    <% @parties.each do |party| %>
+      <% box.with_row(test_selector: "client-registry-party-#{party.id}") do %>
+        <%= render Primer::Box.new(display: :flex, align_items: :center) do %>
+          <%= render Primer::Box.new(col: 5) do %>
+            <%= link_to party.name, party_path(party) %>
+            <% if party.aliases.any? %>
+              <%= render(Primer::Beta::Text.new(tag: :div, color: :muted, font_size: :small)) do %>
+                <%= t("client_registry.matter_parties.also_known_as", names: party.aliases.map(&:name).join("; ")) %>
+              <% end %>
+            <% end %>
+          <% end %>
+          <%= render(Primer::Box.new(col: 2)) { t("client_registry.kinds.#{party.kind}") } %>
+          <%= render(Primer::Box.new(col: 2)) { party.formatted_tin || "–" } %>
+          <%= render(Primer::Box.new(col: 3)) { t("client_registry.matter_count", count: @matter_counts.fetch(party.id, 0)) } %>
+        <% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+
+  <%= pagination_links_full @parties %>
+<% end %>

@@ -1,0 +1,169 @@
+<%#-- copyright
+OpenProject is an open source project management software.
+Copyright (C) the OpenProject GmbH
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License version 3.
+
+OpenProject is a fork of ChiliProject, which is a fork of Redmine. The copyright follows:
+Copyright (C) 2006-2013 Jean-Philippe Lang
+Copyright (C) 2010-2013 the ChiliProject Team
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+See COPYRIGHT and LICENSE files for more details.
+
+++#%>
+
+<%= form_with model: @party, id: "client-registry-party-form" do |f| %>
+  <% if @party.errors.any? %>
+    <%= render Primer::Alpha::Banner.new(scheme: :danger, icon: :stop, mb: 3, test_selector: "client-registry-form-errors") do %>
+      <ul>
+        <% @party.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    <% end %>
+  <% end %>
+
+  <%= render Primer::Box.new(style: "max-width: 720px;") do %>
+    <%= render Primer::Box.new(mb: 3) do %>
+      <%= render Primer::Alpha::Select.new(name: "party[kind]", id: "party_kind", label: Party.human_attribute_name(:kind)) do |select|
+            Party::KINDS.each do |kind|
+              select.option(label: t("client_registry.kinds.#{kind}"), value: kind, selected: @party.kind == kind)
+            end
+          end %>
+    <% end %>
+
+    <%= render Primer::Box.new(mb: 3) do %>
+      <%= render Primer::Alpha::TextField.new(
+            name: "party[name]",
+            id: "party_name",
+            label: Party.human_attribute_name(:name),
+            value: @party.name,
+            required: true,
+            full_width: true,
+            validation_message: party_field_error(@party, :name)
+          ) %>
+    <% end %>
+
+    <%= render Primer::Box.new(mb: 3) do %>
+      <%= render Primer::Alpha::TextField.new(
+            name: "party[tin]",
+            id: "party_tin",
+            label: Party.human_attribute_name(:tin),
+            caption: t("client_registry.party.tin_caption"),
+            value: @party.formatted_tin || @party.tin,
+            full_width: true,
+            validation_message: party_field_error(@party, :tin)
+          ) %>
+    <% end %>
+
+    <%= render Primer::Box.new(display: :flex, mb: 3, style: "gap: 16px;") do %>
+      <%= render Primer::Box.new(flex: 1) do %>
+        <%= render Primer::Alpha::TextField.new(
+              name: "party[email]",
+              id: "party_email",
+              type: :email,
+              label: Party.human_attribute_name(:email),
+              value: @party.email,
+              full_width: true,
+              validation_message: party_field_error(@party, :email)
+            ) %>
+      <% end %>
+      <%= render Primer::Box.new(flex: 1) do %>
+        <%= render Primer::Alpha::TextField.new(
+              name: "party[phone]",
+              id: "party_phone",
+              label: Party.human_attribute_name(:phone),
+              value: @party.phone,
+              full_width: true
+            ) %>
+      <% end %>
+    <% end %>
+
+    <%= render Primer::Box.new(mb: 3) do %>
+      <%= render Primer::Alpha::TextArea.new(
+            name: "party[address]",
+            id: "party_address",
+            label: Party.human_attribute_name(:address),
+            value: @party.address,
+            full_width: true,
+            rows: 2
+          ) %>
+    <% end %>
+
+    <%= render Primer::Box.new(mb: 4) do %>
+      <%= render Primer::Alpha::TextArea.new(
+            name: "party[notes]",
+            id: "party_notes",
+            label: Party.human_attribute_name(:notes),
+            value: @party.notes,
+            full_width: true,
+            rows: 3
+          ) %>
+    <% end %>
+
+    <%= render Primer::Beta::Heading.new(tag: :h3, mb: 1) do %><%= t("client_registry.party.aliases_heading") %><% end %>
+    <%= render(Primer::Beta::Text.new(tag: :p, color: :muted, font_size: :small, mb: 2)) { t("client_registry.party.aliases_caption") } %>
+
+    <%= render Primer::Box.new(mb: 4, test_selector: "client-registry-alias-rows") do %>
+      <% @party.aliases.each_with_index do |party_alias, index| %>
+        <% prefix = "party[aliases_attributes][#{index}]" %>
+        <%= render Primer::Box.new(display: :flex, align_items: :flex_end, mb: 2, style: "gap: 8px;") do %>
+          <% if party_alias.persisted? %>
+            <%= hidden_field_tag "#{prefix}[id]", party_alias.id, id: nil %>
+          <% end %>
+          <%= render Primer::Box.new(flex: 1) do %>
+            <%= render Primer::Alpha::TextField.new(
+                  name: "#{prefix}[name]",
+                  id: "party_aliases_#{index}_name",
+                  label: PartyAlias.human_attribute_name(:name),
+                  visually_hide_label: index.positive?,
+                  value: party_alias.name,
+                  full_width: true
+                ) %>
+          <% end %>
+          <%= render Primer::Alpha::Select.new(
+                name: "#{prefix}[alias_type]",
+                id: "party_aliases_#{index}_alias_type",
+                label: PartyAlias.human_attribute_name(:alias_type),
+                visually_hide_label: index.positive?
+              ) do |select|
+                PartyAlias::ALIAS_TYPES.each do |alias_type|
+                  select.option(
+                    label: t("client_registry.alias_types.#{alias_type}"),
+                    value: alias_type,
+                    selected: party_alias.alias_type == alias_type
+                  )
+                end
+              end %>
+          <% if party_alias.persisted? %>
+            <%= render Primer::Alpha::CheckBox.new(
+                  name: "#{prefix}[_destroy]",
+                  id: "party_aliases_#{index}_destroy",
+                  value: "1",
+                  label: t("client_registry.party.remove_alias")
+                ) %>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+
+    <%= render Primer::Box.new(display: :flex, style: "gap: 8px;") do %>
+      <%= render(Primer::Beta::Button.new(type: :submit, scheme: :primary)) { t(:button_save) } %>
+      <%= render(Primer::Beta::Button.new(tag: :a, href: @party.persisted? ? party_path(@party) : parties_path)) { t(:button_cancel) } %>
+    <% end %>
+  <% end %>
+<% end %>

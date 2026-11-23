@@ -1,0 +1,116 @@
+en:
+  plugin_openproject_client_registry:
+    name: "VDL client and party registry"
+    description: "Firm-wide registry of clients and parties with aliases, linked to matters by role."
+
+  label_client_registry: "Clients and parties"
+  label_matter_parties: "Parties"
+
+  permission_view_client_registry: "View the client and party registry"
+  permission_manage_client_registry: "Add and edit clients and parties in the registry"
+  permission_view_matter_parties: "View the parties of a matter"
+  permission_manage_matter_parties: "Link and unlink parties on a matter"
+
+  activerecord:
+    models:
+      party: "Party"
+      party_alias: "Alternate name"
+      matter_party: "Matter party"
+    attributes:
+      party:
+        kind: "Type"
+        name: "Name"
+        tin: "TIN"
+        email: "Email"
+        phone: "Phone"
+        address: "Address"
+        notes: "Notes"
+        aliases: "Alternate names"
+        matter_parties: "Matters"
+      party_alias:
+        name: "Alternate name"
+        alias_type: "Kind of name"
+      matter_party:
+        party: "Party"
+        party_id: "Party"
+        role: "Role on the matter"
+        notes: "Notes"
+    errors:
+      models:
+        party:
+          attributes:
+            tin:
+              invalid_tin: "must have 9 digits, followed by a 3 or 5 digit branch code if any (e.g. 123-456-789-00000)"
+        matter_party:
+          attributes:
+            party_id:
+              taken: "already has this role on the matter"
+
+  client_registry:
+    caption: >
+      Every client, adverse party, opposing counsel, witness and related party the firm deals with,
+      with their other names. The conflict check searches this registry.
+    search_label: "Search by name, alternate name, email or TIN"
+    search_placeholder: "e.g. Ma. Cristina Dela Cruz, ABC Holdings, 123-456-789"
+    search_submit: "Search"
+    new_party: "Add client or party"
+    no_parties: "No clients or parties yet."
+    no_results: "No client or party matches \"%{query}\"."
+    columns:
+      name: "Name"
+      kind: "Type"
+      tin: "TIN"
+      contact: "Contact"
+      matters: "Matters"
+    matter_count:
+      zero: "None"
+      one: "1 matter"
+      other: "%{count} matters"
+    kinds:
+      person: "Person"
+      organization: "Company or organization"
+      government: "Government agency or GOCC"
+    alias_types:
+      maiden_name: "Maiden name"
+      former_name: "Former or married name"
+      nickname: "Nickname or short form"
+      trade_name: "Trade or business name"
+      former_company_name: "Former company name"
+      abbreviation: "Abbreviation or acronym"
+      other_name: "Other name or spelling"
+    roles:
+      client: "Client"
+      adverse_party: "Adverse party"
+      opposing_counsel: "Opposing counsel"
+      witness: "Witness"
+      related_party: "Related party"
+    party:
+      details: "Details"
+      aliases_heading: "Alternate names"
+      aliases_caption: >
+        Add every other name this party is known by, so the conflict check finds it:
+        maiden or married names, "Ma." and "Sto." forms, nicknames, trade names, and former company names.
+        Leave a row empty to skip it.
+      no_aliases: "No alternate names recorded."
+      remove_alias: "Remove"
+      matters_heading: "Matters"
+      no_matters: "Not linked to any matter yet. Link it from the matter's Parties page."
+      hidden_matters:
+        one: "Also linked to 1 matter you cannot see."
+        other: "Also linked to %{count} matters you cannot see."
+      tin_caption: "BIR Taxpayer Identification Number, with branch code if any. Dashes are optional."
+      cannot_delete_linked: "This party is linked to matters. Unlink it from every matter before deleting it."
+      delete_confirm: "Delete this party from the registry?"
+      not_set: "Not set"
+    matter_parties:
+      caption: "The clients, adverse parties, counsel and witnesses on this matter, from the firm's registry."
+      none: "No parties linked to this matter yet."
+      add_heading: "Link a party"
+      add_submit: "Link party"
+      party_placeholder: "Choose from the registry"
+      not_in_registry: "Not in the registry yet?"
+      add_to_registry: "Add a new client or party"
+      unlink: "Unlink"
+      unlink_confirm: "Unlink this party from the matter? The party stays in the registry."
+      change_role: "Change role"
+      also_known_as: "Also known as %{names}"
