@@ -34,7 +34,7 @@ module LawFirm
 
     Entry = Data.define(:work_package, :date, :time, :time_position, :kind, :court, :court_id,
                         :branch, :courtroom, :judge, :appearance, :lawyer) do
-      def closed? = work_package.closed?
+      delegate :closed?, to: :work_package
     end
 
     attr_reader :user, :view, :date, :lawyer_id, :court_id
@@ -98,17 +98,7 @@ module LawFirm
     def lawyer_options
       return Principal.none unless configured?
 
-      ids = hearing_scope.where.not(assigned_to_id: nil).distinct.pluck(:assigned_to_id)
-      if (lawyer_field = fields[:lawyer])
-        ids += CustomValue
-          .where(custom_field: lawyer_field, customized_type: "WorkPackage", customized_id: hearing_scope.select(:id))
-          .where.not(value: [nil, ""])
-          .distinct
-          .pluck(:value)
-          .map(&:to_i)
-      end
-
-      Principal.visible(user).where(id: ids.uniq | [user.id]).ordered_by_name
+      Principal.visible(user).where(id: lawyer_ids_on_hearings | [user.id]).ordered_by_name
     end
 
     def court_options
@@ -125,18 +115,34 @@ module LawFirm
     def load_entries
       return [] unless configured?
 
-      work_packages = hearing_scope
-        .where("COALESCE(work_packages.due_date, work_packages.start_date) BETWEEN :from AND :to",
-               from: days.first, to: days.last)
-        .includes(:project, :status, :assigned_to, :type)
-        .to_a
+      work_packages = hearings_in_period
       values = custom_values_for(work_packages.map(&:id))
       lawyers = lawyers_in(values)
 
       work_packages
         .map { |work_package| build_entry(work_package, values.fetch(work_package.id, {}), lawyers) }
         .select { |entry| matches_filters?(entry) }
-        .sort_by { |entry| [entry.date, entry.time_position || Float::INFINITY, entry.work_package.subject.to_s] }
+        .sort_by { |entry| sort_key(entry) }
+    end
+
+    def hearings_in_period
+      hearing_scope
+        .where("COALESCE(work_packages.due_date, work_packages.start_date) BETWEEN :from AND :to",
+               from: days.first, to: days.last)
+        .includes(:project, :status, :assigned_to, :type)
+        .to_a
+    end
+
+    def sort_key(entry)
+      [entry.date, entry.time_position || Float::INFINITY, entry.work_package.subject.to_s]
+    end
+
+    def lawyer_ids_on_hearings
+      assignee_ids = hearing_scope.where.not(assigned_to_id: nil).distinct.pluck(:assigned_to_id)
+      lawyer_field = fields[:lawyer]
+      return assignee_ids unless lawyer_field
+
+      assignee_ids | values_scope(hearing_scope.select(:id), [lawyer_field.id]).distinct.pluck(:value).map(&:to_i)
     end
 
     def entries_by_day
@@ -155,34 +161,47 @@ module LawFirm
       field_ids = fields.values.compact.map(&:id)
       return {} if work_package_ids.empty? || field_ids.empty?
 
+      values_scope(work_package_ids, field_ids)
+        .pluck(:customized_id, :custom_field_id, :value)
+        .group_by(&:first)
+        .transform_values { |rows| rows.to_h { |_, field_id, value| [field_id, value] } }
+    end
+
+    def values_scope(work_package_ids, field_ids)
       CustomValue
         .where(customized_type: "WorkPackage", customized_id: work_package_ids, custom_field_id: field_ids)
         .where.not(value: [nil, ""])
-        .pluck(:customized_id, :custom_field_id, :value)
-        .each_with_object(Hash.new { |hash, key| hash[key] = {} }) do |(work_package_id, field_id, value), values|
-          values[work_package_id][field_id] = value
-        end
     end
 
     def build_entry(work_package, values, lawyers)
       time = option_for(:time, values)
       court = option_for(:court, values)
-      lawyer_value = value_for(:lawyer, values)
 
       Entry.new(
         work_package:,
         date: work_package.due_date || work_package.start_date,
         time: time&.value,
         time_position: time&.position,
-        kind: option_for(:kind, values)&.value,
         court: court&.value,
         court_id: court&.id,
+        lawyer: lawyer_for(work_package, values, lawyers),
+        **text_details(values)
+      )
+    end
+
+    def text_details(values)
+      {
+        kind: option_for(:kind, values)&.value,
+        appearance: option_for(:appearance, values)&.value,
         branch: value_for(:branch, values),
         courtroom: value_for(:courtroom, values),
-        judge: value_for(:judge, values),
-        appearance: option_for(:appearance, values)&.value,
-        lawyer: (lawyers[lawyer_value.to_i] if lawyer_value) || work_package.assigned_to
-      )
+        judge: value_for(:judge, values)
+      }
+    end
+
+    def lawyer_for(work_package, values, lawyers)
+      lawyer_value = value_for(:lawyer, values)
+      (lawyers[lawyer_value.to_i] if lawyer_value) || work_package.assigned_to
     end
 
     def matches_filters?(entry)

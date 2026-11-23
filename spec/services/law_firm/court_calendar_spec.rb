@@ -35,7 +35,9 @@ RSpec.describe LawFirm::CourtCalendar, with_settings: { start_of_week: 1, workin
   shared_let(:matter) { create(:project, name: "People v. Cruz", types: [hearing_type, deadline_type]) }
   shared_let(:other_matter) { create(:project, name: "Private matter", types: [hearing_type]) }
 
-  shared_let(:lawyer) { create(:user, firstname: "Ana", lastname: "Reyes", member_with_permissions: { matter => %i[view_work_packages] }) }
+  shared_let(:lawyer) do
+    create(:user, firstname: "Ana", lastname: "Reyes", member_with_permissions: { matter => %i[view_work_packages] })
+  end
   shared_let(:associate) do
     create(:user, firstname: "Ben", lastname: "Santos", member_with_permissions: { matter => %i[view_work_packages] })
   end
