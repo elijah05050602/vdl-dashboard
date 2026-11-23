@@ -55,9 +55,31 @@ Other running costs:
 
 ## 4. Production install
 
-*TODO (in progress):* the fork has its own code (legal seed data, PH holidays, deadline digest,
-branding), so it is installed from this repository rather than from the stock OpenProject package.
-Steps: system packages, Ruby and Node, PostgreSQL, build assets, systemd services, first admin.
+The fork has its own code (legal seed data, PH holidays, deadline digest, branding), so it is installed
+from this repository rather than from the stock OpenProject package. Log in with `ssh root@<server-ip>`.
+
+### 4.1 Base system
+
+```bash
+timedatectl set-timezone Asia/Manila
+apt update && apt -y upgrade
+apt -y install git curl build-essential libssl-dev libyaml-dev libffi-dev zlib1g-dev \
+  libpq-dev postgresql nginx certbot python3-certbot-nginx gnupg rclone ufw fail2ban unattended-upgrades
+adduser --disabled-password --gecos "" vdl
+mkdir -p /opt/vdl-dashboard /var/lib/vdl-dashboard/files
+chown vdl:vdl /opt/vdl-dashboard /var/lib/vdl-dashboard/files
+```
+
+### 4.2 Database
+
+```bash
+sudo -u postgres createuser vdl
+sudo -u postgres createdb -O vdl vdl_dashboard
+```
+
+*TODO (next):* Ruby and Node versions from `.ruby-version` and `package.json`, clone, `RAILS_ENV=production`
+asset build, `db:migrate` and `db:seed`, the `law_firm:ph_holidays` task, and systemd units for the web
+server and background jobs.
 
 ## 5. HTTPS with Let's Encrypt
 
