@@ -1,0 +1,110 @@
+<%#-- copyright
+OpenProject is an open source project management software.
+Copyright (C) the OpenProject GmbH
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License version 3.
+
+OpenProject is a fork of ChiliProject, which is a fork of Redmine. The copyright follows:
+Copyright (C) 2006-2013 Jean-Philippe Lang
+Copyright (C) 2010-2013 the ChiliProject Team
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+See COPYRIGHT and LICENSE files for more details.
+
+++#%>
+<% html_title(t("law_firm_billing.tabs.terms")) %>
+
+<%=
+  render(Primer::OpenProject::PageHeader.new) do |header|
+    header.with_title { t("law_firm_billing.title") }
+    header.with_breadcrumbs([{ href: project_overview_path(@project.id), text: @project.name }, t("law_firm_billing.title")])
+  end
+%>
+
+<%= law_firm_billing_tabs(@project, :terms) %>
+
+<% if @terms.errors.any? %>
+  <%= render(Primer::Alpha::Banner.new(scheme: :danger, icon: :stop, mb: 3)) { safe_join(@terms.errors.full_messages, tag.br) } %>
+<% end %>
+
+<p class="color-fg-muted"><%= t("law_firm_billing.terms.explanation") %></p>
+
+<%= form_with model: @terms, scope: :engagement_terms, url: terms_project_billing_path(@project), method: :patch,
+              data: { turbo: false, test_selector: "terms-form" }, class: "form" do |f| %>
+  <%= tag.fieldset disabled: !@can_manage do %>
+    <section class="form--section">
+      <h3 class="form--section-title"><%= t("law_firm_billing.terms.rates_heading") %></h3>
+      <% config = LawFirm::BillingConfig.current %>
+      <% @roles.each do |role| %>
+        <div class="form--field">
+          <%= label_tag "engagement_terms_role_rates_#{role.parameterize}", role, class: "form--label" %>
+          <div class="form--field-container">
+            <div class="form--text-field-container">
+              <%= number_field_tag "engagement_terms[role_rates][#{role}]", @terms.role_rate(role)&.to_s("F"),
+                                   id: "engagement_terms_role_rates_#{role.parameterize}", step: "0.01", min: "0",
+                                   placeholder: config.hourly_rate_for([role])&.to_s("F"), autocomplete: "off",
+                                   class: "form--text-field" %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+      <p class="color-fg-muted f6"><%= t("law_firm_billing.terms.rates_hint") %></p>
+    </section>
+
+    <section class="form--section">
+      <h3 class="form--section-title"><%= t("law_firm_billing.terms.tax_heading") %></h3>
+      <div class="form--field">
+        <%= f.label :withholds_ewt, t("law_firm_billing.terms.withholds_ewt"), class: "form--label" %>
+        <div class="form--field-container"><%= f.check_box :withholds_ewt, class: "form--check-box" %></div>
+      </div>
+      <div class="form--field">
+        <%= f.label :ewt_rate, t("law_firm_billing.terms.ewt_rate"), class: "form--label" %>
+        <div class="form--field-container">
+          <div class="form--select-container">
+            <%= f.select :ewt_rate,
+                         config.invoice.ewt_rates.map { ["#{(it * 100).to_i}%", it.to_d.to_s("F")] },
+                         { selected: (@terms.ewt_rate || config.ewt_rate)&.to_d&.to_s("F") },
+                         class: "form--select" %>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="form--section">
+      <h3 class="form--section-title"><%= t("law_firm_billing.terms.collection_heading") %></h3>
+      <div class="form--field">
+        <%= f.label :payment_terms_days, t("law_firm_billing.terms.payment_terms_days"), class: "form--label" %>
+        <div class="form--field-container">
+          <div class="form--text-field-container">
+            <%= f.number_field :payment_terms_days, min: 0, placeholder: config.payment_terms_days.to_s, class: "form--text-field" %>
+          </div>
+        </div>
+      </div>
+      <div class="form--field">
+        <%= f.label :retainer_minimum, t("law_firm_billing.terms.retainer_minimum"), class: "form--label" %>
+        <div class="form--field-container">
+          <div class="form--text-field-container">
+            <%= f.number_field :retainer_minimum, step: "0.01", min: 0, class: "form--text-field" %>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <% if @can_manage %>
+      <%= f.submit t("law_firm_billing.terms.save"), class: "button -primary" %>
+    <% end %>
+  <% end %>
+<% end %>

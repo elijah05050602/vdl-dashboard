@@ -53,6 +53,25 @@ en:
         rates: "Rates"
         unit: "Unit name"
         unit_plural: "Pluralized unit name"
+      law_firm/engagement_terms:
+        ewt_rate: "EWT rate"
+        payment_terms_days: "Days to pay"
+        retainer_minimum: "Minimum retainer balance"
+        role_rates: "Hourly rates"
+      law_firm/payment:
+        amount: "Amount"
+        payment_method: "Paid by"
+        received_on: "Received on"
+      law_firm/retainer_entry:
+        amount: "Amount"
+        entry_on: "Date"
+        kind: "Type"
+      law_firm/withholding_certificate:
+        amount: "Tax withheld"
+        received_on: "Received on"
+      law_firm/write_down:
+        new_amount: "New amount"
+        reason: "Reason"
       rate:
         rate: "Rate"
       time_entry:
@@ -82,6 +101,9 @@ en:
     errors:
       messages:
         cost_type_in_use_cannot_disable: "cannot be disabled because costs have already been logged for it in this project."
+        exceeds_retainer: "is more than the retainer balance."
+        not_lower: "must be lower than the current amount."
+        not_unbilled: "can only be changed on time and costs that are not on an issued invoice."
       models:
         cost_types_project:
           attributes:
@@ -289,6 +311,119 @@ en:
   label_valid_from: "Valid from"
   label_work_package_filter_add: "Add work package filter"
   label_yes: "Yes"
+  law_firm_billing:
+    aging:
+      buckets:
+        current: "Not yet due"
+        days_1_30: "1–30 days overdue"
+        days_31_60: "31–60 days overdue"
+        days_61_90: "61–90 days overdue"
+        over_90: "Over 90 days overdue"
+      certificates_explanation: "Invoices where the client withheld tax but the firm has not recorded the BIR Form 2307 for all of it. The firm needs these to claim the tax credit."
+      certificates_heading: "BIR 2307s to collect"
+      description: "Unpaid invoices across your matters, by how long they are overdue, and BIR 2307s still to collect."
+      invoice_count:
+        one: "1 invoice"
+        other: "%{count} invoices"
+      no_missing_certificates: "All 2307s are in."
+      nothing_open: "All issued invoices are paid."
+      open_heading: "Unpaid invoices"
+      title: "Receivables aging"
+    certificate_missing: "%{amount} to collect"
+    certificate_received: "Received"
+    certificate_recorded: "BIR 2307 for invoice %{number} recorded."
+    columns:
+      age: "Age"
+      amount: "Amount"
+      amount_due: "Amount due"
+      balance: "Balance"
+      certificate: "BIR 2307"
+      certified: "Covered by 2307s"
+      client: "Client"
+      description: "Work"
+      due_on: "Due"
+      issued_on: "Issued"
+      matter: "Matter"
+      number: "Invoice"
+      paid: "Paid"
+      quantity: "Quantity"
+      spent_on: "Date"
+      tax_withheld: "Tax withheld"
+      user: "By"
+    days_overdue:
+      one: "1 day overdue"
+      other: "%{count} days overdue"
+    fields:
+      amount: "Amount (₱)"
+      entry_on: "Date"
+      kind: "Type"
+      method: "Paid by"
+      new_amount: "New amount (₱)"
+      note: "Note"
+      period: "Quarter covered"
+      reason: "Reason"
+      received_on: "Received on"
+      reference: "Reference"
+      tax_withheld: "Tax withheld (₱)"
+    hours:
+      one: "1 hour"
+      other: "%{count} hours"
+    invoices_heading: "Invoices"
+    kinds:
+      deposit: "Deposit"
+      drawdown: "Applied to invoice"
+      refund: "Refund to client"
+    low_retainer: "The retainer balance of %{balance} is below the agreed minimum of %{minimum}. Ask the client to replenish it."
+    menu: "Receivables"
+    methods:
+      bank_transfer: "Bank transfer"
+      cash: "Cash"
+      check: "Check"
+      online: "Online payment"
+      retainer: "Retainer"
+    no_ewt: "No withholding"
+    no_invoices: "No invoices have been issued on this matter yet."
+    nothing_unbilled: "Everything logged on this matter has been invoiced."
+    paid: "Paid"
+    payment_line: "%{date}: %{amount} by %{method} (%{reference})"
+    payment_recorded: "Payment on invoice %{number} recorded."
+    record_certificate: "Record BIR 2307"
+    record_payment: "Record payment"
+    record_retainer: "Record deposit or refund"
+    retainer_explanation: "Deposits the client made in advance. Paying an invoice by retainer draws the amount from this balance."
+    retainer_heading: "Retainer and advances"
+    retainer_recorded: "Retainer entry recorded."
+    summary:
+      missing_certificates: "BIR 2307s to collect"
+      outstanding: "Outstanding"
+      overdue: "Overdue"
+      retainer_balance: "Retainer balance"
+      unbilled: "Unbilled work"
+    tabs:
+      show: "Invoices and retainer"
+      terms: "Billing terms"
+      unbilled: "Unbilled work"
+    terms:
+      collection_heading: "Collection"
+      ewt_rate: "EWT rate"
+      explanation: "The terms agreed with the client for this matter. Rates left blank use the firm's standard rate shown in grey."
+      payment_terms_days: "Days to pay an invoice"
+      rates_heading: "Hourly rates"
+      rates_hint: "Saving updates the hourly rate of everyone on the matter whose role has a rate here. A changed rate applies from today; time already logged keeps its price."
+      retainer_minimum: "Minimum retainer balance (₱)"
+      save: "Save terms"
+      saved:
+        one: "Billing terms saved. 1 hourly rate updated."
+        other: "Billing terms saved. %{count} hourly rates updated."
+        zero: "Billing terms saved."
+      tax_heading: "Withholding tax"
+      withholds_ewt: "Client withholds EWT"
+    title: "Receivables"
+    unbilled_explanation: "Time and costs not yet on an issued invoice: %{hours} hours, %{amount} in total. Write an amount down here before issuing the invoice; issued invoices cannot change."
+    write_down: "Write down"
+    write_down_line: "%{date}, %{user}: %{from} to %{to}. %{reason}"
+    write_downs_heading: "Write-downs"
+    written_down: "Amount written down."
   law_firm_invoices:
     already_billed_hint: "Time and costs already on an active invoice are left out."
     attributes:
@@ -396,14 +531,17 @@ en:
   permission_manage_default_hourly_rates: "Manage default hourly rates"
   permission_manage_default_hourly_rates_explanation: >
     Allows adding, changing and deleting the default hourly rates of users and placeholder users.
+  permission_manage_law_firm_receivables: "Record payments, BIR 2307s, retainers and billing terms"
   permission_view_cost_entries: "View booked costs"
   permission_view_cost_rates: "View cost rates"
   permission_view_hourly_rates: "View all hourly rates"
   permission_view_law_firm_invoices: "View invoices"
+  permission_view_law_firm_receivables: "View receivables and unbilled work"
   permission_view_own_cost_entries: "View own booked costs"
   permission_view_own_hourly_rate: "View own hourly rate"
   permission_view_own_time_entries: "View own spent time"
 
+  permission_write_down_law_firm_entries: "Write down unbilled time and costs"
   placeholder_activity_select_work_package_first: Work package selection is required first
   plugin_costs:
     description: "This module adds features for planning and tracking costs of projects."

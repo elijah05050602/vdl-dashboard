@@ -55,7 +55,19 @@ Rails.application.routes.draw do
       post :draft, on: :collection
       post :cancel, on: :member
     end
+
+    resource :billing, controller: "law_firm/billing", only: :show do
+      get :unbilled
+      get :terms
+      patch :terms, action: :update_terms
+      post :payments, action: :create_payment
+      post :certificates, action: :create_certificate
+      post :retainer_entries, action: :create_retainer_entry
+      post :write_downs, action: :create_write_down
+    end
   end
+
+  get "/receivables" => "law_firm/receivables#index", as: "law_firm_receivables"
 
   namespace "my" do
     get "/hourly_rates" => "hourly_rates#show", as: "hourly_rates"

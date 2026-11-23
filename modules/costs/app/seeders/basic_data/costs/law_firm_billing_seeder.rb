@@ -77,10 +77,11 @@ module BasicData
         end
       end
 
-      # Invoices came after the billing roles, so partners on an existing
-      # installation are given the invoice permissions their preset includes.
+      # Invoices and receivables came after the billing roles, so partners on an
+      # existing installation are given the permissions their preset includes.
       def grant_invoice_permissions(existing, role)
-        missing = known_permissions(role[:permissions] & ::LawFirm::BillingConfig::INVOICE_PERMISSIONS) - existing.permissions
+        missing = known_permissions(role[:permissions] & (::LawFirm::BillingConfig::INVOICE_PERMISSIONS +
+                                                   ::LawFirm::BillingConfig::RECEIVABLE_PERMISSIONS)) - existing.permissions
         return if missing.empty?
 
         existing.add_permission!(*missing)

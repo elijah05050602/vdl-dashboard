@@ -141,6 +141,19 @@ module Costs
                    permissible_on: :project,
                    require: :member,
                    dependencies: :view_law_firm_invoices
+        permission :view_law_firm_receivables,
+                   { "law_firm/billing": %i[show unbilled terms] },
+                   permissible_on: :project
+        permission :manage_law_firm_receivables,
+                   { "law_firm/billing": %i[create_payment create_certificate create_retainer_entry update_terms] },
+                   permissible_on: :project,
+                   require: :member,
+                   dependencies: :view_law_firm_receivables
+        permission :write_down_law_firm_entries,
+                   { "law_firm/billing": %i[create_write_down] },
+                   permissible_on: :project,
+                   require: :member,
+                   dependencies: :view_law_firm_receivables
       end
 
       menu :project_menu,
@@ -150,6 +163,28 @@ module Costs
            caption: ->(*) { I18n.t("law_firm_invoices.menu") },
            if: ->(project) { project.module_enabled?(:costs) },
            icon: "file"
+
+      menu :project_menu,
+           :law_firm_billing,
+           { controller: "/law_firm/billing", action: "show" },
+           after: :law_firm_invoices,
+           caption: ->(*) { I18n.t("law_firm_billing.menu") },
+           if: ->(project) { project.module_enabled?(:costs) },
+           icon: "credit-card"
+
+      menu :top_menu,
+           :law_firm_receivables,
+           { controller: "/law_firm/receivables", action: "index" },
+           caption: ->(*) { I18n.t("law_firm_billing.aging.title") },
+           if: ->(*) { User.current.allowed_in_any_project?(:view_law_firm_receivables) },
+           icon: "credit-card"
+
+      menu :global_menu,
+           :law_firm_receivables,
+           { controller: "/law_firm/receivables", action: "index" },
+           caption: ->(*) { I18n.t("law_firm_billing.aging.title") },
+           if: ->(*) { User.current.allowed_in_any_project?(:view_law_firm_receivables) },
+           icon: "credit-card"
 
       # Menu extensions
       menu :admin_menu,

@@ -74,9 +74,14 @@ module LawFirm
       save_cost_reports
       view_law_firm_invoices
       issue_law_firm_invoices
+      view_law_firm_receivables
+      manage_law_firm_receivables
+      write_down_law_firm_entries
     ]).freeze
 
     INVOICE_PERMISSIONS = %i[view_law_firm_invoices issue_law_firm_invoices].freeze
+    RECEIVABLE_PERMISSIONS = %i[view_law_firm_receivables manage_law_firm_receivables write_down_law_firm_entries].freeze
+    DEFAULT_PAYMENT_TERMS_DAYS = 15
 
     PERMISSION_PRESETS = {
       "timekeeper" => TIMEKEEPER_PERMISSIONS,
@@ -138,6 +143,10 @@ module LawFirm
 
     def vat_registered?
       vat_rate.present? && vat_rate.positive?
+    end
+
+    def payment_terms_days
+      Integer(@data.dig("receivables", "payment_terms_days") || DEFAULT_PAYMENT_TERMS_DAYS)
     end
 
     def invoice
