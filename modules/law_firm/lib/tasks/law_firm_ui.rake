@@ -30,14 +30,14 @@
 namespace :law_firm do
   desc "Create the VDL Firm matter, its firm board and the firm welcome text"
   task setup_firm: :environment do
-    admin = User.admin.active.first || raise("No active administrator found")
+    admin = User.admin.active.order(:id).first || raise("No active administrator found")
     result = LawFirm::FirmSetup.new(user: admin).call
     puts "Firm board ready: #{result.result.name} in #{result.result.project.name}"
   end
 
   desc "Remove the OpenProject demo and developer sample projects and lock their sample users"
   task remove_sample_data: :environment do
-    admin = User.admin.active.first || raise("No active administrator found")
+    admin = User.admin.active.order(:id).first || raise("No active administrator found")
     result = LawFirm::SampleDataCleanup.new(user: admin).call.result
 
     puts "Removed projects: #{result[:removed_projects].presence&.join(', ') || 'none'}"

@@ -30,6 +30,7 @@
 module LawFirm
   # Removes OpenProject's demo and developer sample projects, and locks the
   # sample users they come with (their passwords equal their logins).
+  # Administrators are never locked, so nobody is shut out of the firm.
   # Firm data is never touched: only the stock seed identifiers are matched.
   class SampleDataCleanup
     PROJECT_IDENTIFIERS = %w[
@@ -76,7 +77,7 @@ module LawFirm
       ::User
         .not_locked
         .where("LOWER(mail) LIKE ?", "%#{SAMPLE_USER_MAIL_DOMAIN}")
-        .where.not(id: user.id)
+        .where(admin: false)
         .find_each
         .map do |sample_user|
           sample_user.update_column(:status, ::User.statuses[:locked])

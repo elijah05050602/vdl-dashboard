@@ -28,6 +28,6 @@
 #++
 
 unless Rails.env.test?
-  admin = User.admin.active.first
+  admin = User.admin.active.order(:id).first
   LawFirm::FirmSetup.new(user: admin).call if admin
 end

@@ -46,13 +46,13 @@ RSpec.describe LawFirm::SampleDataCleanup do
     expect(Project.pluck(:identifier)).to eq [matter.identifier]
   end
 
-  it "locks the sample users but keeps real users and the acting admin" do
+  it "locks the sample users but keeps real users and every administrator" do
     sample = create(:user, login: "reader", mail: "reader@example.net")
+    sample_admin = create(:admin, login: "admin_de", mail: "admin_de@example.net")
     lawyer = create(:user, mail: "lawyer@vdl.ph")
 
     expect(cleanup.call.result[:locked_users]).to eq ["reader"]
     expect(sample.reload).to be_locked
-    expect(lawyer.reload).to be_active
-    expect(admin.reload).to be_active
+    expect([sample_admin, lawyer, admin].map { it.reload.active? }).to all(be true)
   end
 end

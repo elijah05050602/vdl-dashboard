@@ -60,4 +60,5 @@ matters should be opened under VDL Firm; the **New matter** shortcut does that.
 
 `bin/rails law_firm:remove_sample_data` deletes OpenProject's demo and
 developer projects (matched by their stock identifiers only) and locks the
-sample `@example.net` users, whose passwords equal their logins.
+sample `@example.net` users, whose passwords equal their logins. Administrators
+are never locked.
