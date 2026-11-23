@@ -27,6 +27,21 @@ To open a new matter from one, click **New matter**, pick the template from the 
 
 Seeding only adds templates that are missing, so it is safe to run on a database that already has matters. To change a template, edit it in the app, or edit the YAML file, delete the template matter and seed again.
 
+## Hearings and the court calendar
+
+The **Hearing** type has a "Hearing details" group with these work package custom fields, seeded by `BasicData::HearingDetailsSeeder` from `hearing_details` in `app/seeders/standard.yml`:
+
+- **Hearing time:** half-hour slots from 7:00 AM to 6:00 PM. The hearing date is the work package's date.
+- **Hearing kind:** arraignment, pre-trial, court-annexed mediation (CAM), JDR, trial, motion hearing, preliminary and mandatory conference, clarificatory hearing, oral arguments, promulgation.
+- **Court:** the Philippine courts and the agencies the firm appears before (NLRC, NCMB, prosecutor, Ombudsman, SEC, DARAB).
+- **Branch and station**, **Courtroom or sala**, **Presiding judge:** free text, for example "Branch 143, Makati City".
+- **Appearance:** in person or videoconference.
+- **Appearing lawyer:** a user.
+
+Seeding runs on existing databases too: `bin/rails db:seed` adds the fields if none of them exist yet and a type named "Hearing" does. Admins can add or rename choices under Administration > Custom fields. The court calendar finds the fields and the type by name, so keep the names.
+
+**Court calendar** (`/court_calendar`, in the main menu) shows every hearing the user can see across all matters, by month, week or day. Filter by lawyer (matches the appearing lawyer or, if none, the assignee) and by court. "My hearings" filters to the signed-in user. Weekends and the non-working days set under Administration > Calendars and dates are shaded, with the holiday name. Closed hearings stay on the calendar, faded.
+
 ## Branding
 
 - **Name:** the app title defaults to "VDL Dashboard" and the organization name to "Law Offices of Villanueva, Dorin & Lozano" in development and production (`config/constants/settings/definition.rb`). The test environment keeps the upstream defaults so upstream specs pass. Override with the variables in `lawfirm.env.example`, or under Administration. A value saved in Administration wins over the default.

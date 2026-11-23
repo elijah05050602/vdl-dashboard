@@ -1,0 +1,71 @@
+<%#-- copyright
+OpenProject is an open source project management software.
+Copyright (C) the OpenProject GmbH
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License version 3.
+
+OpenProject is a fork of ChiliProject, which is a fork of Redmine. The copyright follows:
+Copyright (C) 2006-2013 Jean-Philippe Lang
+Copyright (C) 2010-2013 the ChiliProject Team
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+See COPYRIGHT and LICENSE files for more details.
+
+++#%>
+
+<div class="court-calendar--scroll">
+  <table class="court-calendar--grid" data-test-selector="court-calendar-month">
+    <thead>
+      <tr>
+        <% calendar.weeks.first.each do |day| %>
+          <th scope="col"><%= I18n.t("date.abbr_day_names")[day.wday] %></th>
+        <% end %>
+      </tr>
+    </thead>
+    <tbody>
+      <% calendar.weeks.each do |week| %>
+        <tr>
+          <% week.each do |day| %>
+            <%
+              classes = []
+              classes << "-outside" unless calendar.in_period?(day)
+              classes << "-non-working" unless calendar.working_day?(day)
+            %>
+            <td class="<%= classes.join(" ") %>" data-date="<%= day.iso8601 %>">
+              <%= link_to day.day,
+                          court_calendar_link(view: "day", date: day.iso8601),
+                          class: ["court-calendar--day-number", ("-today" if day == current_user.today)].compact.join(" ") %>
+              <% if (holiday = calendar.holiday_name(day)) %>
+                <span class="court-calendar--holiday" title="<%= holiday %>"><%= holiday %></span>
+              <% end %>
+              <% calendar.entries_on(day).each do |entry| %>
+                <%
+                  label = [entry.time, entry.work_package.project.name, entry.kind].compact.join(" · ")
+                  details = [entry.work_package.subject, entry.court, entry.branch, entry.lawyer&.name].compact_blank.join(" · ")
+                %>
+                <%= link_to label.presence || entry.work_package.subject,
+                            work_package_path(entry.work_package),
+                            class: ["court-calendar--chip", ("-closed" if entry.closed?)].compact.join(" "),
+                            title: details,
+                            data: { test_selector: "court-calendar-entry" } %>
+              <% end %>
+            </td>
+          <% end %>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
