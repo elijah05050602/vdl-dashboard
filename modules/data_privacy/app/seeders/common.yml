@@ -1,0 +1,6 @@
+modules_permissions:
+  data_privacy:
+  - role: :default_role_member
+    add:
+    - :view_data_privacy_consents
+    - :manage_data_privacy_consents

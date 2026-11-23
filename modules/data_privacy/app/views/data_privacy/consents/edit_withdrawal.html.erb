@@ -1,0 +1,67 @@
+<%#-- copyright
+OpenProject is an open source project management software.
+Copyright (C) the OpenProject GmbH
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License version 3.
+
+OpenProject is a fork of ChiliProject, which is a fork of Redmine. The copyright follows:
+Copyright (C) 2006-2013 Jean-Philippe Lang
+Copyright (C) 2010-2013 the ChiliProject Team
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+See COPYRIGHT and LICENSE files for more details.
+
+++#%>
+
+<% html_title t("data_privacy.consents.withdraw"), @project.name -%>
+
+<%=
+  render Primer::OpenProject::PageHeader.new do |header|
+    header.with_title { t("data_privacy.consents.withdraw_title", name: @consent.data_subject) }
+    header.with_description { t("data_privacy.consents.withdraw_caption") }
+    header.with_breadcrumbs([{ href: project_overview_path(@project.id), text: @project.name },
+                             { href: project_data_privacy_consents_path(@project), text: t("data_privacy.menu") },
+                             t("data_privacy.consents.withdraw")])
+  end
+%>
+
+<%= render "errors", consent: @consent %>
+
+<%= form_with model: @consent, scope: :consent, url: withdraw_project_data_privacy_consent_path(@project, @consent),
+              method: :patch, local: true do %>
+  <%= render Primer::Box.new(display: :flex, direction: :column, style: "gap: 16px; max-width: 640px;") do %>
+    <%= render Primer::Alpha::TextField.new(
+          name: "consent[withdrawn_on]",
+          id: "consent_withdrawn_on",
+          type: :date,
+          label: DataPrivacy::Consent.human_attribute_name(:withdrawn_on),
+          value: @consent.withdrawn_on&.iso8601,
+          required: true
+        ) %>
+    <%= render Primer::Alpha::TextArea.new(
+          name: "consent[withdrawal_notes]",
+          id: "consent_withdrawal_notes",
+          label: DataPrivacy::Consent.human_attribute_name(:withdrawal_notes),
+          caption: t("data_privacy.consents.withdrawal_notes_caption"),
+          value: @consent.withdrawal_notes,
+          full_width: true
+        ) %>
+    <%= render Primer::Box.new(display: :flex, style: "gap: 8px;") do %>
+      <%= render Primer::Beta::Button.new(type: :submit, scheme: :danger) { t("data_privacy.consents.withdraw") } %>
+      <%= render Primer::Beta::Button.new(tag: :a, href: project_data_privacy_consents_path(@project)) { t(:button_cancel) } %>
+    <% end %>
+  <% end %>
+<% end %>

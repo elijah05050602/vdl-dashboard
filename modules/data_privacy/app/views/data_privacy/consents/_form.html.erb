@@ -1,0 +1,100 @@
+<%#-- copyright
+OpenProject is an open source project management software.
+Copyright (C) the OpenProject GmbH
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License version 3.
+
+OpenProject is a fork of ChiliProject, which is a fork of Redmine. The copyright follows:
+Copyright (C) 2006-2013 Jean-Philippe Lang
+Copyright (C) 2010-2013 the ChiliProject Team
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+See COPYRIGHT and LICENSE files for more details.
+
+++#%>
+
+<%= render "errors", consent: %>
+
+<%= form_with model: consent, scope: :consent, url:, method: form_method, multipart: true, local: true do %>
+  <%= render Primer::Box.new(display: :flex, direction: :column, style: "gap: 16px; max-width: 640px;") do %>
+    <%= render Primer::Alpha::TextField.new(
+          name: "consent[data_subject]",
+          id: "consent_data_subject",
+          label: DataPrivacy::Consent.human_attribute_name(:data_subject),
+          caption: t("data_privacy.consents.data_subject_caption"),
+          value: consent.data_subject,
+          required: true,
+          full_width: true
+        ) %>
+    <%= render Primer::Alpha::Select.new(
+          name: "consent[subject_role]",
+          id: "consent_subject_role",
+          label: DataPrivacy::Consent.human_attribute_name(:subject_role)
+        ) do |select| %>
+      <% DataPrivacy::Consent::SUBJECT_ROLES.each do |role| %>
+        <% select.option(label: t("data_privacy.consents.subject_roles.#{role}"), value: role,
+                         selected: consent.subject_role == role) %>
+      <% end %>
+    <% end %>
+    <%= render Primer::Alpha::TextField.new(
+          name: "consent[consent_given_on]",
+          id: "consent_consent_given_on",
+          type: :date,
+          label: DataPrivacy::Consent.human_attribute_name(:consent_given_on),
+          value: consent.consent_given_on&.iso8601,
+          required: true
+        ) %>
+    <%= render Primer::Alpha::TextArea.new(
+          name: "consent[scope]",
+          id: "consent_scope",
+          label: DataPrivacy::Consent.human_attribute_name(:scope),
+          caption: t("data_privacy.consents.scope_caption"),
+          value: consent.scope,
+          required: true,
+          full_width: true
+        ) %>
+    <%= hidden_field_tag "consent[sensitive_personal_information]", "0", id: nil %>
+    <%= render Primer::Alpha::CheckBox.new(
+          name: "consent[sensitive_personal_information]",
+          id: "consent_sensitive_personal_information",
+          value: "1",
+          checked: consent.sensitive_personal_information?,
+          label: DataPrivacy::Consent.human_attribute_name(:sensitive_personal_information),
+          caption: t("data_privacy.consents.sensitive_caption")
+        ) %>
+    <%= render Primer::Alpha::TextArea.new(
+          name: "consent[notes]",
+          id: "consent_notes",
+          label: DataPrivacy::Consent.human_attribute_name(:notes),
+          value: consent.notes,
+          full_width: true
+        ) %>
+    <div class="FormControl">
+      <%= label_tag "consent_document", t("data_privacy.consents.document_upload"), class: "FormControl-label" %>
+      <%= file_field_tag "consent[document]", id: "consent_document" %>
+      <span class="FormControl-caption"><%= t("data_privacy.consents.document_caption") %></span>
+      <% if consent.persisted? && consent.attachments.any? %>
+        <span class="FormControl-caption">
+          <%= t("data_privacy.consents.document_existing", files: consent.attachments.map(&:filename).to_sentence) %>
+        </span>
+      <% end %>
+    </div>
+    <%= render Primer::Box.new(display: :flex, style: "gap: 8px;") do %>
+      <%= render Primer::Beta::Button.new(type: :submit, scheme: :primary) { t(:button_save) } %>
+      <%= render Primer::Beta::Button.new(tag: :a, href: project_data_privacy_consents_path(consent.project)) { t(:button_cancel) } %>
+    <% end %>
+  <% end %>
+<% end %>

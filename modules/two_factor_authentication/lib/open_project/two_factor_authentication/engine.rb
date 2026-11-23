@@ -43,8 +43,9 @@ module OpenProject::TwoFactorAuthentication
                  # Only app-based 2FA allowed per default
                  # (will be added in token strategy manager)
                  active_strategies: [],
-                 # Don't force users to register device
-                 enforced: false,
+                 # VDL Dashboard: every production user must register a device (Data Privacy Act).
+                 # Turn off with OPENPROJECT_2FA_ENFORCED=false.
+                 enforced: Rails.env.production?,
                  # Don't allow remember cookie
                  allow_remember_for_days: 0
                },

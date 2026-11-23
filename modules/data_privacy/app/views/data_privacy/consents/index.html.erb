@@ -1,0 +1,154 @@
+<%#-- copyright
+OpenProject is an open source project management software.
+Copyright (C) the OpenProject GmbH
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License version 3.
+
+OpenProject is a fork of ChiliProject, which is a fork of Redmine. The copyright follows:
+Copyright (C) 2006-2013 Jean-Philippe Lang
+Copyright (C) 2010-2013 the ChiliProject Team
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+See COPYRIGHT and LICENSE files for more details.
+
+++#%>
+
+<% html_title t("data_privacy.menu"), @project.name -%>
+
+<%=
+  render Primer::OpenProject::PageHeader.new do |header|
+    header.with_title { t("data_privacy.title") }
+    header.with_description { t("data_privacy.consents.caption") }
+    header.with_breadcrumbs([{ href: project_overview_path(@project.id), text: @project.name }, t("data_privacy.menu")])
+    if User.current.allowed_in_project?(:manage_data_privacy_consents, @project)
+      header.with_action_button(
+        tag: :a,
+        href: new_project_data_privacy_consent_path(@project),
+        scheme: :primary,
+        mobile_icon: :plus,
+        mobile_label: t("data_privacy.consents.add")
+      ) do |button|
+        button.with_leading_visual_icon(icon: :plus)
+        t("data_privacy.consents.add")
+      end
+    end
+  end
+%>
+
+<%= render Primer::Alpha::Banner.new(scheme: @project.confidential? ? :warning : :default,
+                                     icon: @project.confidential? ? :lock : :info,
+                                     mb: 3,
+                                     test_selector: "data-privacy-confidentiality") do |banner| %>
+  <%= @project.confidential? ? t("data_privacy.confidential.on") : t("data_privacy.confidential.off") %>
+  <% if User.current.admin? %>
+    <% banner.with_action_content do %>
+      <%= form_tag confidential_project_data_privacy_consents_path(@project), method: :patch do %>
+        <%= hidden_field_tag :confidential, !@project.confidential? %>
+        <%= render Primer::Beta::Button.new(type: :submit, size: :small) do %>
+          <%= @project.confidential? ? t("data_privacy.confidential.lift") : t("data_privacy.confidential.mark") %>
+        <% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+<% end %>
+
+<% if @consents.empty? %>
+  <%= render Primer::Beta::Blankslate.new(border: true, test_selector: "data-privacy-consents-empty") do |slate| %>
+    <% slate.with_visual_icon(icon: "shield-lock") %>
+    <% slate.with_heading(tag: :h2).with_content(t("data_privacy.consents.empty_heading")) %>
+    <% slate.with_description { t("data_privacy.consents.empty_description") } %>
+  <% end %>
+<% else %>
+  <%= render Primer::Beta::BorderBox.new(test_selector: "data-privacy-consents") do |box| %>
+    <% box.with_header do %>
+      <%= render Primer::Box.new(display: :flex, font_weight: :bold) do %>
+        <%= render Primer::Box.new(col: 3) do %><%= DataPrivacy::Consent.human_attribute_name(:data_subject) %><% end %>
+        <%= render Primer::Box.new(col: 4) do %><%= DataPrivacy::Consent.human_attribute_name(:scope) %><% end %>
+        <%= render Primer::Box.new(col: 3) do %><%= t("data_privacy.consents.status") %><% end %>
+        <%= render Primer::Box.new(col: 2) do %><%= t("data_privacy.consents.document") %><% end %>
+      <% end %>
+    <% end %>
+    <% @consents.each do |consent| %>
+      <% box.with_row(test_selector: "data-privacy-consent-#{consent.id}") do %>
+        <%= render Primer::Box.new(display: :flex) do %>
+          <%= render Primer::Box.new(col: 3, pr: 2) do %>
+            <%= render Primer::Beta::Text.new(font_weight: :bold) { consent.data_subject } %>
+            <%= render Primer::Beta::Text.new(tag: :div, color: :subtle, font_size: :small) do %>
+              <%= t("data_privacy.consents.subject_roles.#{consent.subject_role}") %>
+            <% end %>
+            <% if consent.sensitive_personal_information? %>
+              <%= render Primer::Beta::Label.new(scheme: :attention, mt: 1) do %><%= t("data_privacy.consents.sensitive") %><% end %>
+            <% end %>
+          <% end %>
+          <%= render Primer::Box.new(col: 4, pr: 2) do %>
+            <%= simple_format(h(consent.scope)) %>
+            <% if consent.notes.present? %>
+              <%= render Primer::Beta::Text.new(tag: :div, color: :subtle, font_size: :small) { consent.notes } %>
+            <% end %>
+          <% end %>
+          <%= render Primer::Box.new(col: 3, pr: 2) do %>
+            <% if consent.withdrawn? %>
+              <%= render Primer::Beta::Label.new(scheme: :danger) do %>
+                <%= t("data_privacy.consents.withdrawn_on", date: format_date(consent.withdrawn_on)) %>
+              <% end %>
+              <% if consent.withdrawal_notes.present? %>
+                <%= render Primer::Beta::Text.new(tag: :div, color: :subtle, font_size: :small, mt: 1) { consent.withdrawal_notes } %>
+              <% end %>
+            <% else %>
+              <%= render Primer::Beta::Label.new(scheme: :success) do %>
+                <%= t("data_privacy.consents.given_on", date: format_date(consent.consent_given_on)) %>
+              <% end %>
+            <% end %>
+            <%= render Primer::Beta::Text.new(tag: :div, color: :subtle, font_size: :small, mt: 1) do %>
+              <%= t("data_privacy.consents.recorded_by", name: consent.author.name, date: format_date(consent.created_at)) %>
+            <% end %>
+          <% end %>
+          <%= render Primer::Box.new(col: 2) do %>
+            <% consent.attachments.each do |attachment| %>
+              <div>
+                <%= link_to attachment.filename,
+                            ::API::V3::Utilities::PathHelper::ApiV3Path.attachment_content(attachment.id),
+                            target: "_blank", rel: "noopener" %>
+              </div>
+            <% end %>
+            <% if User.current.allowed_in_project?(:manage_data_privacy_consents, @project) %>
+              <div class="mt-2">
+                <%= link_to t(:button_edit), edit_project_data_privacy_consent_path(@project, consent) %>
+                <% unless consent.withdrawn? %>
+                  · <%= link_to t("data_privacy.consents.withdraw"), edit_withdrawal_project_data_privacy_consent_path(@project, consent) %>
+                <% end %>
+              </div>
+            <% end %>
+            <% if User.current.admin? %>
+              <%= form_tag project_data_privacy_consent_path(@project, consent), method: :delete,
+                           data: { turbo_confirm: t("data_privacy.consents.delete_confirm") } do %>
+                <%= render Primer::Beta::Button.new(type: :submit, scheme: :link, color: :danger, font_size: :small) do %>
+                  <%= t(:button_delete) %>
+                <% end %>
+              <% end %>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+<% end %>
+
+<% if User.current.admin? %>
+  <%= render Primer::Beta::Text.new(tag: :p, color: :subtle, font_size: :small, mt: 3) do %>
+    <%= link_to t("data_privacy.audit.matter_link"), data_privacy_audit_events_path(project_id: @project.id) %>
+  <% end %>
+<% end %>

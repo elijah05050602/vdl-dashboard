@@ -125,6 +125,11 @@ PATH
     costs (1.0.0)
 
 PATH
+  remote: modules/data_privacy
+  specs:
+    openproject-data_privacy (1.0.0)
+
+PATH
   remote: modules/documents
   specs:
     openproject-documents (1.0.0)
@@ -1769,6 +1774,7 @@ DEPENDENCIES
   openproject-bim!
   openproject-boards!
   openproject-calendar!
+  openproject-data_privacy!
   openproject-documents!
   openproject-gantt!
   openproject-github_integration!
@@ -2168,6 +2174,7 @@ CHECKSUMS
   openproject-bim (1.0.0)
   openproject-boards (1.0.0)
   openproject-calendar (1.0.0)
+  openproject-data_privacy (1.0.0)
   openproject-documents (1.0.0)
   openproject-gantt (1.0.0)
   openproject-github_integration (1.0.0)

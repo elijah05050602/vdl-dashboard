@@ -1,0 +1,93 @@
+en:
+  activerecord:
+    attributes:
+      data_privacy/consent:
+        data_subject: "Data subject"
+        subject_role: "Relationship to the matter"
+        consent_given_on: "Consent given on"
+        scope: "Scope of consent"
+        sensitive_personal_information: "Includes sensitive personal information"
+        notes: "Notes"
+        withdrawn_on: "Withdrawn on"
+        withdrawal_notes: "Withdrawal notes"
+      project:
+        confidential: "Confidential"
+    errors:
+      messages:
+        confidential_matter: "is not allowed on a confidential matter."
+    models:
+      data_privacy/consent: "Data privacy consent"
+      data_privacy/audit_event: "Audit event"
+
+  permission_view_data_privacy_consents: "View data privacy consents"
+  permission_manage_data_privacy_consents: "Manage data privacy consents"
+  project_module_data_privacy: "Data privacy"
+
+  data_privacy:
+    menu: "Data privacy"
+    title: "Data privacy consents"
+    confidential:
+      "on": "This matter is confidential. Only its members can see it, it cannot be made public, and its work packages cannot be shared with people outside the matter."
+      "off": "This matter is visible to its members only. Mark it confidential to also block making it public and sharing its work packages outside the matter."
+      mark: "Mark confidential"
+      lift: "Remove confidential mark"
+      marked: "The matter is now confidential."
+      lifted: "The confidential mark was removed."
+    consents:
+      caption: "Consents given under the Data Privacy Act of 2012 (RA 10173) by clients and others whose personal information this matter holds."
+      add: "Record consent"
+      edit: "Edit consent"
+      status: "Status"
+      document: "Signed form"
+      document_upload: "Signed consent form"
+      document_caption: "Upload a scan or PDF of the signed form."
+      document_existing: "Already attached: %{files}. A new upload is added next to it."
+      data_subject_caption: "The person whose personal information the firm processes."
+      scope_caption: "What the person agreed to: the purposes, the kinds of personal information and who it may be shared with."
+      sensitive: "Sensitive personal info"
+      sensitive_caption: "For example health, government IDs, or records of court proceedings. The Act requires stricter handling."
+      given_on: "Given %{date}"
+      withdrawn_on: "Withdrawn %{date}"
+      recorded_by: "Recorded by %{name} on %{date}"
+      withdraw: "Withdraw"
+      withdraw_title: "Withdraw consent of %{name}"
+      withdraw_caption: "The record stays in the list as withdrawn, so the firm can show when consent ended."
+      withdrawal_notes_caption: "How the withdrawal was received and what follows, for example stopping processing or a retention basis."
+      withdrawn_notice: "The consent was marked as withdrawn."
+      delete_confirm: "Delete this consent record? Withdrawing keeps a record; deleting does not."
+      empty_heading: "No consents recorded yet"
+      empty_description: "Record the consent of the client and anyone else whose personal information this matter holds."
+      subject_roles:
+        client: "Client"
+        client_representative: "Client representative"
+        witness: "Witness"
+        opposing_party: "Opposing party"
+        employee: "Employee"
+        other: "Other"
+    audit:
+      menu: "Audit trail"
+      title: "Audit trail"
+      caption: "Who viewed, changed, exported or downloaded which matter, and when. Records cannot be edited."
+      matter_link: "Open the audit trail for this matter"
+      download: "Download CSV"
+      filter: "Filter"
+      all: "All"
+      from: "From"
+      to: "To"
+      empty: "No activity matches these filters."
+      actions:
+        view: "Viewed"
+        change: "Changed"
+        export: "Exported"
+        download: "Downloaded"
+        sign_in: "Signed in"
+      columns:
+        time: "Time"
+        user: "User"
+        event: "Event"
+        matter: "Matter"
+        record: "Record"
+        activity: "Activity"
+        method: "Method"
+        path: "Path"
+        ip: "IP address"

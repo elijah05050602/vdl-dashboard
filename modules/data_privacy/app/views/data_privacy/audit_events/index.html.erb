@@ -1,0 +1,114 @@
+<%#-- copyright
+OpenProject is an open source project management software.
+Copyright (C) the OpenProject GmbH
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License version 3.
+
+OpenProject is a fork of ChiliProject, which is a fork of Redmine. The copyright follows:
+Copyright (C) 2006-2013 Jean-Philippe Lang
+Copyright (C) 2010-2013 the ChiliProject Team
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+See COPYRIGHT and LICENSE files for more details.
+
+++#%>
+
+<% html_title t(:label_administration), t("data_privacy.audit.title") -%>
+
+<%=
+  render Primer::OpenProject::PageHeader.new do |header|
+    header.with_title { t("data_privacy.audit.title") }
+    header.with_description { t("data_privacy.audit.caption") }
+    header.with_breadcrumbs([{ href: admin_index_path, text: t(:label_administration) }, t("data_privacy.audit.title")])
+    header.with_action_button(
+      tag: :a,
+      href: data_privacy_audit_events_path(@filters.merge(format: :csv)),
+      mobile_icon: :download,
+      mobile_label: t("data_privacy.audit.download")
+    ) do |button|
+      button.with_leading_visual_icon(icon: :download)
+      t("data_privacy.audit.download")
+    end
+  end
+%>
+
+<%= form_tag data_privacy_audit_events_path, method: :get do %>
+  <%= render Primer::Box.new(display: :flex, flex_wrap: :wrap, align_items: :flex_end, mb: 3, style: "gap: 8px;") do %>
+    <%= render Primer::Alpha::Select.new(name: :user_id, id: "audit_user_id", label: t("data_privacy.audit.columns.user")) do |select| %>
+      <% select.option(label: t("data_privacy.audit.all"), value: "") %>
+      <% @users.each do |user| %>
+        <% select.option(label: user.name, value: user.id, selected: @filters[:user_id] == user.id.to_s) %>
+      <% end %>
+    <% end %>
+    <%= render Primer::Alpha::Select.new(name: :project_id, id: "audit_project_id", label: t("data_privacy.audit.columns.matter")) do |select| %>
+      <% select.option(label: t("data_privacy.audit.all"), value: "") %>
+      <% @projects.each do |project| %>
+        <% select.option(label: project.name, value: project.id, selected: @filters[:project_id] == project.id.to_s) %>
+      <% end %>
+    <% end %>
+    <%= render Primer::Alpha::Select.new(name: :event, id: "audit_event", label: t("data_privacy.audit.columns.event")) do |select| %>
+      <% select.option(label: t("data_privacy.audit.all"), value: "") %>
+      <% DataPrivacy::AuditEvent::ACTIONS.each do |action| %>
+        <% select.option(label: t("data_privacy.audit.actions.#{action}"), value: action, selected: @filters[:event] == action) %>
+      <% end %>
+    <% end %>
+    <%= render Primer::Alpha::TextField.new(name: :from, id: "audit_from", type: :date, label: t("data_privacy.audit.from"), value: @filters[:from]) %>
+    <%= render Primer::Alpha::TextField.new(name: :to, id: "audit_to", type: :date, label: t("data_privacy.audit.to"), value: @filters[:to]) %>
+    <%= render Primer::Beta::Button.new(type: :submit, scheme: :primary) { t("data_privacy.audit.filter") } %>
+  <% end %>
+<% end %>
+
+<% if @events.empty? %>
+  <%= render Primer::Beta::Blankslate.new(border: true, test_selector: "audit-events-empty") do |slate| %>
+    <% slate.with_visual_icon(icon: :history) %>
+    <% slate.with_heading(tag: :h2).with_content(t("data_privacy.audit.empty")) %>
+  <% end %>
+<% else %>
+  <%= render Primer::Beta::BorderBox.new(test_selector: "audit-events") do |box| %>
+    <% box.with_header do %>
+      <%= render Primer::Box.new(display: :flex, font_weight: :bold) do %>
+        <%= render Primer::Box.new(col: 2) do %><%= t("data_privacy.audit.columns.time") %><% end %>
+        <%= render Primer::Box.new(col: 2) do %><%= t("data_privacy.audit.columns.user") %><% end %>
+        <%= render Primer::Box.new(col: 1) do %><%= t("data_privacy.audit.columns.event") %><% end %>
+        <%= render Primer::Box.new(col: 2) do %><%= t("data_privacy.audit.columns.matter") %><% end %>
+        <%= render Primer::Box.new(col: 3) do %><%= t("data_privacy.audit.columns.record") %><% end %>
+        <%= render Primer::Box.new(col: 2) do %><%= t("data_privacy.audit.columns.ip") %><% end %>
+      <% end %>
+    <% end %>
+    <% @events.each do |event| %>
+      <% box.with_row do %>
+        <%= render Primer::Box.new(display: :flex, font_size: :small) do %>
+          <%= render Primer::Box.new(col: 2, pr: 2) do %><%= format_time(event.created_at) %><% end %>
+          <%= render Primer::Box.new(col: 2, pr: 2) do %><%= event.user_label %><% end %>
+          <%= render Primer::Box.new(col: 1, pr: 2) do %>
+            <%= render Primer::Beta::Label.new(scheme: { "view" => :secondary, "change" => :accent, "export" => :attention,
+                                                         "download" => :attention, "sign_in" => :success }[event.action]) do %>
+              <%= t("data_privacy.audit.actions.#{event.action}") %>
+            <% end %>
+          <% end %>
+          <%= render Primer::Box.new(col: 2, pr: 2) do %><%= event.project_label %><% end %>
+          <%= render Primer::Box.new(col: 3, pr: 2, style: "word-break: break-word;") do %>
+            <div><%= event.resource_label %></div>
+            <%= render Primer::Beta::Text.new(tag: :div, color: :subtle) { "#{event.http_method} #{event.path}" } %>
+          <% end %>
+          <%= render Primer::Box.new(col: 2) do %><%= event.remote_ip %><% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+
+  <%= pagination_links_full @events, params: @filters %>
+<% end %>

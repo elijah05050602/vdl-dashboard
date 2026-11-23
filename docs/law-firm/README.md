@@ -11,6 +11,8 @@ Seed data in `app/seeders/standard.yml` (used on a fresh database):
 - **Time entry activities:** Legal research, Drafting, Client communication, Court appearance, Discovery and document review, Negotiation, Travel, Administrative (non-billable).
 - **Welcome text** on the home page.
 
+Data privacy (consent records, audit trail, confidential matters and 2FA) is described in [data-privacy.md](data-privacy.md).
+
 ## Matter templates
 
 `bin/rails db:seed` creates five template matters, defined in `app/seeders/law_firm/matter_templates.yml`:
