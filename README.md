@@ -1,3 +1,5 @@
+> **VDL Dashboard.** This is the Law Offices of Villanueva, Dorin & Lozano's fork of OpenProject, adapted for managing legal matters. See [docs/law-firm](docs/law-firm/README.md) for what changed and how to run it.
+
 # OpenProject
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/opf/openproject)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/opf/openproject)
