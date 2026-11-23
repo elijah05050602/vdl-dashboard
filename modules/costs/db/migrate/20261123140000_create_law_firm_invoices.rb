@@ -28,7 +28,7 @@
 #++
 
 class CreateLawFirmInvoices < ActiveRecord::Migration[8.1]
-  def change
+  def change # rubocop:disable Metrics/AbcSize
     create_table :law_firm_invoices do |t|
       t.references :project, null: false, foreign_key: true
       t.integer :serial, null: false

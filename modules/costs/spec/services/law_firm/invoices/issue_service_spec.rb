@@ -119,8 +119,8 @@ RSpec.describe LawFirm::Invoices::IssueService, type: :model do
   it "numbers invoices one after the other and never bills an entry twice" do
     first = call.result
     second = described_class.new(user:, project:, config:)
-                            .call(LawFirm::Invoices::Request.new(**period.merge(period_to: Date.new(2026, 12, 31)),
-                                                                 client_name: "ABC", client_address: "Pasig"))
+                            .call(LawFirm::Invoices::Request.new(**period, period_to: Date.new(2026, 12, 31),
+                                                                           client_name: "ABC", client_address: "Pasig"))
 
     expect(second).to be_success
     expect(second.result.number).to eq "000102"

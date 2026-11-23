@@ -29,13 +29,14 @@
 
 module LawFirm
   module Invoices
-    class Pdf < ::Exports::PDF::Common::View # rubocop:disable Metrics/ClassLength
+    class Pdf < ::Exports::PDF::Common::View
       LOGO_PATH = Rails.root.join("app/assets/images/law_firm/vdl-mark-charcoal.png")
       CHARCOAL = "3A3A3A"
       MUTED = "6B6B6B"
       RULE = "C8C8C8"
       STAMP = "B42318"
       FOOTER_HEIGHT = 46
+      FEE_KINDS = %w[time fee].freeze
 
       attr_reader :invoice
 
@@ -166,7 +167,7 @@ module LawFirm
         move_down 2
       end
 
-      def draw_lines
+      def draw_lines # rubocop:disable Metrics/AbcSize
         rows = [[t(:description), t(:quantity), t(:unit_cost), t(:amount)]]
         grouped_lines.each do |heading, lines|
           rows << [{ content: heading, colspan: 4, font_style: :bold, text_color: MUTED, size: 8 }]
@@ -187,7 +188,7 @@ module LawFirm
       def grouped_lines
         lines = invoice.lines.map(&:stringify_keys)
         {
-          t(:section_professional_fees) => lines.select { |line| %w[time fee].include?(line["kind"]) },
+          t(:section_professional_fees) => lines.select { |line| FEE_KINDS.include?(line["kind"]) },
           t(:section_disbursements) => lines.select { |line| line["kind"] == "disbursement" }
         }.reject { |_, group| group.empty? }
       end
@@ -206,7 +207,8 @@ module LawFirm
           rows << [t(:vat_exempt_sales), money(invoice.vat_exempt_sales)]
           rows << [t(:zero_rated_sales), money(invoice.zero_rated_sales)]
           rows << [t(:vat_amount, rate: percent(invoice.vat_rate)), money(invoice.vat_amount)]
-          rows << [{ content: t(:total_vat_inclusive), font_style: :bold }, { content: money(invoice.total_amount), font_style: :bold }]
+          rows << [{ content: t(:total_vat_inclusive), font_style: :bold },
+                   { content: money(invoice.total_amount), font_style: :bold }]
         else
           rows << [{ content: t(:total_sales), font_style: :bold }, { content: money(invoice.total_amount), font_style: :bold }]
         end
@@ -239,7 +241,7 @@ module LawFirm
         notes.each { |note| text note, color: CHARCOAL }
       end
 
-      def draw_schedule
+      def draw_schedule # rubocop:disable Metrics/AbcSize
         details = invoice.details.map(&:stringify_keys)
         return if details.empty?
 
@@ -301,7 +303,7 @@ module LawFirm
         ].join("   ·   ")
       end
 
-      def draw_stamp(label)
+      def draw_stamp(label) # rubocop:disable Metrics/AbcSize
         transparent(0.12) do
           rotate(30, origin: [bounds.width / 2, bounds.height / 2]) do
             apply_font(font_style: :bold, size: 72)
@@ -319,11 +321,13 @@ module LawFirm
       def number(value, strip: false)
         decimal = BigDecimal(value.to_s.presence || "0")
         formatted = ActiveSupport::NumberHelper.number_to_rounded(decimal, precision: 2, delimiter: ",")
-        strip ? formatted.sub(/\.00\z/, "") : formatted
+        strip ? formatted.delete_suffix(".00") : formatted
       end
 
       def percent(rate)
-        ActiveSupport::NumberHelper.number_to_rounded(BigDecimal(rate.to_s) * 100, precision: 2, strip_insignificant_zeros: true) + "%"
+        value = ActiveSupport::NumberHelper.number_to_rounded(BigDecimal(rate.to_s) * 100,
+                                                              precision: 2, strip_insignificant_zeros: true)
+        "#{value}%"
       end
 
       def format_date(value)

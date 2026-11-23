@@ -61,7 +61,7 @@ module LawFirm
         @details ||= time_entries.map { |entry| time_detail(entry) } + cost_entries.map { |entry| cost_detail(entry) }
       end
 
-      def totals # rubocop:disable Metrics/AbcSize
+      def totals # rubocop:disable Metrics/AbcSize,Metrics/PerceivedComplexity
         @totals ||= begin
           vat_rate = config.vat_registered? ? config.vat_rate : nil
           subtotal = sum(lines)
@@ -80,7 +80,7 @@ module LawFirm
         end
       end
 
-      def invoice_attributes
+      def invoice_attributes # rubocop:disable Metrics/AbcSize
         totals.merge(project:, period_from:, period_to:,
                      lines: lines.map { |line| serialize(line) },
                      details: details.map { |detail| serialize(detail) },
@@ -115,7 +115,7 @@ module LawFirm
         TimeEntryActivity.where(name: config.non_billable_activities).pluck(:id)
       end
 
-      def time_lines
+      def time_lines # rubocop:disable Metrics/AbcSize
         time_entries.group_by(&:user).map do |user, entries|
           hours = entries.sum { |entry| entry.hours.to_d }
           amount = round(entries.sum { |entry| entry.real_costs.to_d })
@@ -130,17 +130,20 @@ module LawFirm
       end
 
       def cost_lines
-        cost_entries.group_by(&:cost_type).map do |cost_type, entries|
-          kind = disbursement?(cost_type) ? "disbursement" : "fee"
-          amount = round(entries.sum { |entry| entry.real_costs.to_d })
-          quantity, unit = cost_quantity(cost_type, entries)
+        lines = cost_entries.group_by(&:cost_type).map { |cost_type, entries| cost_line(cost_type, entries) }
+        lines.sort_by { |line| line[:kind] == "fee" ? 0 : 1 }
+      end
 
-          {
-            kind:, description: cost_type&.name.to_s, quantity:, unit:,
-            unit_cost: quantity.zero? ? 0.to_d : round(amount / quantity), amount:,
-            vatable: kind == "fee" || config.invoice.disbursements_vatable?
-          }
-        end.sort_by { |line| line[:kind] == "fee" ? 0 : 1 }
+      def cost_line(cost_type, entries)
+        kind = disbursement?(cost_type) ? "disbursement" : "fee"
+        amount = round(entries.sum { |entry| entry.real_costs.to_d })
+        quantity, unit = cost_quantity(cost_type, entries)
+
+        {
+          kind:, description: cost_type&.name.to_s, quantity:, unit:,
+          unit_cost: quantity.zero? ? 0.to_d : round(amount / quantity), amount:,
+          vatable: kind == "fee" || config.invoice.disbursements_vatable?
+        }
       end
 
       def cost_quantity(cost_type, entries)

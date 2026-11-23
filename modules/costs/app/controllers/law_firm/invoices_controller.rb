@@ -40,6 +40,15 @@ module LawFirm
       @can_issue = User.current.allowed_in_project?(:issue_law_firm_invoices, @project)
     end
 
+    def show
+      reprint = @invoice.reprint?
+      pdf = Invoices::Pdf.new(@invoice, reprint:)
+      data = pdf.render
+      @invoice.record_print!
+
+      send_data data, filename: pdf.filename, type: "application/pdf", disposition: "inline"
+    end
+
     def new
       @invoice_request = new_request(default_request_attributes)
       prepare_form
@@ -70,28 +79,9 @@ module LawFirm
       end
     end
 
-    def show
-      reprint = @invoice.reprint?
-      pdf = Invoices::Pdf.new(@invoice, reprint:)
-      data = pdf.render
-      @invoice.record_print!
-
-      send_data data, filename: pdf.filename, type: "application/pdf", disposition: "inline"
-    end
-
     def cancel
-      reason = params[:cancellation_reason].to_s.strip
-
-      if @invoice.cancelled?
-        redirect_to project_invoices_path(@project)
-      elsif reason.blank?
-        flash[:error] = t("law_firm_invoices.cancel_reason_required")
-        redirect_to project_invoices_path(@project)
-      else
-        @invoice.update!(cancelled_at: Time.current, cancelled_by: User.current, cancellation_reason: reason)
-        flash[:notice] = t("law_firm_invoices.cancelled_notice", number: @invoice.number)
-        redirect_to project_invoices_path(@project)
-      end
+      cancel_invoice(params[:cancellation_reason].to_s.strip) unless @invoice.cancelled?
+      redirect_to project_invoices_path(@project)
     end
 
     private
@@ -100,12 +90,21 @@ module LawFirm
       @config ||= BillingConfig.current
     end
 
+    def cancel_invoice(reason)
+      if reason.blank?
+        flash[:error] = t("law_firm_invoices.cancel_reason_required")
+      else
+        @invoice.update!(cancelled_at: Time.current, cancelled_by: User.current, cancellation_reason: reason)
+        flash[:notice] = t("law_firm_invoices.cancelled_notice", number: @invoice.number)
+      end
+    end
+
     def issue_service
       Invoices::IssueService.new(user: User.current, project: @project, config:)
     end
 
     def find_invoice
-      @invoice = Invoice.find_by!(project: @project, id: params[:id])
+      @invoice = Invoice.find_by!(project: @project, id: params.expect(:id))
     end
 
     def new_request(attributes)
@@ -120,11 +119,9 @@ module LawFirm
     def default_request_attributes
       last = Invoice.active.where(project: @project).newest_first.first
       today = User.current.today
-      period_from = last ? last.period_to + 1 : today.beginning_of_month
-      period_from = today.beginning_of_month if period_from > today
 
       {
-        period_from:,
+        period_from: default_period_from(last, today),
         period_to: today,
         client_name: last&.client_name,
         client_address: last&.client_address,
@@ -132,6 +129,11 @@ module LawFirm
         client_withholds: last&.ewt_rate.present?,
         ewt_rate: last&.ewt_rate || config.ewt_rate
       }
+    end
+
+    def default_period_from(last_invoice, today)
+      next_day = last_invoice&.period_to&.next_day
+      next_day && next_day <= today ? next_day : today.beginning_of_month
     end
 
     def prepare_form
