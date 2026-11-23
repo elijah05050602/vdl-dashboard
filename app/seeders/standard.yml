@@ -239,7 +239,7 @@ projects:
         t_summary: |
           The complaint was filed with the RTC Makati and the sheriff served summons on Bayanihan Freight.
           Their answer is due 30 calendar days from service.
-        t_description: Document review and the discovery requests start this week. See the Discovery work packages for who is doing what.
+        t_description: Case build-up starts this week. See the work packages under Case build-up for who is doing what.
     types:
       - :default_type_task
       - :default_type_milestone
@@ -303,7 +303,7 @@ projects:
         assigned_to: :openproject_admin
     boards:
       kanban:
-        t_name: "Filings board"
+        t_name: "Filings Kanban"
         filters:
           - type: :legal_type_filing
         statuses:
@@ -410,6 +410,7 @@ projects:
             t_description: |-
               Causes of action: collection of sum of money, breach of contract and damages.
               Attach the trucking agreement, the unpaid credit memos and the final demand letter as annexes, with the verification and certification against forum shopping.
+              The judicial affidavits of Ms. Dela Cruz and the bookkeeper are attached to the complaint (Rule 7, Section 6).
             status: :default_status_closed
             type: :legal_type_filing
             duration: 5
@@ -435,13 +436,13 @@ projects:
             duration: 1
             schedule_manually: true
       - start: 0
-        t_subject: Discovery
+        t_subject: Case build-up and discovery requests
         reference: :delacruz__discovery
         assigned_to: :department__events_operations
         description: ""
         status: :default_status_in_progress
         type: :default_type_summary_task
-        duration: 12
+        duration: 11
         schedule_manually: false
         children:
           - start: 0
@@ -478,12 +479,12 @@ projects:
             done_ratio: 30
             schedule_manually: true
           - start: 1
-            t_subject: Get Ms. Dela Cruz's signed judicial affidavit
+            t_subject: Get the dispatcher's signed supplemental judicial affidavit
             reference: :delacruz__judicial_affidavit
             assigned_to: :user__marko_marketing
             labels:
               - :label__waiting_on_client
-            t_description: Draft sent to the client. Waiting for her signature before a notary and the two missing delivery receipts.
+            t_description: Covers the 2025 deliveries the dispatcher handled. Draft sent to the client. Waiting for the dispatcher's signature before a notary and the two missing delivery receipts.
             status: :legal_status_awaiting_client
             type: :legal_type_client_communication
             duration: 3
@@ -491,7 +492,7 @@ projects:
           - start: 7
             t_subject: Draft written interrogatories to Bayanihan Freight
             reference: :delacruz__interrogatories
-            description: ""
+            t_description: Ready to serve once Bayanihan Freight files its answer and the issues are joined (Rules 25 and 26).
             status: :legal_status_drafting
             type: :legal_type_filing
             duration: 4
@@ -516,15 +517,6 @@ projects:
             relations:
               - to: :delacruz__review_records
                 type: follows
-          - start: 11
-            t_subject: Serve the interrogatories and request for admission
-            labels:
-              - :label__urgent
-            description: ""
-            status: :default_status_scheduled
-            type: :legal_type_court_deadline
-            duration: 1
-            schedule_manually: true
       - start: 4
         t_subject: Send the monthly case update to the client
         description: ""
@@ -532,30 +524,46 @@ projects:
         type: :legal_type_client_communication
         duration: 1
         schedule_manually: true
-      - start: 25
-        t_subject: Pre-trial brief and judicial affidavits due
-        t_description: File and serve the pre-trial brief and the judicial affidavits of our witnesses at least 3 days before the pre-trial.
-        status: :default_status_scheduled
+      - start: 24
+        t_subject: Serve the interrogatories and request for admission
+        labels:
+          - :label__urgent
+        t_description: Serve right after the answer is filed, once the issues are joined.
+        status: :default_status_new
         type: :legal_type_court_deadline
         duration: 1
         schedule_manually: true
-      - start: 32
+      - start: 30
+        t_subject: File the ex parte motion to set the case for pre-trial
+        t_description: The plaintiff must move to set the pre-trial within 5 days after the last pleading is served and filed (Rule 18, Section 1).
+        status: :default_status_new
+        type: :legal_type_filing
+        duration: 1
+        schedule_manually: true
+      - start: 53
+        t_subject: Pre-trial brief and judicial affidavits due
+        t_description: Judicial affidavits of any additional witnesses are due at least 5 days before the pre-trial (Judicial Affidavit Rule, Section 2). The pre-trial brief is due at least 3 calendar days before (Rule 18, Section 6).
+        status: :default_status_new
+        type: :legal_type_court_deadline
+        duration: 1
+        schedule_manually: true
+      - start: 60
         t_subject: Pre-trial conference
         t_description: RTC Makati, Branch 142, 8:30 AM. The client must attend or send a representative with a special power of attorney.
         status: :default_status_scheduled
         type: :legal_type_hearing
         duration: 1
         schedule_manually: true
-      - start: 39
-        t_subject: Court-annexed mediation at the Philippine Mediation Center
-        description: ""
+      - start: 67
+        t_subject: Court-annexed mediation starts at the Philippine Mediation Center
+        t_description: Mediation runs for up to 30 days.
         status: :default_status_new
         type: :default_type_milestone
         duration: 1
         schedule_manually: true
-      - start: 46
+      - start: 102
         t_subject: Judicial Dispute Resolution (JDR) conference
-        t_description: Only needed if mediation at the Philippine Mediation Center fails.
+        t_description: Only if mediation at the Philippine Mediation Center fails. JDR is before a different judge and runs for up to 15 days.
         status: :default_status_new
         type: :legal_type_hearing
         duration: 1
@@ -719,7 +727,7 @@ projects:
         description: ""
         status: :default_status_in_progress
         type: :default_type_summary_task
-        duration: 10
+        duration: 9
         schedule_manually: false
         children:
           - start: 0
@@ -760,33 +768,33 @@ projects:
             duration: 3
             schedule_manually: true
           - start: 3
-            t_subject: Draft the position paper
+            t_subject: Compute backwages, separation pay and 13th month pay differentials
+            reference: :reyes__computation
+            t_description: Attach the computation to the position paper as an annex.
+            status: :default_status_in_progress
+            type: :default_type_task
+            duration: 1
+            schedule_manually: false
+            relations:
+              - to: :reyes__evidence
+                type: follows
+          - start: 4
+            t_subject: Draft the verified position paper
             reference: :reyes__draft
             labels:
               - :label__urgent
-            description: ""
+            t_description: The position paper must be verified by Mr. Reyes and attach his affidavit, the documentary evidence and the computation.
             status: :legal_status_drafting
             type: :legal_type_filing
-            duration: 2
+            duration: 1
             estimated_hours: 8
             remaining_hours: 8
             done_ratio: 0
             schedule_manually: false
             relations:
-              - to: :reyes__evidence
+              - to: :reyes__computation
                 type: follows
           - start: 7
-            t_subject: Compute backwages, separation pay and 13th month pay differentials
-            reference: :reyes__computation
-            description: ""
-            status: :default_status_new
-            type: :default_type_task
-            duration: 1
-            schedule_manually: false
-            relations:
-              - to: :reyes__draft
-                type: follows
-          - start: 8
             t_subject: File and serve the position paper
             reference: :reyes__file
             description: ""
@@ -795,7 +803,7 @@ projects:
             duration: 2
             schedule_manually: false
             relations:
-              - to: :reyes__computation
+              - to: :reyes__draft
                 type: follows
       - start: 10
         t_subject: Position paper deadline set by the Labor Arbiter
@@ -908,7 +916,7 @@ projects:
         schedule_manually: true
       - start: 0
         t_subject: Compute capital gains tax, documentary stamp tax and transfer tax
-        t_description: Use the higher of the selling price and the BIR zonal value as the tax base.
+        t_description: The tax base is the highest of the gross selling price, the BIR zonal value and the fair market value in the tax declaration. Capital gains tax is normally the sellers' cost; confirm who pays what in the deed.
         status: :default_status_new
         type: :legal_type_legal_research
         duration: 2
@@ -953,7 +961,7 @@ projects:
               - to: :santos__deed
                 type: follows
           - start: 7
-            t_subject: Get the real property tax clearance and condominium dues clearance
+            t_subject: Get the real property tax clearance and the condominium certificate of management and dues clearance
             description: ""
             status: :default_status_new
             type: :default_type_task
@@ -984,16 +992,42 @@ projects:
         relations:
           - to: :santos__signing
             type: follows
-      - start: 15
+      - start: 28
+        t_subject: BIR releases the eCAR
+        reference: :santos__ecar
+        t_description: The eCAR usually takes 2 to 4 weeks after payment and complete submission.
+        status: :default_status_new
+        type: :default_type_milestone
+        duration: 1
+        schedule_manually: true
+      - start: 29
         t_subject: Pay transfer tax and register the sale at the Registry of Deeds
-        t_description: After the BIR releases the eCAR, pay the transfer tax at the Makati City Treasurer, then file at the Registry of Deeds for the new CCT in the client's name.
+        reference: :santos__registration
+        t_description: Pay the transfer tax at the Makati City Treasurer, then file at the Registry of Deeds for the new CCT in the client's name.
         status: :default_status_new
         type: :legal_type_filing
         duration: 4
         schedule_manually: false
         relations:
-          - to: :santos__bir_payment
+          - to: :santos__ecar
             type: follows
+      - start: 35
+        t_subject: Get a new tax declaration from the Makati City Assessor
+        description: ""
+        status: :default_status_new
+        type: :default_type_task
+        duration: 3
+        schedule_manually: false
+        relations:
+          - to: :santos__registration
+            type: follows
+      - start: 70
+        t_subject: Transfer tax deadline
+        t_description: The local transfer tax is due within 60 days of notarization (Local Government Code, Section 135). Pay it well before this date.
+        status: :default_status_new
+        type: :default_type_milestone
+        duration: 1
+        schedule_manually: true
 
 statuses:
   - reference: :default_status_new

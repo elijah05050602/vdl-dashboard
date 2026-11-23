@@ -154,9 +154,9 @@ module ResourceManagement
       end
 
       def seed_allocations
-        # Wanda is booked full-time on the website for its whole span, which
-        # already uses up her capacity. The additional (realistic, single-day)
-        # allocation for inviting attendees overlaps it and overbooks her, which
+        # Wanda is booked full-time on the document review for its whole span,
+        # which already uses up her capacity. The additional allocation for the
+        # supplemental judicial affidavit overlaps it and overbooks her, which
         # the user timeline then surfaces.
         create_explicit_allocation(:delacruz__review_records, :user__wanda_web, :full)
         create_explicit_allocation(:delacruz__judicial_affidavit, :user__wanda_web, :full)
