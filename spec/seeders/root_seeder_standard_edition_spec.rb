@@ -231,7 +231,7 @@ RSpec.describe RootSeeder,
     include_examples "it creates records", model: RecurringMeeting, expected_count: 1
     include_examples "it creates records", model: AI::TextAction, expected_count: 11
     include_examples "it creates records", model: ProjectCustomFieldSection, expected_count: 2
-    include_examples "it creates records", model: ProjectCustomField, expected_count: 11
+    include_examples "it creates records", model: ProjectCustomField, expected_count: 13
     include_examples "it is compatible with the automatic scheduling mode"
   end
 
@@ -542,8 +542,8 @@ RSpec.describe RootSeeder,
 
     it "creates 1 project with custom fields" do
       # 14 development work package custom fields + 4 development user custom fields
-      # + 11 matter project custom fields
-      expect(CustomField.count).to eq 29
+      # + 13 matter project custom fields
+      expect(CustomField.count).to eq 31
     end
 
     include_examples "creates the company staff and the demo data referencing it"

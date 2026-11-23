@@ -199,34 +199,74 @@ project_custom_fields:
     t_name: Practice area
     field_format: list
     t_possible_values:
-      - Litigation
-      - Corporate and commercial
-      - Real estate
-      - Family law
-      - Criminal defense
+      - Civil litigation
+      - Criminal
       - Labor and employment
-      - Intellectual property
-      - Tax
-      - Estate planning and probate
+      - Family law and annulment
+      - Corporate and SEC
+      - Land and property
+      - Tax and BIR
+      - Estate and succession
+      - Notarial
       - Immigration
-      - Banking and finance
+      - Intellectual property
+      - Administrative
       - Other
-  - reference: :matter_cf__responsible_attorney
-    t_name: Responsible attorney
+  - reference: :matter_cf__handling_lawyer
+    t_name: Handling lawyer
     field_format: user
   - reference: :matter_cf__date_opened
     t_name: Date opened
     field_format: date
   - reference: :matter_cf__court
-    t_name: Court
+    t_name: Court or tribunal
+    field_format: list
+    t_possible_values:
+      - Supreme Court
+      - Court of Appeals
+      - Sandiganbayan
+      - Court of Tax Appeals
+      - Regional Trial Court
+      - Metropolitan Trial Court
+      - Municipal Trial Court in Cities
+      - Municipal Trial Court
+      - Municipal Circuit Trial Court
+      - Shari'a court
+      - NLRC
+      - Office of the Prosecutor
+      - Department of Justice
+      - Office of the Ombudsman
+      - SEC
+      - Barangay (Lupon)
+      - Other
+  - reference: :matter_cf__branch_and_station
+    t_name: Branch and station
     field_format: string
     searchable: true
+  - reference: :matter_cf__case_type
+    t_name: Case type
+    field_format: list
+    t_possible_values:
+      - Civil Case No.
+      - Criminal Case No.
+      - Special Proceedings No.
+      - G.R. No.
+      - CA-G.R. CV No.
+      - CA-G.R. CR No.
+      - CA-G.R. SP No.
+      - CTA Case No.
+      - SB Case No.
+      - NLRC Case No.
+      - NPS Docket No.
+      - OMB Case No.
+      - SEC Case No.
+      - Other
   - reference: :matter_cf__case_number
     t_name: Case number
     field_format: string
     searchable: true
-  - reference: :matter_cf__judge
-    t_name: Judge
+  - reference: :matter_cf__presiding_judge
+    t_name: Presiding judge
     field_format: string
   - reference: :matter_cf__opposing_party
     t_name: Opposing party
@@ -236,8 +276,8 @@ project_custom_fields:
     t_name: Opposing counsel
     field_format: string
     searchable: true
-  - reference: :matter_cf__statute_of_limitations
-    t_name: Statute of limitations
+  - reference: :matter_cf__prescriptive_period
+    t_name: Prescriptive period ends
     field_format: date
 
 labels:

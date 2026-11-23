@@ -53,10 +53,10 @@ RSpec.describe BasicData::ProjectCustomFieldSeeder do
           name: Practice area
           field_format: list
           possible_values:
-            - Litigation
-            - Family law
-        - reference: :matter_cf__statute_of_limitations
-          name: Statute of limitations
+            - Civil litigation
+            - Family law and annulment
+        - reference: :matter_cf__prescriptive_period
+          name: Prescriptive period ends
           field_format: date
     SEEDING_DATA_YAML
   end
@@ -70,13 +70,13 @@ RSpec.describe BasicData::ProjectCustomFieldSeeder do
       section = ProjectCustomFieldSection.find_by!(name: "Matter details")
 
       expect(ProjectCustomField.order(:position).pluck(:name))
-        .to eq(["Client", "Practice area", "Statute of limitations"])
+        .to eq(["Client", "Practice area", "Prescriptive period ends"])
       expect(ProjectCustomField.all).to all(have_attributes(custom_field_section_id: section.id,
                                                             is_for_all: true,
                                                             is_required: false))
       expect(ProjectCustomField.find_by!(name: "Client")).to have_attributes(field_format: "string", searchable: true)
       expect(ProjectCustomField.find_by!(name: "Practice area").possible_values.map(&:value))
-        .to eq(["Litigation", "Family law"])
+        .to eq(["Civil litigation", "Family law and annulment"])
       expect(seed_data.find_reference(:matter_cf__client)).to eq(ProjectCustomField.find_by!(name: "Client"))
     end
 
