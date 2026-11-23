@@ -2913,25 +2913,32 @@ en:
     single: "or"
 
   conflict_check:
+    archived: "Archived"
     caption: "Search every matter's client, opposing party and other names before you take on a new matter."
-    query_label: "Name of person or company"
-    query_placeholder: "e.g. Acme Holdings Inc."
-    submit: "Run check"
-    no_matches: "No conflicts found for \"%{query}\". Only matters you can see were searched."
+    column_field: "Found in"
+    column_matter: "Matter"
+    column_role: "Risk"
+    column_value: "Value"
+    field_matter_name: "Matter name"
+    log_heading: "Recent conflict checks"
+    log_matches:
+      one: "1 match"
+      other: "%{count} matches"
     matches_found:
       one: "1 possible conflict found for \"%{query}\". Review it before opening the matter."
       other: "%{count} possible conflicts found for \"%{query}\". Review them before opening the matter."
-    scope_note: "Matches matter names and the text fields on each matter (for example Client and Opposing party). Word order, middle initials, Ma. for Maria, dela Cruz or De La Cruz, Jr. or III, titles such as Atty., and company endings such as Inc., Corp. or OPC do not matter."
-    column_matter: "Matter"
-    column_field: "Found in"
-    column_value: "Value"
-    column_role: "Risk"
-    field_matter_name: "Matter name"
+    no_matches: "No conflicts found for \"%{query}\" in any matter, including archived ones."
+    query_label: "Name of person or company"
+    query_placeholder: "e.g. Acme Holdings Inc."
+    restricted_hint: "You are not on this matter. Ask the handling lawyer or an administrator to clear it."
+    restricted_matter: "Restricted matter %{identifier}"
     roles:
-      opposing: "Adverse party"
       client: "Existing client"
       matter: "Matter name"
+      opposing: "Adverse party"
       other: "Other field"
+    scope_note: "Searches every matter in the firm, including archived ones. Matches matter names and the text fields on each matter (for example Client and Opposing party). Word order, middle initials, Ma. for Maria, dela Cruz or De La Cruz, Jr. or III, titles such as Atty., and company endings such as Inc., Corp. or OPC do not matter."
+    submit: "Run check"
   consent:
     checkbox_label: I have noted and do consent to the above.
     contact_mail_instructions: Define the mail address that users can reach a data controller to perform data change or removal requests.

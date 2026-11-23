@@ -28,6 +28,8 @@
 #++
 
 class ConflictChecksController < ApplicationController
+  RECENT_LOG_LIMIT = 25
+
   before_action :require_login
   no_authorization_required! :index
 
@@ -38,5 +40,7 @@ class ConflictChecksController < ApplicationController
   def index
     @search = ConflictChecks::Search.new(query: params[:q], user: current_user)
     @matches = @search.call
+    ConflictCheckLog.record!(search: @search, matches: @matches) if @search.searchable?
+    @recent_logs = ConflictCheckLog.recent.includes(:user).limit(RECENT_LOG_LIMIT) if current_user.admin?
   end
 end

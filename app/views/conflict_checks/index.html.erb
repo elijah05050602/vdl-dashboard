@@ -81,14 +81,32 @@ See COPYRIGHT and LICENSE files for more details.
       <% @matches.each do |match| %>
         <% box.with_row do %>
           <%= render Primer::Box.new(display: :flex, align_items: :center) do %>
-            <%= render Primer::Box.new(col: 3) do %>
-              <%= link_to match.project.name, project_path(match.project) %>
-            <% end %>
-            <%= render Primer::Box.new(col: 3) do %>
-              <%= match.source || t("conflict_check.field_matter_name") %>
-            <% end %>
-            <%= render Primer::Box.new(col: 4) do %>
-              <%= truncate(match.value.to_s, length: 160) %>
+            <% if match.restricted %>
+              <%= render Primer::Box.new(col: 3) do %>
+                <%= render Primer::Beta::Octicon.new(icon: :lock, color: :muted, mr: 1) %>
+                <%= t("conflict_check.restricted_matter", identifier: match.project.identifier) %>
+                <% if match.archived? %>
+                  <%= render Primer::Beta::Label.new(scheme: :secondary, ml: 1) do %><%= t("conflict_check.archived") %><% end %>
+                <% end %>
+              <% end %>
+              <%= render Primer::Box.new(col: 7, color: :muted) do %>
+                <%= t("conflict_check.restricted_hint") %>
+              <% end %>
+            <% else %>
+              <%= render Primer::Box.new(col: 3) do %>
+                <% if match.archived? %>
+                  <%= match.project.name %>
+                  <%= render Primer::Beta::Label.new(scheme: :secondary, ml: 1) do %><%= t("conflict_check.archived") %><% end %>
+                <% else %>
+                  <%= link_to match.project.name, project_path(match.project) %>
+                <% end %>
+              <% end %>
+              <%= render Primer::Box.new(col: 3) do %>
+                <%= match.source || t("conflict_check.field_matter_name") %>
+              <% end %>
+              <%= render Primer::Box.new(col: 4) do %>
+                <%= truncate(match.value.to_s, length: 160) %>
+              <% end %>
             <% end %>
             <%= render Primer::Box.new(col: 2) do %>
               <%= render Primer::Beta::Label.new(
@@ -97,6 +115,26 @@ See COPYRIGHT and LICENSE files for more details.
                 <%= t("conflict_check.roles.#{match.role}") %>
               <% end %>
             <% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+<% end %>
+
+<% if @recent_logs.present? %>
+  <%= render Primer::Beta::Heading.new(tag: :h3, mt: 5, mb: 2) do %>
+    <%= t("conflict_check.log_heading") %>
+  <% end %>
+  <%= render Primer::Beta::BorderBox.new(test_selector: "conflict-check-log") do |box| %>
+    <% @recent_logs.each do |log| %>
+      <% box.with_row do %>
+        <%= render Primer::Box.new(display: :flex) do %>
+          <%= render Primer::Box.new(col: 3) do %><%= format_time(log.created_at) %><% end %>
+          <%= render Primer::Box.new(col: 3) do %><%= log.user&.name %><% end %>
+          <%= render Primer::Box.new(col: 4) do %><%= log.query %><% end %>
+          <%= render Primer::Box.new(col: 2) do %>
+            <%= t("conflict_check.log_matches", count: log.matches_count) %>
           <% end %>
         <% end %>
       <% end %>

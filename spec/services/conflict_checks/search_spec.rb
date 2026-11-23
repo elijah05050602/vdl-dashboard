@@ -30,13 +30,20 @@
 require "spec_helper"
 
 RSpec.describe ConflictChecks::Search do
-  shared_let(:client_field) { create(:string_project_custom_field, name: "Client") }
-  shared_let(:opposing_field) { create(:string_project_custom_field, name: "Opposing party") }
-  shared_let(:secret_field) { create(:string_project_custom_field, :admin_only, name: "Opposing counsel") }
-
   shared_let(:smith_matter) { create(:project, name: "Smith v. Acme Holdings") }
   shared_let(:jones_matter) { create(:project, name: "Jones estate") }
   shared_let(:hidden_matter) { create(:project, name: "Acme merger", public: false) }
+  shared_let(:archived_matter) { create(:project, :archived, name: "Old estate case") }
+
+  shared_let(:client_field) do
+    create(:string_project_custom_field, name: "Client", projects: [smith_matter, jones_matter, archived_matter])
+  end
+  shared_let(:opposing_field) do
+    create(:string_project_custom_field, name: "Opposing party", projects: [smith_matter, hidden_matter])
+  end
+  shared_let(:secret_field) do
+    create(:string_project_custom_field, :admin_only, name: "Opposing counsel", projects: [jones_matter])
+  end
 
   shared_let(:user) do
     create(:user, member_with_permissions: {
@@ -51,6 +58,7 @@ RSpec.describe ConflictChecks::Search do
     create(:custom_value, custom_field: client_field, customized: jones_matter, value: "Robert Jones")
     create(:custom_value, custom_field: secret_field, customized: jones_matter, value: "Acme Holdings legal team")
     create(:custom_value, custom_field: opposing_field, customized: hidden_matter, value: "Acme Holdings LLC")
+    create(:custom_value, custom_field: client_field, customized: archived_matter, value: "JONES, ROBERT S.")
   end
 
   subject(:matches) { described_class.new(query:, user:).call }
@@ -67,7 +75,8 @@ RSpec.describe ConflictChecks::Search do
 
   describe ".names_match?" do
     def match?(query, value)
-      described_class.names_match?(described_class.normalize(query), value)
+      described_class.names_match?(described_class.normalize(query), value,
+                                   described_class.normalize(query, expand: true))
     end
 
     it "treats Ma. as Maria and ignores middle initials and word order" do
@@ -96,8 +105,23 @@ RSpec.describe ConflictChecks::Search do
       expect(match?("Maria Clara", "Juan dela Cruz; Maria Clara Ibarra")).to be true
     end
 
+    it "finds a surname written without its particle" do
+      expect(match?("Cruz", "Juan dela Cruz")).to be true
+      expect(match?("Santos", "Pedro delos Santos")).to be true
+    end
+
+    it "treats Co as a surname" do
+      expect(match?("Co", "Jimmy Co")).to be true
+      expect(match?("Jimmy Co", "Jimmy Tan")).to be false
+    end
+
+    it "splits spouses who share a surname" do
+      expect(match?("Juan Santos", "Spouses Juan and Maria Santos")).to be true
+    end
+
     it "does not match different people who share one name" do
       expect(match?("Juan Santos", "Juan dela Cruz")).to be false
+      expect(match?("Juan Santos", "Juan Reyes; Pedro Santos")).to be false
     end
   end
 
@@ -106,25 +130,37 @@ RSpec.describe ConflictChecks::Search do
       expect(described_class.role_for("Opposing party")).to eq(:opposing)
       expect(described_class.role_for("Client")).to eq(:client)
       expect(described_class.role_for("Court")).to eq(:other)
+      expect(described_class.role_for("Respondent")).to eq(:other)
     end
   end
 
   context "with a company name written differently" do
     let(:query) { "acme holdings llc" }
 
-    it "finds the adverse party and the matter name in visible matters only" do
-      expect(matches.map { |m| [m.project, m.role] })
-        .to contain_exactly([smith_matter, :opposing], [smith_matter, :matter])
+    it "finds matches across the whole firm, hiding details the user may not see" do
+      expect(matches.map { |m| [m.project, m.role, m.restricted] })
+        .to contain_exactly([smith_matter, :opposing, false],
+                            [smith_matter, :matter, false],
+                            [jones_matter, :opposing, true],
+                            [hidden_matter, :opposing, true])
       expect(matches.first.role).to eq(:opposing)
+    end
+
+    it "leaves out the value and field name of restricted matches" do
+      restricted = matches.select(&:restricted)
+      expect(restricted.map(&:value)).to all(be_nil)
+      expect(restricted.map(&:source)).to all(be_nil)
     end
   end
 
   context "with a client name" do
     let(:query) { "robert jones" }
 
-    it "finds the existing client" do
-      expect(matches.map { |m| [m.project, m.source, m.role] })
-        .to contain_exactly([jones_matter, "Client", :client])
+    it "finds the existing client, including in archived matters" do
+      expect(matches.map { |m| [m.project, m.source, m.role, m.restricted] })
+        .to contain_exactly([jones_matter, "Client", :client, false],
+                            [archived_matter, nil, :client, true])
+      expect(matches.find { |m| m.project == archived_matter }).to be_archived
     end
   end
 
@@ -132,8 +168,9 @@ RSpec.describe ConflictChecks::Search do
     let(:user) { create(:admin) }
     let(:query) { "Acme" }
 
-    it "also searches admin only fields and all matters" do
+    it "sees the details of every match" do
       expect(matches.map(&:project)).to include(hidden_matter, jones_matter)
+      expect(matches.map(&:restricted)).to all(be false)
     end
   end
 

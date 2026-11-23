@@ -29,19 +29,19 @@
 
 module ConflictChecks
   class Search
-    Match = Data.define(:project, :source, :value, :role)
+    Match = Data.define(:project, :source, :value, :role, :restricted) do
+      def archived? = project.archived?
+    end
 
     SEARCHABLE_FORMATS = %w[string text].freeze
     MIN_TOKEN_LENGTH = 2
 
-    ALIASES = {
-      "ma" => "maria",
-      "sto" => "santo", "sta" => "santa",
-      "phils" => "philippines", "phil" => "philippines"
+    ABBREVIATIONS = {
+      /\bma\./i => "maria ", /\bsta\./i => "santa ", /\bsto\./i => "santo ", /\bphils?\./i => "philippines "
     }.freeze
 
     IGNORED_WORDS = %w[
-      inc incorporated corp corporation co company cos llc llp lp ltd limited plc opc
+      inc incorporated corp corporation company cos llc llp lp ltd limited plc opc
       gmbh ag sa bv pc pa pllc the and of
       jr sr ii iii iv
       atty dr engr hon mr mrs ms sps spouses
@@ -52,8 +52,8 @@ module ConflictChecks
     NAME_SEPARATORS = /[;\n|]|\s+(?:and|vs?\.?|versus)\s+|\s+&\s+|\//i
 
     ROLE_PATTERNS = {
-      opposing: /opposing|adverse|defendant|respondent|accused|other\s*party|counter\s*party/i,
-      client: /client|plaintiff|petitioner|complainant/i
+      opposing: /opposing|adverse|other\s*party|counter\s*party/i,
+      client: /client/i
     }.freeze
 
     attr_reader :query, :user
@@ -67,6 +67,10 @@ module ConflictChecks
       @tokens ||= self.class.normalize(query)
     end
 
+    def expanded_tokens
+      @expanded_tokens ||= self.class.normalize(query, expand: true)
+    end
+
     def searchable?
       tokens.any?
     end
@@ -78,33 +82,48 @@ module ConflictChecks
         .sort_by { |m| [role_rank(m.role), m.project.name.downcase] }
     end
 
-    def self.normalize(text)
-      words = I18n.transliterate(text.to_s).downcase.scan(/[a-z0-9]+/).map { |w| ALIASES.fetch(w, w) }
-      significant = join_particles(words - IGNORED_WORDS)
-      significant = join_particles(words) if significant.empty?
-      significant.select { |w| w.length >= MIN_TOKEN_LENGTH }.uniq
+    def self.normalize(text, expand: false)
+      expanded = ABBREVIATIONS.reduce(I18n.transliterate(text.to_s)) { |str, (pattern, word)| str.gsub(pattern, word) }
+      words = expanded.downcase.scan(/[a-z0-9]+/)
+      significant = words - IGNORED_WORDS
+      significant = words if significant.empty?
+      join_particles(significant, expand:).select { |w| w.length >= MIN_TOKEN_LENGTH }.uniq
     end
 
-    def self.join_particles(words)
+    def self.join_particles(words, expand: false)
       prefix = +""
       joined = words.each_with_object([]) do |word, result|
         if PARTICLES.include?(word)
           prefix << word
         else
           result << (prefix + word)
+          result << word if expand && prefix.present?
           prefix = +""
         end
       end
       prefix.empty? ? joined : joined << prefix
     end
 
-    def self.names_match?(query_tokens, text)
-      text.to_s.split(NAME_SEPARATORS).push(text.to_s).uniq.any? do |name|
+    def self.names_match?(query_tokens, text, expanded_query = query_tokens)
+      split_names(text).any? do |name|
         name_tokens = normalize(name)
         next false if name_tokens.empty?
 
-        (query_tokens - name_tokens).empty? ||
-          (name_tokens.size >= 2 && (name_tokens - query_tokens).empty?)
+        (query_tokens - normalize(name, expand: true)).empty? ||
+          (name_tokens.size >= 2 && (name_tokens - expanded_query).empty?)
+      end
+    end
+
+    # "Spouses Juan and Maria Santos" names two people who share the last surname.
+    def self.split_names(text)
+      parts = text.to_s.split(NAME_SEPARATORS).map(&:strip).reject(&:empty?)
+      parts.each_with_index.map do |part, index|
+        following = parts[index + 1]
+        if following && normalize(part).size == 1
+          "#{part} #{following.split.last}"
+        else
+          part
+        end
       end
     end
 
@@ -114,37 +133,51 @@ module ConflictChecks
 
     private
 
-    def visible_projects
-      Project.visible(user)
-    end
-
     def project_name_matches
-      visible_projects
-        .select { |project| self.class.names_match?(tokens, project.name) }
-        .map { |project| Match.new(project:, source: nil, value: project.name, role: :matter) }
+      Project
+        .select { |project| self.class.names_match?(tokens, project.name, expanded_tokens) }
+        .map { |project| build_match(project, nil, project.name, :matter) }
     end
 
     def custom_value_matches
       CustomValue
         .joins("INNER JOIN custom_fields ON custom_fields.id = custom_values.custom_field_id")
-        .where(customized_type: "Project", customized_id: visible_projects.select(:id))
+        .where(customized_type: "Project")
         .where(custom_fields: { type: "ProjectCustomField", field_format: SEARCHABLE_FORMATS })
         .where.not(value: [nil, ""])
         .includes(:custom_field, :customized)
-        .select { |custom_value| self.class.names_match?(tokens, custom_value.value) }
-        .filter_map { |custom_value| to_match(custom_value) }
+        .select { |custom_value| self.class.names_match?(tokens, custom_value.value, expanded_tokens) }
+        .filter_map do |custom_value|
+          next if custom_value.customized.nil?
+
+          build_match(custom_value.customized, custom_value.custom_field, custom_value.value,
+                      self.class.role_for(custom_value.custom_field.name))
+        end
     end
 
-    def to_match(custom_value)
-      field = custom_value.custom_field
-      project = custom_value.customized
-      return unless field_visible?(field, project)
-
-      Match.new(project:, source: field.name, value: custom_value.value, role: self.class.role_for(field.name))
+    def build_match(project, field, value, role)
+      if details_visible?(project, field)
+        Match.new(project:, source: field&.name, value:, role:, restricted: false)
+      else
+        Match.new(project:, source: nil, value: nil, role:, restricted: true)
+      end
     end
 
-    def field_visible?(field, project)
-      user.admin? || (!field.admin_only? && user.allowed_in_project?(:view_project_attributes, project))
+    def details_visible?(project, field)
+      return true if user.active_admin?
+      return false unless known_project_ids.include?(project.id)
+      return true if field.nil?
+      return false if field.admin_only? || !project.project_custom_field_ids.include?(field.id)
+
+      project.archived? || user.allowed_in_project?(:view_project_attributes, project)
+    end
+
+    def known_project_ids
+      @known_project_ids ||= Project
+        .where(public: true)
+        .or(Project.where(id: user.members.select(:project_id)))
+        .pluck(:id)
+        .to_set
     end
 
     def role_rank(role)
