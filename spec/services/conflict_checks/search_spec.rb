@@ -65,6 +65,42 @@ RSpec.describe ConflictChecks::Search do
     end
   end
 
+  describe ".names_match?" do
+    def match?(query, value)
+      described_class.names_match?(described_class.normalize(query), value)
+    end
+
+    it "treats Ma. as Maria and ignores middle initials and word order" do
+      expect(match?("Maria Teresa Dela Cruz", "DELA CRUZ, MA. TERESA P.")).to be true
+    end
+
+    it "treats dela Cruz, de la Cruz and Delacruz alike" do
+      expect(match?("Juan de la Cruz", "Juan Delacruz")).to be true
+      expect(match?("Pedro delos Santos", "Pedro De Los Santos")).to be true
+    end
+
+    it "ignores Jr., III and titles" do
+      expect(match?("Atty. Jose Rizal Jr.", "Jose Rizal III")).to be true
+    end
+
+    it "matches a stored name that leaves out the middle name" do
+      expect(match?("Juan Reyes dela Cruz", "Juan dela Cruz")).to be true
+    end
+
+    it "ignores Philippine corporate endings" do
+      expect(match?("ABC Trading OPC", "ABC Trading Corp.")).to be true
+      expect(match?("Sta. Maria Holdings Inc.", "Santa Maria Holdings")).to be true
+    end
+
+    it "checks each name in a list of parties" do
+      expect(match?("Maria Clara", "Juan dela Cruz; Maria Clara Ibarra")).to be true
+    end
+
+    it "does not match different people who share one name" do
+      expect(match?("Juan Santos", "Juan dela Cruz")).to be false
+    end
+  end
+
   describe ".role_for" do
     it "classifies field names" do
       expect(described_class.role_for("Opposing party")).to eq(:opposing)

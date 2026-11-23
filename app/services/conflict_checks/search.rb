@@ -33,14 +33,27 @@ module ConflictChecks
 
     SEARCHABLE_FORMATS = %w[string text].freeze
     MIN_TOKEN_LENGTH = 2
-    ENTITY_SUFFIXES = %w[
-      inc incorporated corp corporation co company llc llp lp ltd limited plc
+
+    ALIASES = {
+      "ma" => "maria",
+      "sto" => "santo", "sta" => "santa",
+      "phils" => "philippines", "phil" => "philippines"
+    }.freeze
+
+    IGNORED_WORDS = %w[
+      inc incorporated corp corporation co company cos llc llp lp ltd limited plc opc
       gmbh ag sa bv pc pa pllc the and of
+      jr sr ii iii iv
+      atty dr engr hon mr mrs ms sps spouses
     ].freeze
 
+    PARTICLES = %w[de del dela delas delos la las los san santa santo].freeze
+
+    NAME_SEPARATORS = /[;\n|]|\s+(?:and|vs?\.?|versus)\s+|\s+&\s+|\//i
+
     ROLE_PATTERNS = {
-      opposing: /opposing|adverse|defendant|respondent|other\s*party|counter\s*party/i,
-      client: /client|plaintiff|petitioner/i
+      opposing: /opposing|adverse|defendant|respondent|accused|other\s*party|counter\s*party/i,
+      client: /client|plaintiff|petitioner|complainant/i
     }.freeze
 
     attr_reader :query, :user
@@ -66,9 +79,33 @@ module ConflictChecks
     end
 
     def self.normalize(text)
-      words = I18n.transliterate(text.to_s).downcase.scan(/[a-z0-9]+/)
-      significant = words - ENTITY_SUFFIXES
-      (significant.presence || words).select { |w| w.length >= MIN_TOKEN_LENGTH }.uniq
+      words = I18n.transliterate(text.to_s).downcase.scan(/[a-z0-9]+/).map { |w| ALIASES.fetch(w, w) }
+      significant = join_particles(words - IGNORED_WORDS)
+      significant = join_particles(words) if significant.empty?
+      significant.select { |w| w.length >= MIN_TOKEN_LENGTH }.uniq
+    end
+
+    def self.join_particles(words)
+      prefix = +""
+      joined = words.each_with_object([]) do |word, result|
+        if PARTICLES.include?(word)
+          prefix << word
+        else
+          result << (prefix + word)
+          prefix = +""
+        end
+      end
+      prefix.empty? ? joined : joined << prefix
+    end
+
+    def self.names_match?(query_tokens, text)
+      text.to_s.split(NAME_SEPARATORS).push(text.to_s).uniq.any? do |name|
+        name_tokens = normalize(name)
+        next false if name_tokens.empty?
+
+        (query_tokens - name_tokens).empty? ||
+          (name_tokens.size >= 2 && (name_tokens - query_tokens).empty?)
+      end
     end
 
     def self.role_for(field_name)
@@ -83,7 +120,7 @@ module ConflictChecks
 
     def project_name_matches
       visible_projects
-        .where(like_all_tokens("projects.name"))
+        .select { |project| self.class.names_match?(tokens, project.name) }
         .map { |project| Match.new(project:, source: nil, value: project.name, role: :matter) }
     end
 
@@ -92,8 +129,9 @@ module ConflictChecks
         .joins("INNER JOIN custom_fields ON custom_fields.id = custom_values.custom_field_id")
         .where(customized_type: "Project", customized_id: visible_projects.select(:id))
         .where(custom_fields: { type: "ProjectCustomField", field_format: SEARCHABLE_FORMATS })
-        .where(like_all_tokens("custom_values.value"))
+        .where.not(value: [nil, ""])
         .includes(:custom_field, :customized)
+        .select { |custom_value| self.class.names_match?(tokens, custom_value.value) }
         .filter_map { |custom_value| to_match(custom_value) }
     end
 
@@ -107,14 +145,6 @@ module ConflictChecks
 
     def field_visible?(field, project)
       user.admin? || (!field.admin_only? && user.allowed_in_project?(:view_project_attributes, project))
-    end
-
-    def like_all_tokens(column)
-      table = Arel::Table.new(column.split(".").first)
-      attribute = table[column.split(".").last]
-      tokens
-        .map { |token| attribute.matches("%#{ActiveRecord::Base.sanitize_sql_like(token)}%") }
-        .reduce(:and)
     end
 
     def role_rank(role)

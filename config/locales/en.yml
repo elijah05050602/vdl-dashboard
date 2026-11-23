@@ -2921,7 +2921,7 @@ en:
     matches_found:
       one: "1 possible conflict found for \"%{query}\". Review it before opening the matter."
       other: "%{count} possible conflicts found for \"%{query}\". Review them before opening the matter."
-    scope_note: "Matches matter names and the text fields on each matter (for example Client and Opposing party). Company endings such as Inc. or LLC are ignored."
+    scope_note: "Matches matter names and the text fields on each matter (for example Client and Opposing party). Word order, middle initials, Ma. for Maria, dela Cruz or De La Cruz, Jr. or III, titles such as Atty., and company endings such as Inc., Corp. or OPC do not matter."
     column_matter: "Matter"
     column_field: "Found in"
     column_value: "Value"
