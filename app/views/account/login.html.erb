@@ -32,6 +32,12 @@ See COPYRIGHT and LICENSE files for more details.
 <%= render Homescreen::AnnouncementComponent.new(announcement: Announcement.active_and_current) %>
 
 <div id="login-form" class="form">
+  <%= render(Primer::Box.new(text_align: :center, mb: 3)) do %>
+    <%= image_tag "law_firm/vdl-mark-gold.png", alt: "", width: 96, height: 99 %>
+    <% if Setting.organization_name.present? %>
+      <%= render(Primer::Beta::Text.new(tag: :p, color: :muted, mt: 2, mb: 0)) { Setting.organization_name } %>
+    <% end %>
+  <% end %>
   <%= render(Primer::Beta::Heading.new(tag: :h1, font_size: 4, font_weight: :bold, text_align: :center, mb: 3)) do %>
     <%= t("account.login_title", app_title: Setting.app_title) %>
   <% end %>

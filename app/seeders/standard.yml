@@ -1446,9 +1446,9 @@ workflows:
       - :default_status_closed
 
 welcome:
-  t_title: "Welcome to the Law Firm Dashboard"
+  t_title: "Welcome to the Law Offices of Villanueva, Dorin & Lozano"
   t_text: |
-    This workspace tracks the firm's matters from intake to close. Each project is a matter, and each work package is a piece of work on it.
+    This is the VDL Dashboard. It tracks the firm's matters from intake to close. Each project is a matter, and each work package is a piece of work on it.
 
     Getting started:
 

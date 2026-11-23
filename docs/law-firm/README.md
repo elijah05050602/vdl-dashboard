@@ -1,6 +1,6 @@
-# Law Firm Dashboard
+# VDL Dashboard
 
-This fork adapts OpenProject for a law firm. A project is a matter, and a work package is a piece of work on that matter.
+The matter dashboard for the Law Offices of Villanueva, Dorin & Lozano (VDL). This fork adapts OpenProject for the firm. A project is a matter, and a work package is a piece of work on that matter.
 
 ## What this fork changes
 
@@ -27,7 +27,15 @@ To open a new matter from one, click **New matter**, pick the template from the 
 
 Seeding only adds templates that are missing, so it is safe to run on a database that already has matters. To change a template, edit it in the app, or edit the YAML file, delete the template matter and seed again.
 
-Branding is set by configuration, not code, so upstream merges stay easy. See `lawfirm.env.example`.
+## Branding
+
+- **Name:** the app title defaults to "VDL Dashboard" and the organization name to "Law Offices of Villanueva, Dorin & Lozano" in development and production (`config/constants/settings/definition.rb`). The test environment keeps the upstream defaults so upstream specs pass. Override with the variables in `lawfirm.env.example`, or under Administration. A value saved in Administration wins over the default.
+- **Logo:** the firm's VD monogram replaces the OpenProject logo in the header (`logo_openproject_white_big.png`, `logo_openproject.png`), the mobile header (`icon_logo.svg`, `icon_logo_white.svg`), the favicons, the touch icon and the installable app icons (`pwa/`). The file names stay the same so upstream code and specs keep working. The sign-in page shows the monogram and the firm's name above the form.
+- **Colors:** charcoal header `#2E2829` with the logo in gold `#C9A45C`, navy accent `#1F3A5F` for links and the selected menu item (`frontend/src/global_styles/openproject/_variable_defaults.scss`, `lib/open_project/custom_styles/color_themes.rb`).
+- **Brand kit:** `brand/` holds transparent versions of the mark (charcoal, gold, white), square icons and the wordmarks, for letterhead, the website or the desktop app.
+- **Emails:** the sender name comes from `mail_from`, for example `VDL Dashboard <dashboard@firm-domain>`.
+
+The welcome text is seeded only on a fresh database. On an existing one, change it under Administration > System settings > General.
 
 ## License
 
