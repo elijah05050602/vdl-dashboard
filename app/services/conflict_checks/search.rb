@@ -30,7 +30,7 @@
 module ConflictChecks
   class Search
     Match = Data.define(:project, :source, :value, :role, :restricted) do
-      def archived? = project.archived?
+      delegate :archived?, to: :project
     end
 
     SEARCHABLE_FORMATS = %w[string text].freeze
@@ -135,24 +135,30 @@ module ConflictChecks
 
     def project_name_matches
       Project
-        .select { |project| self.class.names_match?(tokens, project.name, expanded_tokens) }
+        .select { |project| names_match?(project.name) }
         .map { |project| build_match(project, nil, project.name, :matter) }
     end
 
     def custom_value_matches
+      candidate_custom_values
+        .select { |custom_value| custom_value.customized && names_match?(custom_value.value) }
+        .map do |custom_value|
+          field = custom_value.custom_field
+          build_match(custom_value.customized, field, custom_value.value, self.class.role_for(field.name))
+        end
+    end
+
+    def candidate_custom_values
       CustomValue
         .joins("INNER JOIN custom_fields ON custom_fields.id = custom_values.custom_field_id")
         .where(customized_type: "Project")
         .where(custom_fields: { type: "ProjectCustomField", field_format: SEARCHABLE_FORMATS })
         .where.not(value: [nil, ""])
         .includes(:custom_field, :customized)
-        .select { |custom_value| self.class.names_match?(tokens, custom_value.value, expanded_tokens) }
-        .filter_map do |custom_value|
-          next if custom_value.customized.nil?
+    end
 
-          build_match(custom_value.customized, custom_value.custom_field, custom_value.value,
-                      self.class.role_for(custom_value.custom_field.name))
-        end
+    def names_match?(text)
+      self.class.names_match?(tokens, text, expanded_tokens)
     end
 
     def build_match(project, field, value, role)
@@ -167,7 +173,7 @@ module ConflictChecks
       return true if user.active_admin?
       return false unless known_project_ids.include?(project.id)
       return true if field.nil?
-      return false if field.admin_only? || !project.project_custom_field_ids.include?(field.id)
+      return false if field.admin_only? || project.project_custom_field_ids.exclude?(field.id)
 
       project.archived? || user.allowed_in_project?(:view_project_attributes, project)
     end
