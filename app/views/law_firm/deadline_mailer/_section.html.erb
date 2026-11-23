@@ -1,0 +1,47 @@
+<% if entries.any? %>
+  <table width="100%" cellspacing="0" cellpadding="0" style="<%= placeholder_table_styles("width:100%") %>">
+    <tr>
+      <td style="<%= placeholder_text_styles(color: "#333333", "font-size": "16px", "font-weight": "bold") %>">
+        <%= title %>
+      </td>
+    </tr>
+    <tr>
+      <%= placeholder_cell("8px", vertical: false) %>
+    </tr>
+  </table>
+  <%= render layout: "mailer/border_table" do %>
+    <% entries.each do |entry| %>
+      <% urgent = highlight && entry.days_left <= 1 %>
+      <tr>
+        <%= placeholder_cell("12px", vertical: true) %>
+        <td style="<%= placeholder_text_styles(color: urgent ? "#C92A2A" : "#333333", "font-weight": urgent ? "bold" : "normal", "white-space": "nowrap", width: "150px") %>">
+          <%= format_date(entry.work_package.due_date) %><br>
+          <%= t("law_firm.deadline_digest.days_left", count: entry.days_left) unless entry.overdue? %>
+          <%= t("law_firm.deadline_digest.days_overdue", count: -entry.days_left) if entry.overdue? %>
+        </td>
+        <%= placeholder_cell("12px", vertical: true) %>
+        <td style="<%= placeholder_text_styles(color: "#333333") %>">
+          <a href="<%= work_package_url(entry.work_package) %>" target="_blank" style="color: #0F41B5; text-decoration: none;">
+            <%= entry.work_package.type %>: <%= entry.work_package.subject %>
+          </a><br>
+          <span style="color: #878787;">
+            <%= entry.work_package.project %>
+            <% if entry.work_package.assigned_to %>
+              &middot; <%= entry.work_package.assigned_to %>
+            <% end %>
+            &middot; <%= entry.work_package.status %>
+          </span>
+        </td>
+        <%= placeholder_cell("12px", vertical: true) %>
+      </tr>
+      <tr>
+        <%= placeholder_cell("12px", vertical: false) %>
+      </tr>
+    <% end %>
+  <% end %>
+  <table>
+    <tr>
+      <%= placeholder_cell("24px", vertical: false) %>
+    </tr>
+  </table>
+<% end %>

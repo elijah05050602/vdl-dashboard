@@ -1,0 +1,26 @@
+<%= render layout: "mailer/spacer_table" do %>
+  <%= render partial: "mailer/mailer_header",
+             locals: {
+               summary: t("law_firm.deadline_digest.summary", days: Setting.deadline_digest_days_ahead.to_i),
+               user: @user,
+               button_href: work_packages_url,
+               button_text: t("law_firm.deadline_digest.open_dashboard")
+             } %>
+
+  <%= render partial: "law_firm/deadline_mailer/section",
+             locals: { title: t("law_firm.deadline_digest.reminders"), entries: @digest.reminders, highlight: true } %>
+  <%= render partial: "law_firm/deadline_mailer/section",
+             locals: { title: t("law_firm.deadline_digest.overdue"), entries: @digest.overdue, highlight: true } %>
+  <%= render partial: "law_firm/deadline_mailer/section",
+             locals: {
+               title: t("law_firm.deadline_digest.upcoming", days: Setting.deadline_digest_days_ahead.to_i),
+               entries: @digest.upcoming,
+               highlight: false
+             } %>
+
+  <%= render partial: "mailer/notification_settings_table",
+             locals: {
+               button_url: my_notifications_url(tab: "reminders"),
+               button_text: I18n.t(:"mail.notification.settings")
+             } %>
+<% end %>

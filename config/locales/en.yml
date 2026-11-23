@@ -5033,6 +5033,25 @@ en:
   label_yesterday: "yesterday"
   label_zen_mode: "Zen mode"
 
+  law_firm:
+    deadline_digest:
+      days_left:
+        one: "Due tomorrow"
+        other: "In %{count} days"
+        zero: "Due today"
+      days_overdue:
+        one: "1 day overdue"
+        other: "%{count} days overdue"
+      open_dashboard: "Open the dashboard"
+      overdue: "Overdue in your matters"
+      reminders: "Your deadlines that need attention"
+      subject:
+        one: "%{app_title} - 1 deadline needs your attention"
+        other: "%{app_title} - %{count} deadlines need your attention"
+        zero: "%{app_title} - Upcoming deadlines"
+      summary: "Here are the court deadlines and hearings for the next %{days} days."
+      upcoming: "Coming up in the next %{days} days"
+
   ldap_auth_sources:
     attribute_texts:
       admin_map_html: "Optional: The attribute key in LDAP that <strong>if present</strong> marks the OpenProject user an admin. Leave empty when in doubt."
