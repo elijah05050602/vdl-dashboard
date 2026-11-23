@@ -41,8 +41,10 @@ See COPYRIGHT and LICENSE files for more details.
 <% if @missing_details.any? %>
   <%=
     render(Primer::Alpha::Banner.new(scheme: :warning, icon: :alert, mb: 3)) do
-      t("law_firm_invoices.not_ready",
-        fields: @missing_details.map { |key| t("law_firm_invoices.settings.#{key}") }.to_sentence)
+      t(
+        "law_firm_invoices.not_ready",
+        fields: @missing_details.map { |key| t("law_firm_invoices.settings.#{key}") }.to_sentence
+      )
     end
   %>
 <% end %>
@@ -60,11 +62,13 @@ See COPYRIGHT and LICENSE files for more details.
     render(Primer::Beta::Text.new(tag: :p, color: :muted)) do
       hours = @statement.time_entries.sum { |entry| entry.hours.to_d }
       amount = @statement.lines.sum(0.to_d) { |line| line[:amount] }
-      t("law_firm_invoices.preview_summary",
+      summary = t(
+        "law_firm_invoices.preview_summary",
         time: number_with_precision(hours, precision: 2, strip_insignificant_zeros: true),
         entries: @statement.time_entries.size + @statement.cost_entries.size,
-        amount: "₱ #{number_with_precision(amount, precision: 2, delimiter: ',')}") + " " +
-        t("law_firm_invoices.already_billed_hint")
+        amount: "₱ #{number_with_precision(amount, precision: 2, delimiter: ',')}"
+      )
+      "#{summary} #{t('law_firm_invoices.already_billed_hint')}"
     end
   %>
   <% if @statement.unpriced_entry_count.positive? %>
@@ -133,8 +137,10 @@ See COPYRIGHT and LICENSE files for more details.
       <div class="form--field-container">
         <div class="form--select-container">
           <%= f.select :ewt_rate,
-                       options_for_select(@ewt_rates.map { |rate| ["#{(rate * 100).to_i}%", rate.to_s("F")] },
-                                          @invoice_request.ewt_rate&.to_d&.to_s("F")),
+                       options_for_select(
+                         @ewt_rates.map { |rate| ["#{(rate * 100).to_i}%", rate.to_s("F")] },
+                         @invoice_request.ewt_rate&.to_d&.to_s("F")
+                       ),
                        {},
                        class: "form--select" %>
         </div>
@@ -150,7 +156,9 @@ See COPYRIGHT and LICENSE files for more details.
                formtarget: "_blank",
                class: "button" %>
   <% if @missing_details.empty? %>
-    <%= f.button t("law_firm_invoices.button_issue"), type: :submit, class: "button -primary",
+    <%= f.button t("law_firm_invoices.button_issue"),
+                 type: :submit,
+                 class: "button -primary",
                  data: { test_selector: "invoice-issue-button" } %>
   <% end %>
 <% end %>

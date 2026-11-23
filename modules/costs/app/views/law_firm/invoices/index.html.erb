@@ -68,7 +68,7 @@ See COPYRIGHT and LICENSE files for more details.
         <thead>
           <tr>
             <% %i[number issued_on client_name period total_amount amount_due status].each do |attribute| %>
-              <th class="<%= 'currency' if %i[total_amount amount_due].include?(attribute) %>">
+              <th class="<%= "currency" if %i[total_amount amount_due].include?(attribute) %>">
                 <div class="generic-table--sort-header-outer">
                   <div class="generic-table--sort-header">
                     <span><%= LawFirm::Invoices::Request.human_attribute_name(attribute) %></span>
@@ -92,10 +92,12 @@ See COPYRIGHT and LICENSE files for more details.
                 <% if invoice.cancelled? %>
                   <%= render(Primer::Beta::Label.new(scheme: :danger)) { t("law_firm_invoices.cancelled") } %>
                   <div class="color-fg-muted">
-                    <%= t("law_firm_invoices.cancelled_on",
+                    <%= t(
+                          "law_firm_invoices.cancelled_on",
                           date: format_date(invoice.cancelled_at.to_date),
                           name: invoice.cancelled_by&.name,
-                          reason: invoice.cancellation_reason) %>
+                          reason: invoice.cancellation_reason
+                        ) %>
                   </div>
                 <% end %>
               </td>
