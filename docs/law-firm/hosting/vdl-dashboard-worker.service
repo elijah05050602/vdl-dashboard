@@ -1,0 +1,15 @@
+# /etc/systemd/system/vdl-dashboard-worker.service
+[Unit]
+Description=VDL Dashboard background jobs (emails, deadline digest)
+After=network.target postgresql.service
+
+[Service]
+User=vdl
+WorkingDirectory=/opt/vdl-dashboard
+EnvironmentFile=/etc/vdl-dashboard.env
+Environment=PATH=/home/vdl/.rbenv/shims:/home/vdl/.rbenv/bin:/usr/local/bin:/usr/bin:/bin
+ExecStart=/opt/vdl-dashboard/packaging/scripts/worker
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

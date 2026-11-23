@@ -1,0 +1,2 @@
+# /etc/cron.d/vdl-backup : every night at 1:30 AM. The server's clock is set to Asia/Manila (HOSTING.md section 4).
+30 1 * * * root /usr/local/sbin/vdl-backup >> /var/log/vdl-backup.log 2>&1
