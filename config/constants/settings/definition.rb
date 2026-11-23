@@ -83,10 +83,15 @@ module Settings
         default: false
       },
       app_title: {
-        default: "OpenProject"
+        default: "OpenProject",
+        default_by_env: { development: "VDL Dashboard", production: "VDL Dashboard" }
       },
       organization_name: {
-        default: "My Organization"
+        default: "My Organization",
+        default_by_env: {
+          development: "Law Offices of Villanueva, Dorin & Lozano",
+          production: "Law Offices of Villanueva, Dorin & Lozano"
+        }
       },
       attachment_default_charset: {
         description: "Fallback charset used when serving text attachments whose encoding was not detected on upload",
