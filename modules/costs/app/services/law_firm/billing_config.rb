@@ -101,6 +101,14 @@ module LawFirm
       @data = data.deep_stringify_keys
     end
 
+    def vat_rate
+      decimal("vat_rate")
+    end
+
+    def ewt_rate
+      decimal("ewt_rate")
+    end
+
     def default_project_modules
       Array(@data["default_project_modules"]).map(&:to_s)
     end
@@ -143,6 +151,12 @@ module LawFirm
         .select { |role| wanted.include?(role[:name].downcase) && role[:hourly_rate].present? }
         .map { |role| BigDecimal(role[:hourly_rate].to_s) }
         .max
+    end
+
+    private
+
+    def decimal(key)
+      BigDecimal(@data[key].to_s) if @data[key].present?
     end
   end
 end
