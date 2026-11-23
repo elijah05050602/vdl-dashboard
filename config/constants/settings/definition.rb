@@ -366,6 +366,7 @@ module Settings
       date_format: {
         format: :string,
         default: nil,
+        default_by_env: { development: "%b %d, %Y", production: "%b %d, %Y" },
         allowed: [
           "%Y-%m-%d",
           "%d/%m/%Y",
@@ -1229,6 +1230,7 @@ module Settings
       },
       self_registration: {
         default: 2,
+        default_by_env: { development: 0, production: 0 },
         format: :integer
       },
       sendmail_arguments: {
@@ -1254,10 +1256,12 @@ module Settings
         default: "_open_project_session"
       },
       session_ttl_enabled: {
-        default: false
+        default: false,
+        default_by_env: { development: true, production: true }
       },
       session_ttl: {
-        default: 120
+        default: 120,
+        default_by_env: { development: 60, production: 60 }
       },
       show_community_links: {
         description: "Enable or disable links to OpenProject community instances",
@@ -1436,6 +1440,7 @@ module Settings
       time_format: {
         format: :string,
         default: nil,
+        default_by_env: { development: "%I:%M %p", production: "%I:%M %p" },
         allowed: [
           "%H:%M",
           "%I:%M %p"
@@ -1443,6 +1448,7 @@ module Settings
       },
       user_default_timezone: {
         default: nil,
+        default_by_env: { development: "Asia/Manila", production: "Asia/Manila" },
         format: :string,
         allowed: ActiveSupport::TimeZone.all.map { |tz| tz.tzinfo.canonical_identifier }.sort.uniq + [nil]
       },

@@ -43,6 +43,7 @@ module BasicData
         color_id: color_id(type_data["color_name"]),
         is_in_roadmap: true?(type_data["is_in_roadmap"]),
         is_milestone: true?(type_data["is_milestone"]),
+        lag_in_calendar_days: true?(type_data["lag_in_calendar_days"]),
         position: type_data["position"]
       }
     end

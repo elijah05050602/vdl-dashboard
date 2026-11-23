@@ -1,67 +1,98 @@
-# Ready-made matter templates for the Law Firm Dashboard.
+# Ready-made matter templates for the VDL Dashboard, written for Philippine practice.
 #
 # Each entry becomes a template matter, offered when creating a New matter.
 # Dates are relative: the first work package is the anchor milestone, and every
-# other step follows another step with a lag in working days. In a matter created
-# from a template, move the anchor to the real date and the whole plan follows.
+# other step follows another step. In a matter created from a template, move the
+# anchor to the real date and the whole plan follows.
+#
+# Gaps ("lag") are counted two ways:
+#   * Court deadline steps count calendar days, like the Rules of Court (Rule 22, Sec. 1):
+#     lag 15 means the 15th day after the step it follows. If that day is a Saturday,
+#     Sunday or holiday, the deadline moves to the next working day.
+#   * Every other step counts working days. These are planning estimates only.
 #
 # Work package keys:
-#   reference  name other steps can follow (unique within the template)
-#   type       work package type reference
-#   status     optional, defaults to New (Intake for Contract review)
-#   duration   working days, defaults to 1 (milestones are always 1)
-#   after      reference of the step this one follows, defaults to the anchor
-#   lag        working days between the two steps, defaults to 0
-#   children   steps grouped under a summary task; the summary has no dates of its own
+#   reference    name other steps can follow (unique within the template)
+#   type         work package type reference
+#   status       optional, defaults to New (Intake for Contract review)
+#   duration     working days, defaults to 1 (milestones are always 1)
+#   after        reference of the step this one follows, defaults to the anchor
+#   lag          gap after that step (calendar days for Court deadlines, otherwise working days)
+#   description  optional; Court deadlines cite the rule that sets the period
+#   children     steps grouped under a summary task; the summary has no dates of its own
+#
+# retired_templates lists earlier templates that seeding archives, so they stop
+# appearing in the New matter template list.
+retired_templates:
+  - template-civil-litigation
+  - template-contract-review
+  - template-estate-planning
+  - template-real-estate-closing
+  - template-employment-dispute
+
 matter_templates:
-  civil-litigation:
-    name: "Template: Civil litigation"
-    identifier: template-civil-litigation
+  civil-case-rtc:
+    name: "Template: Civil case (RTC)"
+    identifier: template-ph-civil-case-rtc
     description: |
-      Standard plan for a civil lawsuit from intake to trial. Deadlines use common US federal defaults; confirm them against the court's rules and the scheduling order.
+      Ordinary civil action before the Regional Trial Court under the 2019 Amended Rules of Civil Procedure, from intake and barangay conciliation through pre-trial, trial, judgment and appeal.
+
+      Court deadlines count calendar days from the step they follow, and move to the next working day when they land on a weekend or holiday (Rule 22, Sec. 1). They are reminders, not legal advice: confirm every period against the current rules, the court's orders and the actual date of receipt.
     wiki:
       - title: Intake checklist
         content: |
-          # Civil litigation intake checklist
+          # Civil case intake checklist
 
           Complete before the engagement letter goes out.
 
           **Parties and conflicts**
 
-          - [ ] Full legal names of the client, opposing parties and related entities
-          - [ ] Opposing counsel, insurers and key witnesses
-          - [ ] Conflict check run and cleared (record the result on the Conflict check work package)
+          - [ ] Full names and addresses of the client, adverse parties and related persons or companies
+          - [ ] Adverse counsel and key witnesses
+          - [ ] Conflict check run and cleared (record the result on the conflict check work package)
 
-          **Claim**
+          **Cause of action**
 
-          - [ ] Short statement of what happened, with dates
-          - [ ] Date the claim arose and the limitation period that applies
-          - [ ] Court and venue, and whether an arbitration clause applies
-          - [ ] Relief the client wants and their budget
+          - [ ] Short statement of facts, with dates
+          - [ ] When the cause of action accrued and the prescriptive period that applies (Civil Code, Arts. 1139 to 1155: for example 10 years on a written contract, 6 years on an oral contract, 4 years for quasi-delicts)
+          - [ ] Whether a prior written demand was made (Civil Code, Art. 1169)
+          - [ ] Whether barangay conciliation is required (Local Government Code, Secs. 408 to 412: parties are natural persons living in the same city or municipality, or adjoining barangays)
+          - [ ] Venue (Rule 4) and RTC jurisdiction by amount or nature of the claim (B.P. Blg. 129, as amended by R.A. 11576)
+          - [ ] Arbitration clause, if any (R.A. 9285)
+          - [ ] Relief sought and the client's budget
 
           **Documents**
 
-          - [ ] Contracts, correspondence, photos and any prior filings
-          - [ ] Litigation hold explained to the client
-          - [ ] Insurance policies that might cover the claim
+          - [ ] Contracts, receipts, letters, photos and prior filings
+          - [ ] Actionable documents to attach to the complaint (Rule 8, Sec. 7)
+          - [ ] Names of witnesses and a summary of what each will say (Rule 7, Sec. 6)
 
           **Engagement**
 
-          - [ ] Fee arrangement agreed (hourly, contingency, flat)
-          - [ ] Retainer received
+          - [ ] Acceptance fee, appearance fee and other fees agreed
           - [ ] Engagement letter signed
       - title: Key deadlines
         content: |
           # Key deadlines
 
-          The work packages in this matter carry default gaps between steps. Check each one against the court's local rules and any scheduling order, then adjust the dates.
+          Court deadlines in this matter count calendar days from the event they follow. When the last day is a Saturday, Sunday or holiday, the deadline moves to the next working day (Rule 22, Sec. 1). Always count from the actual date of receipt, and follow any period the court sets in its orders.
 
-          | Step | Default | Common source |
+          | Step | Period | Rule |
           | --- | --- | --- |
-          | Answer to complaint | 21 days after service | FRCP 12(a) |
-          | Initial disclosures | 14 days after the Rule 26(f) conference | FRCP 26(a)(1) |
-          | Discovery responses | 30 days after service | FRCP 33, 34, 36 |
-          | Summary judgment | 30 days after discovery closes | FRCP 56(b) |
+          | Answer to the complaint | 30 calendar days from service of summons | Rule 11, Sec. 1 |
+          | Reply (only to new matters or an actionable document in the answer) | 15 calendar days from service of the answer | Rule 11, Sec. 6; Rule 6, Sec. 10 |
+          | Opposition to a motion | 5 calendar days from receipt of the motion | Rule 15, Sec. 5 |
+          | Motion to set pre-trial | 5 calendar days after the last responsive pleading | Rule 18, Sec. 1 |
+          | Pre-trial brief | at least 3 calendar days before pre-trial | Rule 18, Sec. 6 |
+          | Judicial affidavits | at least 5 days before pre-trial | A.M. No. 12-8-8-SC, Sec. 2 |
+          | Decision | within 90 days from submission for decision | Constitution, Art. VIII, Sec. 15 |
+          | Motion for reconsideration or new trial | 15 days from notice of judgment | Rule 37, Sec. 1; Rule 41, Sec. 3 |
+          | Notice of appeal | 15 days from notice of judgment, or a fresh 15 days from notice of denial of the motion for reconsideration | Rule 41, Sec. 3; Neypes v. CA, G.R. No. 141524 |
+          | Petition for certiorari | 60 days from notice of judgment or of denial of the motion for reconsideration | Rule 65, Sec. 4 |
+          | Petition for review on certiorari to the Supreme Court | 15 days from notice | Rule 45, Sec. 2 |
+          | Motion for execution | 5 years from entry of judgment | Rule 39, Sec. 6 |
+
+          Verify these against the current Rules of Court and Supreme Court issuances before relying on them.
     work_packages:
       - reference: opened
         subject: Matter opened
@@ -72,130 +103,1042 @@ matter_templates:
           - reference: conflict_check
             subject: Run conflict check
             type: :default_type_task
-            duration: 1
           - reference: engagement
-            subject: Send engagement letter and collect retainer
+            subject: Send engagement letter and collect acceptance fee
             type: :legal_type_client_communication
             after: conflict_check
             duration: 3
-          - reference: hold_letter
-            subject: Send litigation hold letter to client
-            type: :legal_type_client_communication
-            after: engagement
-            duration: 1
           - reference: collect_documents
-            subject: Collect and index client documents
+            subject: Collect and index client documents and witness list
             type: :legal_type_document_review
             after: engagement
             duration: 10
+          - reference: prescription
+            subject: Check prescriptive period, jurisdiction and venue
+            type: :legal_type_legal_research
+            after: engagement
+            duration: 3
+            description: |
+              Civil Code, Arts. 1139 to 1155 for prescriptive periods; Rule 4 for venue; B.P. Blg. 129, as amended by R.A. 11576, for jurisdiction.
+      - subject: Pre-filing
+        type: :default_type_summary_task
+        children:
+          - reference: demand
+            subject: Send demand letter
+            type: :legal_type_client_communication
+            after: prescription
+          - reference: demand_lapses
+            subject: Demand period lapses
+            type: :legal_type_court_deadline
+            after: demand
+            lag: 15
+            description: |
+              Use the period stated in the demand letter. 15 days is a common choice, not a rule.
+          - reference: barangay
+            subject: Barangay conciliation (Katarungang Pambarangay), if required
+            type: :default_type_task
+            after: demand_lapses
+            duration: 20
+            description: |
+              Required before filing when the Local Government Code, Secs. 408 to 412 applies. Mediation by the Punong Barangay runs 15 days, then the Pangkat 15 days, extendable by another 15 (Sec. 410). Prescription is suspended while the dispute is pending, for up to 60 days (Sec. 410(c)).
+          - reference: certificate_to_file
+            subject: Certificate to File Action issued
+            type: :default_type_milestone
+            after: barangay
       - subject: Pleadings
         type: :default_type_summary_task
         children:
-          - reference: claims_research
-            subject: Research claims, defenses and limitation periods
-            type: :legal_type_legal_research
-            after: engagement
-            duration: 5
-          - reference: draft_pleading
-            subject: Draft complaint or answer
+          - reference: draft_complaint
+            subject: Draft complaint with judicial affidavits and documentary evidence
             type: :legal_type_filing
-            after: claims_research
+            after: certificate_to_file
             duration: 5
-          - reference: file_pleading
-            subject: File and serve pleading
+            description: |
+              Attach the verification and certification against forum shopping (Rule 7, Secs. 4 and 5), and state the witnesses, a summary of their testimony and the documentary evidence (Rule 7, Sec. 6).
+          - reference: file_complaint
+            subject: File complaint and pay docket fees
             type: :legal_type_filing
-            after: draft_pleading
-            duration: 1
-          - reference: response_due
-            subject: Responsive pleading due
-            type: :legal_type_court_deadline
-            after: file_pleading
-            lag: 15
-      - subject: Discovery
-        type: :default_type_summary_task
-        children:
-          - reference: rule_26f
-            subject: Rule 26(f) conference with opposing counsel
-            type: :default_type_task
-            after: response_due
+            after: draft_complaint
+          - reference: summons_served
+            subject: Summons served on defendant
+            type: :default_type_milestone
+            after: file_complaint
             lag: 10
-          - reference: initial_disclosures
-            subject: Initial disclosures due
+            description: |
+              The court issues summons within 5 calendar days of the filing and payment of fees (Rule 14, Sec. 1). Move this milestone to the actual date of service.
+          - reference: answer_due
+            subject: Answer due
             type: :legal_type_court_deadline
-            after: rule_26f
-            lag: 10
-          - reference: written_discovery
-            subject: Serve interrogatories, document requests and admissions
-            type: :legal_type_filing
-            after: rule_26f
-            duration: 5
-          - reference: production
-            subject: Review and produce documents
-            type: :legal_type_document_review
-            after: written_discovery
-            duration: 20
-          - reference: depositions
-            subject: Take and defend depositions
-            type: :default_type_task
-            after: production
-            duration: 15
-          - reference: discovery_cutoff
-            subject: Discovery closes
-            type: :legal_type_court_deadline
-            after: depositions
-      - subject: Motions and trial
-        type: :default_type_summary_task
-        children:
-          - reference: sj_research
-            subject: Research summary judgment issues
-            type: :legal_type_legal_research
-            after: production
-            duration: 5
-          - reference: sj_deadline
-            subject: Summary judgment motions due
-            type: :legal_type_court_deadline
-            after: discovery_cutoff
-            lag: 20
-          - reference: mediation
-            subject: Mediation or settlement conference
-            type: :legal_type_hearing
-            after: discovery_cutoff
-            lag: 10
-          - reference: pretrial
-            subject: Final pretrial conference
-            type: :legal_type_hearing
-            after: sj_deadline
+            after: summons_served
             lag: 30
-          - reference: trial
-            subject: Trial
-            type: :legal_type_hearing
-            after: pretrial
+            description: |
+              30 calendar days from service of summons (Rule 11, Sec. 1). 60 days for a foreign private juridical entity served through the appropriate government office (Rule 11, Sec. 2). One extension of up to 30 days may be allowed on motion (Rule 11, Sec. 11).
+          - reference: reply_due
+            subject: Reply due, if the answer pleads an actionable document
+            type: :legal_type_court_deadline
+            after: answer_due
             lag: 15
-      - subject: Close file, send final bill and return client documents
+            description: |
+              15 calendar days from service of the answer (Rule 11, Sec. 6). A reply is allowed only when the answer is based on an actionable document (Rule 6, Sec. 10).
+      - subject: Pre-trial and court-annexed mediation
+        type: :default_type_summary_task
+        children:
+          - reference: motion_pretrial
+            subject: Move ex parte to set the case for pre-trial
+            type: :legal_type_court_deadline
+            after: reply_due
+            lag: 5
+            description: |
+              Within 5 calendar days after the last responsive pleading is served and filed (Rule 18, Sec. 1).
+          - reference: pretrial_brief
+            subject: File pre-trial brief and judicial affidavits
+            type: :legal_type_filing
+            after: motion_pretrial
+            lag: 15
+            description: |
+              Pre-trial brief at least 3 calendar days before pre-trial (Rule 18, Sec. 6). Judicial affidavits at least 5 days before pre-trial (Judicial Affidavit Rule, A.M. No. 12-8-8-SC, Sec. 2). Set this from the pre-trial date in the notice.
+          - reference: pretrial
+            subject: Pre-trial
+            type: :legal_type_hearing
+            after: pretrial_brief
+            lag: 5
+          - reference: mediation
+            subject: Court-annexed mediation (CAM)
+            type: :default_type_task
+            after: pretrial
+            duration: 22
+            description: |
+              Mandatory after pre-trial. Follow the Supreme Court's current guidelines on court-annexed mediation and judicial dispute resolution for the periods.
+          - reference: jdr
+            subject: Judicial dispute resolution (JDR), if mediation fails
+            type: :legal_type_hearing
+            after: mediation
+      - subject: Trial
+        type: :default_type_summary_task
+        children:
+          - reference: plaintiff_evidence
+            subject: Presentation of plaintiff's evidence
+            type: :legal_type_hearing
+            after: jdr
+            lag: 15
+            description: |
+              Each party's evidence should be presented within 3 months (Rule 30, Sec. 1).
+          - reference: defendant_evidence
+            subject: Presentation of defendant's evidence
+            type: :legal_type_hearing
+            after: plaintiff_evidence
+            lag: 60
+          - reference: formal_offer
+            subject: Formal offer of evidence
+            type: :legal_type_filing
+            after: defendant_evidence
+            description: |
+              Made orally after the presentation of a party's testimonial evidence (Rule 132, Sec. 35).
+          - reference: memoranda
+            subject: Memorandum, if the court requires one
+            type: :legal_type_filing
+            after: formal_offer
+            lag: 10
+            duration: 5
+          - reference: decision
+            subject: Decision expected
+            type: :default_type_milestone
+            after: memoranda
+            lag: 60
+            description: |
+              Trial courts decide within 90 days from submission for decision (Constitution, Art. VIII, Sec. 15). Move this to the date the decision is actually received: the post-judgment deadlines follow it.
+      - subject: Post-judgment
+        type: :default_type_summary_task
+        children:
+          - reference: mr_or_appeal
+            subject: Motion for reconsideration or notice of appeal due
+            type: :legal_type_court_deadline
+            after: decision
+            lag: 15
+            description: |
+              15 days from notice of judgment (Rule 37, Sec. 1; Rule 41, Sec. 3). If a motion for reconsideration is denied, a fresh 15-day period to appeal runs from notice of the denial (Neypes v. Court of Appeals, G.R. No. 141524). A record on appeal, where required, is due in 30 days.
+          - reference: certiorari
+            subject: Petition for certiorari due, if grave abuse of discretion
+            type: :legal_type_court_deadline
+            after: decision
+            lag: 60
+            description: |
+              60 days from notice of the judgment or of the denial of the motion for reconsideration (Rule 65, Sec. 4). Delete this step if it does not apply.
+          - reference: execution
+            subject: Entry of judgment and motion for execution
+            type: :legal_type_filing
+            after: mr_or_appeal
+            lag: 10
+            description: |
+              Execution by motion within 5 years from entry of judgment (Rule 39, Sec. 6).
+      - subject: Close file, send final billing and return client documents
         type: :default_type_task
-        after: trial
+        after: execution
         lag: 10
         duration: 3
 
+  nullity-annulment:
+    name: "Template: Nullity or annulment of marriage"
+    identifier: template-ph-nullity-annulment
+    description: |
+      Petition for declaration of absolute nullity of a void marriage or annulment of a voidable marriage before the Family Court, under A.M. No. 02-11-10-SC and the Family Code.
+
+      Court deadlines count calendar days and move to the next working day when they land on a weekend or holiday (Rule 22, Sec. 1). Confirm every period against the current rules, the court's orders and the actual date of receipt.
+    wiki:
+      - title: Intake checklist
+        content: |
+          # Nullity or annulment intake checklist
+
+          **Ground and timing**
+
+          - [ ] Ground: void marriage (Family Code, Arts. 35, 36, 37, 38, 53) or voidable marriage (Art. 45)
+          - [ ] For Art. 36 psychological incapacity, note the facts showing incapacity that existed at the time of the marriage (Tan-Andal v. Andal, G.R. No. 196359)
+          - [ ] For annulment, check the period to file under Art. 47 (for example 5 years from discovery of fraud)
+          - [ ] Venue: Family Court where the petitioner or respondent has resided for at least 6 months before filing (A.M. No. 02-11-10-SC, Sec. 4)
+
+          **Documents (PSA copies)**
+
+          - [ ] Marriage certificate
+          - [ ] Birth certificates of the parties and of each child
+          - [ ] CENOMAR or advisory on marriages, if a prior marriage is involved
+          - [ ] List of properties of the spouses, with titles and tax declarations
+
+          **Children and property**
+
+          - [ ] Custody, support and visitation the client wants
+          - [ ] Property regime and proposed liquidation and partition
+
+          **Engagement**
+
+          - [ ] Conflict check on the respondent
+          - [ ] Fees agreed, including the psychologist's fee if one is engaged
+          - [ ] Engagement letter signed
+      - title: Key deadlines
+        content: |
+          # Key deadlines
+
+          | Step | Period | Rule |
+          | --- | --- | --- |
+          | Serve the petition on the OSG and the public prosecutor, and file proof | within 5 days from filing | A.M. No. 02-11-10-SC, Sec. 5(4) |
+          | Respondent's answer | 15 days from service of summons, or 30 days from last publication | Sec. 8(1) |
+          | Public prosecutor's report on collusion | within one month from receipt of the court's order | Sec. 9(1) |
+          | Pre-trial brief | at least 3 days before pre-trial | Sec. 12 |
+          | Motion for reconsideration or new trial (required before appeal) | 15 days from notice of judgment | Sec. 20(1) |
+          | Notice of appeal | 15 days from notice of denial of the motion | Sec. 20(2) |
+
+          Verify these against the current rules and the court's orders before relying on them.
+    work_packages:
+      - reference: opened
+        subject: Matter opened
+        type: :default_type_milestone
+      - reference: conflict_check
+        subject: Run conflict check on respondent
+        type: :default_type_task
+      - reference: engagement
+        subject: Send engagement letter and collect acceptance fee
+        type: :legal_type_client_communication
+        after: conflict_check
+        duration: 2
+      - reference: ground_assessment
+        subject: Interview client and assess the ground and venue
+        type: :legal_type_legal_research
+        after: engagement
+        duration: 3
+      - reference: psa_documents
+        subject: Collect PSA certificates and property documents
+        type: :legal_type_client_communication
+        status: :legal_status_awaiting_client
+        after: engagement
+        duration: 10
+      - reference: psych_evaluation
+        subject: Psychological evaluation and report, if engaged
+        type: :default_type_task
+        after: ground_assessment
+        duration: 20
+        description: |
+          Expert opinion is not required for psychological incapacity, but it is commonly offered (Tan-Andal v. Andal, G.R. No. 196359).
+      - reference: draft_petition
+        subject: Draft verified petition
+        type: :legal_type_filing
+        after: psych_evaluation
+        duration: 5
+      - reference: file_petition
+        subject: File petition with the Family Court
+        type: :legal_type_filing
+        after: draft_petition
+      - reference: serve_osg
+        subject: Serve petition on OSG and public prosecutor and file proof of service
+        type: :legal_type_court_deadline
+        after: file_petition
+        lag: 5
+        description: |
+          Within 5 days from filing of the petition (A.M. No. 02-11-10-SC, Sec. 5(4)).
+      - reference: summons_served
+        subject: Summons served on respondent
+        type: :default_type_milestone
+        after: file_petition
+        lag: 10
+        description: |
+          Move this to the actual date of service. If summons is by publication, the answer period runs from the last publication.
+      - reference: answer_due
+        subject: Respondent's answer due
+        type: :legal_type_court_deadline
+        after: summons_served
+        lag: 15
+        description: |
+          15 days from service of summons, or 30 days from the last publication (A.M. No. 02-11-10-SC, Sec. 8(1)). Default is not allowed: if there is no answer, the court orders the prosecutor to investigate collusion (Sec. 8(3)).
+      - reference: collusion_report
+        subject: Public prosecutor's report on collusion
+        type: :legal_type_court_deadline
+        after: answer_due
+        lag: 30
+        description: |
+          Within one month from the prosecutor's receipt of the court's order (A.M. No. 02-11-10-SC, Sec. 9(1)).
+      - reference: pretrial_brief
+        subject: File pre-trial brief
+        type: :legal_type_filing
+        after: collusion_report
+        lag: 10
+        description: |
+          At least 3 days before the pre-trial (A.M. No. 02-11-10-SC, Sec. 12). Set it from the date in the notice of pre-trial.
+      - reference: pretrial
+        subject: Pre-trial
+        type: :legal_type_hearing
+        after: pretrial_brief
+        lag: 3
+      - reference: petitioner_evidence
+        subject: Presentation of petitioner's evidence and expert testimony
+        type: :legal_type_hearing
+        after: pretrial
+        lag: 20
+      - reference: decision
+        subject: Decision expected
+        type: :default_type_milestone
+        after: petitioner_evidence
+        lag: 60
+        description: |
+          Move this to the date the decision is received: the post-judgment deadline follows it.
+      - reference: mr_due
+        subject: Motion for reconsideration or new trial due
+        type: :legal_type_court_deadline
+        after: decision
+        lag: 15
+        description: |
+          15 days from notice of judgment. A motion for reconsideration or new trial is required before any appeal (A.M. No. 02-11-10-SC, Sec. 20(1)). The notice of appeal is due 15 days from notice of the denial (Sec. 20(2)).
+      - reference: registration
+        subject: Register entry of judgment with the local civil registrar and the PSA
+        type: :legal_type_filing
+        after: mr_due
+        lag: 15
+        duration: 10
+        description: |
+          A.M. No. 02-11-10-SC, Secs. 19 and 23. Also complete any liquidation, partition and delivery of presumptive legitimes required before the decree (Sec. 21).
+      - reference: decree
+        subject: Decree of nullity or annulment issued
+        type: :default_type_milestone
+        after: registration
+        description: |
+          A.M. No. 02-11-10-SC, Sec. 22.
+      - subject: Deliver annotated PSA marriage certificate and close file
+        type: :legal_type_client_communication
+        after: decree
+        lag: 20
+
+  labor-nlrc:
+    name: "Template: Labor case (NLRC)"
+    identifier: template-ph-labor-nlrc
+    description: |
+      Illegal dismissal or money claims, from SEnA conciliation through the Labor Arbiter, the NLRC and a Rule 65 petition to the Court of Appeals.
+
+      Court deadlines count calendar days and move to the next working day when they land on a weekend or holiday. Labor deadlines are short and strictly applied: confirm every period against the Labor Code, the current NLRC Rules of Procedure and the actual date of receipt.
+    wiki:
+      - title: Intake checklist
+        content: |
+          # Labor case intake checklist
+
+          **Timing first**
+
+          - [ ] Date of dismissal or of the unpaid claim
+          - [ ] Money claims prescribe in 3 years from accrual (Labor Code, Art. 306)
+          - [ ] Illegal dismissal prescribes in 4 years (Civil Code, Art. 1146)
+
+          **Facts**
+
+          - [ ] Employer's registered name and address, and the client's position, salary and dates of employment
+          - [ ] Notices received (notice to explain, notice of decision) and whether a hearing or conference was held
+          - [ ] Claims: reinstatement, backwages, separation pay, unpaid wages, overtime, holiday pay, 13th month pay, service incentive leave, damages, attorney's fees
+          - [ ] Quitclaim or release signed, and for how much
+
+          **Documents**
+
+          - [ ] Employment contract, ID, payslips, payroll or bank records
+          - [ ] Memos and notices, and messages with management
+          - [ ] SSS, PhilHealth and Pag-IBIG contribution records
+
+          **Engagement**
+
+          - [ ] Conflict check on the employer and its officers
+          - [ ] Fee arrangement agreed (attorney's fees capped at 10% of the recovery, Labor Code, Art. 111)
+          - [ ] Engagement letter signed
+      - title: Key deadlines
+        content: |
+          # Key deadlines
+
+          | Step | Period | Source |
+          | --- | --- | --- |
+          | SEnA conciliation-mediation | 30 calendar days | R.A. 10396 and DOLE rules on SEnA |
+          | Position papers | 10 calendar days from the end of the mandatory conferences, or as the Labor Arbiter directs | NLRC Rules of Procedure, Rule V |
+          | Labor Arbiter's decision | 30 calendar days from submission for decision | NLRC Rules of Procedure, Rule V |
+          | Appeal to the NLRC, with appeal bond for monetary awards | 10 calendar days from receipt of the decision | Labor Code, Art. 229; NLRC Rules of Procedure, Rule VI |
+          | Motion for reconsideration of the NLRC decision | 10 calendar days from receipt | NLRC Rules of Procedure, Rule VII |
+          | Petition for certiorari to the Court of Appeals | 60 days from notice of denial of the motion for reconsideration | Rule 65, Sec. 4; St. Martin Funeral Home v. NLRC, G.R. No. 130866 |
+
+          Verify these against the current Labor Code, NLRC Rules and DOLE issuances before relying on them.
+    work_packages:
+      - reference: opened
+        subject: Matter opened
+        type: :default_type_milestone
+      - reference: conflict_check
+        subject: Run conflict check on employer and officers
+        type: :default_type_task
+      - reference: intake_interview
+        subject: Intake interview and timeline of events
+        type: :legal_type_client_communication
+        after: conflict_check
+      - reference: prescription
+        subject: Confirm claims and prescriptive periods
+        type: :legal_type_legal_research
+        after: intake_interview
+        duration: 2
+        description: |
+          Money claims: 3 years (Labor Code, Art. 306). Illegal dismissal: 4 years (Civil Code, Art. 1146).
+      - reference: collect_records
+        subject: Collect employment contract, payslips, notices and messages
+        type: :legal_type_document_review
+        after: intake_interview
+        duration: 5
+      - reference: sena
+        subject: File SEnA request for assistance with DOLE or the NLRC
+        type: :legal_type_filing
+        after: prescription
+      - reference: sena_period
+        subject: SEnA conciliation-mediation period ends
+        type: :legal_type_court_deadline
+        after: sena
+        lag: 30
+        description: |
+          30 calendar days for conciliation-mediation under the Single Entry Approach (R.A. 10396). If unsettled, the request is referred for a formal complaint.
+      - reference: complaint
+        subject: File complaint with the Labor Arbiter
+        type: :legal_type_filing
+        after: sena_period
+      - reference: conferences
+        subject: Mandatory conciliation and mediation conferences
+        type: :legal_type_hearing
+        after: complaint
+        lag: 10
+      - reference: position_paper
+        subject: Position paper due
+        type: :legal_type_court_deadline
+        after: conferences
+        lag: 10
+        description: |
+          10 calendar days from the end of the mandatory conferences, unless the Labor Arbiter sets another date (NLRC Rules of Procedure, Rule V).
+      - reference: reply
+        subject: Reply to position paper due
+        type: :legal_type_court_deadline
+        after: position_paper
+        lag: 10
+        description: |
+          As directed by the Labor Arbiter (NLRC Rules of Procedure, Rule V).
+      - reference: la_decision
+        subject: Labor Arbiter's decision expected
+        type: :default_type_milestone
+        after: reply
+        lag: 20
+        description: |
+          Move this to the date the decision is received: the appeal deadline follows it.
+      - reference: nlrc_appeal
+        subject: Memorandum of appeal to the NLRC due
+        type: :legal_type_court_deadline
+        after: la_decision
+        lag: 10
+        description: |
+          10 calendar days from receipt of the decision (Labor Code, Art. 229; NLRC Rules of Procedure, Rule VI). An employer appealing a monetary award must post a cash or surety bond in the same amount within the same period. The period is not extendable.
+      - reference: nlrc_decision
+        subject: NLRC decision expected
+        type: :default_type_milestone
+        after: nlrc_appeal
+        lag: 40
+      - reference: nlrc_mr
+        subject: Motion for reconsideration of NLRC decision due
+        type: :legal_type_court_deadline
+        after: nlrc_decision
+        lag: 10
+        description: |
+          10 calendar days from receipt of the NLRC decision (NLRC Rules of Procedure, Rule VII). Required before a petition for certiorari.
+      - reference: nlrc_mr_denied
+        subject: Resolution on motion for reconsideration received
+        type: :default_type_milestone
+        after: nlrc_mr
+        lag: 30
+      - reference: certiorari
+        subject: Rule 65 petition to the Court of Appeals due
+        type: :legal_type_court_deadline
+        after: nlrc_mr_denied
+        lag: 60
+        description: |
+          60 days from notice of the denial of the motion for reconsideration (Rule 65, Sec. 4; St. Martin Funeral Home v. NLRC, G.R. No. 130866).
+      - subject: Execution of award, or close file
+        type: :default_type_task
+        after: certiorari
+        duration: 5
+
+  criminal-complaint:
+    name: "Template: Criminal complaint (preliminary investigation)"
+    identifier: template-ph-criminal-complaint
+    description: |
+      Criminal complaint before the Office of the City or Provincial Prosecutor, from case build-up through preliminary investigation, resolution and review by the Department of Justice. Works for the complainant or the respondent: delete the steps that do not apply.
+
+      Court deadlines count calendar days and move to the next working day when they land on a weekend or holiday. The DOJ-National Prosecution Service rules on preliminary investigation may set different periods than Rule 112: confirm every period against the current rules and the subpoena.
+    wiki:
+      - title: Intake checklist
+        content: |
+          # Criminal complaint intake checklist
+
+          - [ ] Offense, with the law and article or section violated
+          - [ ] Date and place of commission (sets the venue and the prescriptive period: Revised Penal Code, Art. 90; Act No. 3326 for special laws)
+          - [ ] Whether barangay conciliation is required first (Local Government Code, Sec. 408: offenses punishable by imprisonment of up to 1 year or a fine of up to P5,000, between residents of the same city or municipality)
+          - [ ] Complainant's and witnesses' names and contact details
+          - [ ] Documents, photos, screenshots, medical or police reports
+          - [ ] Respondent's name and address (for the conflict check and the subpoena)
+          - [ ] Whether the respondent was arrested without a warrant (inquest, not preliminary investigation)
+          - [ ] Fees agreed and engagement letter signed
+      - title: Key deadlines
+        content: |
+          # Key deadlines
+
+          | Step | Period | Source |
+          | --- | --- | --- |
+          | Counter-affidavit | 10 days from receipt of the subpoena | Rule 112, Sec. 3(b) |
+          | Resolution of the investigating prosecutor | 10 days after the investigation ends | Rule 112, Sec. 3(f) |
+          | Motion for reconsideration of the resolution | 15 days from receipt | DOJ rules on preliminary investigation |
+          | Petition for review to the Secretary of Justice | 15 days from receipt of the resolution or of the denial of reconsideration | DOJ rules on appeals (Department Circular No. 70, s. 2000, as amended) |
+
+          The DOJ-NPS rules on preliminary investigation and inquest have been updated in recent years. Check the current rules and the subpoena for the period that applies.
+    work_packages:
+      - reference: opened
+        subject: Matter opened
+        type: :default_type_milestone
+      - reference: conflict_check
+        subject: Run conflict check on complainant and respondent
+        type: :default_type_task
+      - reference: engagement
+        subject: Send engagement letter and collect acceptance fee
+        type: :legal_type_client_communication
+        after: conflict_check
+      - reference: prescription
+        subject: Check offense, venue, prescription and barangay conciliation
+        type: :legal_type_legal_research
+        after: engagement
+        duration: 2
+        description: |
+          Revised Penal Code, Art. 90 and Act No. 3326 for prescription; Local Government Code, Sec. 408 for barangay conciliation.
+      - reference: evidence
+        subject: Gather evidence and witness statements
+        type: :legal_type_document_review
+        after: engagement
+        duration: 10
+      - reference: complaint_affidavit
+        subject: Draft complaint-affidavit and witness affidavits
+        type: :legal_type_filing
+        after: evidence
+        duration: 5
+      - reference: file_complaint
+        subject: File complaint with the Office of the Prosecutor
+        type: :legal_type_filing
+        after: complaint_affidavit
+      - reference: subpoena
+        subject: Subpoena received by respondent
+        type: :default_type_milestone
+        after: file_complaint
+        lag: 10
+        description: |
+          Move this to the actual date of receipt of the subpoena: the counter-affidavit deadline follows it.
+      - reference: counter_affidavit
+        subject: Counter-affidavit due
+        type: :legal_type_court_deadline
+        after: subpoena
+        lag: 10
+        description: |
+          10 days from receipt of the subpoena with the complaint and supporting affidavits (Rules of Criminal Procedure, Rule 112, Sec. 3(b)). Check the subpoena and the current DOJ-NPS rules for the period that applies.
+      - reference: reply_affidavit
+        subject: Reply-affidavit, if allowed
+        type: :legal_type_filing
+        after: counter_affidavit
+        lag: 5
+      - reference: clarificatory
+        subject: Clarificatory hearing, if called
+        type: :legal_type_hearing
+        after: reply_affidavit
+        lag: 5
+      - reference: resolution
+        subject: Prosecutor's resolution received
+        type: :default_type_milestone
+        after: clarificatory
+        lag: 20
+        description: |
+          Move this to the actual date of receipt: the reconsideration and review deadlines follow it.
+      - reference: mr_due
+        subject: Motion for reconsideration due
+        type: :legal_type_court_deadline
+        after: resolution
+        lag: 15
+        description: |
+          15 days from receipt of the resolution under the DOJ rules. Confirm against the current DOJ-NPS rules.
+      - reference: review_due
+        subject: Petition for review to the Secretary of Justice due
+        type: :legal_type_court_deadline
+        after: resolution
+        lag: 15
+        description: |
+          15 days from receipt of the resolution, or of the denial of the motion for reconsideration (DOJ Department Circular No. 70, s. 2000, as amended).
+      - subject: Information filed in court, or complaint dismissed; open a court matter if needed
+        type: :default_type_task
+        after: review_due
+        lag: 10
+
+  sec-incorporation:
+    name: "Template: Corporation registration (SEC)"
+    identifier: template-ph-sec-incorporation
+    description: |
+      Register a stock corporation (or a One Person Corporation) with the Securities and Exchange Commission under the Revised Corporation Code (R.A. 11232), then with the LGU, BIR, SSS, PhilHealth and Pag-IBIG.
+
+      Deadlines here come from agency rules that change often. Confirm each one against the current SEC, BIR and LGU requirements.
+    wiki:
+      - title: Intake checklist
+        content: |
+          # Corporation registration intake checklist
+
+          - [ ] Proposed corporate names, in order of preference
+          - [ ] Primary and secondary purposes
+          - [ ] Principal office address (with proof of right to use the space)
+          - [ ] Incorporators and directors: full names, nationality, address, TIN (Revised Corporation Code, Secs. 10 and 22)
+          - [ ] Authorized capital stock, subscribed and paid-up amounts, par value and classes of shares
+          - [ ] Foreign equity, and whether the activity is on the Foreign Investment Negative List (R.A. 7042, as amended by R.A. 11647)
+          - [ ] Corporate secretary, treasurer, compliance officer and their contact details
+          - [ ] Fiscal year and date of the annual stockholders' meeting
+          - [ ] Fees agreed and engagement letter signed
+      - title: Post-registration compliance
+        content: |
+          # Post-registration compliance
+
+          - [ ] Barangay clearance and mayor's permit (renew every year, usually by January 20)
+          - [ ] BIR registration before starting business (National Internal Revenue Code, Sec. 236): Certificate of Registration, books of accounts, invoices
+          - [ ] SSS, PhilHealth and Pag-IBIG employer registration
+          - [ ] Stock and transfer book and corporate seal, if used
+          - [ ] General Information Sheet every year, after the annual meeting (Revised Corporation Code, Sec. 177)
+          - [ ] Audited financial statements every year, on the SEC's filing schedule
+          - [ ] Beneficial ownership disclosures as the SEC requires
+          - [ ] The corporation must start operations within 5 years of incorporation (Revised Corporation Code, Sec. 21)
+    work_packages:
+      - reference: opened
+        subject: Matter opened
+        type: :default_type_milestone
+      - reference: conflict_check
+        subject: Run conflict check on incorporators
+        type: :default_type_task
+      - reference: intake
+        subject: Intake meeting on structure, capital and officers
+        type: :legal_type_client_communication
+        after: conflict_check
+      - reference: name_reservation
+        subject: Verify and reserve corporate name with the SEC
+        type: :legal_type_filing
+        after: intake
+        duration: 2
+      - reference: draft_aoi
+        subject: Draft articles of incorporation and by-laws
+        type: :legal_type_filing
+        after: name_reservation
+        duration: 5
+        description: |
+          Revised Corporation Code, Secs. 13, 14 and 45.
+      - reference: signatures
+        subject: Client review, signatures and notarization
+        type: :legal_type_client_communication
+        status: :legal_status_awaiting_client
+        after: draft_aoi
+        duration: 3
+      - reference: sec_filing
+        subject: Submit application and pay fees on the SEC online registration system
+        type: :legal_type_filing
+        after: signatures
+      - reference: certificate
+        subject: Certificate of incorporation issued
+        type: :default_type_milestone
+        after: sec_filing
+        lag: 10
+        description: |
+          Move this to the actual date of issue: the GIS deadline follows it.
+      - reference: gis_due
+        subject: First General Information Sheet due
+        type: :legal_type_court_deadline
+        after: certificate
+        lag: 30
+        description: |
+          The SEC requires the first GIS within 30 calendar days of incorporation. Confirm the current period in the SEC's memorandum circulars.
+      - reference: mayors_permit
+        subject: Barangay clearance and mayor's permit
+        type: :default_type_task
+        after: certificate
+        duration: 10
+      - reference: bir
+        subject: BIR registration, books of accounts and invoices
+        type: :default_type_task
+        after: mayors_permit
+        duration: 5
+        description: |
+          Register before starting business (National Internal Revenue Code, Sec. 236).
+      - reference: agencies
+        subject: SSS, PhilHealth and Pag-IBIG employer registration
+        type: :default_type_task
+        after: bir
+        duration: 5
+      - reference: organizational
+        subject: Organizational meeting, stock certificates and stock and transfer book
+        type: :default_type_task
+        after: certificate
+        duration: 3
+      - subject: Docket annual compliance dates and deliver corporate kit
+        type: :legal_type_client_communication
+        after: agencies
+
+  land-title-transfer:
+    name: "Template: Land title transfer (sale)"
+    identifier: template-ph-land-title-transfer
+    description: |
+      Transfer of titled land or a condominium unit after a sale: due diligence, deed of absolute sale, BIR taxes and eCAR, local transfer tax, Registry of Deeds and Assessor's Office.
+
+      Tax deadlines count calendar days and move to the next working day when they land on a weekend or holiday. Confirm each against the current BIR regulations and the local revenue code, since rates and periods change.
+    wiki:
+      - title: Intake checklist
+        content: |
+          # Land title transfer intake checklist
+
+          - [ ] Owner's duplicate copy of the title (TCT or CCT), and a certified true copy from the Registry of Deeds
+          - [ ] Latest tax declaration and real property tax clearance
+          - [ ] Annotations on the title: mortgages, adverse claims, lis pendens, Rule 74 liens
+          - [ ] Seller's civil status and spouse's consent (Family Code, Arts. 96 and 124)
+          - [ ] Seller's and buyer's IDs and TINs, or corporate secretary's certificate and board resolution
+          - [ ] Price, payment terms and who pays which taxes and fees
+          - [ ] Zonal value from the BIR and fair market value from the tax declaration
+          - [ ] Condominium: certificate of management and HOA or condo dues clearance
+          - [ ] Fees agreed and engagement letter signed
+      - title: Taxes and fees
+        content: |
+          # Taxes and fees
+
+          | Item | Usual rate | Due | Source |
+          | --- | --- | --- | --- |
+          | Capital gains tax (BIR Form 1706) | 6% of the higher of the price or the zonal or assessed value | 30 days from notarization of the deed | National Internal Revenue Code, Secs. 24(D) and 27(D)(5) |
+          | Documentary stamp tax (BIR Form 2000-OT) | 1.5% of the same base | within 5 days after the close of the month of notarization | National Internal Revenue Code, Secs. 196 and 200 |
+          | Local transfer tax | up to 0.5% (0.75% in Metro Manila) | 60 days from execution of the deed | Local Government Code, Sec. 135 |
+          | Registration fees | per LRA schedule | on registration | Property Registration Decree (P.D. 1529) |
+
+          Rates and periods change (for example under the TRAIN and Ease of Paying Taxes Acts). Check the current BIR regulations and the city or province's revenue code.
+    work_packages:
+      - reference: opened
+        subject: Matter opened
+        type: :default_type_milestone
+      - reference: conflict_check
+        subject: Run conflict check on buyer and seller
+        type: :default_type_task
+      - reference: due_diligence
+        subject: Due diligence on title, tax declaration and annotations
+        type: :legal_type_document_review
+        after: conflict_check
+        duration: 5
+      - reference: tax_computation
+        subject: Compute taxes from the zonal value and fair market value
+        type: :legal_type_legal_research
+        after: due_diligence
+      - reference: draft_deed
+        subject: Draft deed of absolute sale
+        type: :legal_type_contract_review
+        after: tax_computation
+        duration: 2
+      - reference: notarized
+        subject: Deed of absolute sale signed and notarized
+        type: :default_type_milestone
+        after: draft_deed
+        lag: 3
+        description: |
+          Move this to the date of notarization: the tax deadlines follow it.
+      - reference: dst_due
+        subject: Documentary stamp tax due (BIR Form 2000-OT)
+        type: :legal_type_court_deadline
+        after: notarized
+        lag: 5
+        description: |
+          Due within 5 days after the close of the month the deed was notarized (National Internal Revenue Code, Sec. 200(B)). This step is set 5 days after notarization as an early reminder: move it to the real due date.
+      - reference: cgt_due
+        subject: Capital gains tax due (BIR Form 1706)
+        type: :legal_type_court_deadline
+        after: notarized
+        lag: 30
+        description: |
+          30 days from notarization of the deed (National Internal Revenue Code, Secs. 24(D) and 27(D)(5)). Check the current BIR regulations.
+      - reference: ecar_filing
+        subject: File documents with the BIR revenue district office for the eCAR
+        type: :legal_type_filing
+        after: notarized
+        lag: 5
+      - reference: ecar
+        subject: eCAR released
+        type: :default_type_milestone
+        after: ecar_filing
+        lag: 15
+      - reference: transfer_tax_due
+        subject: Local transfer tax due
+        type: :legal_type_court_deadline
+        after: notarized
+        lag: 60
+        description: |
+          60 days from execution of the deed (Local Government Code, Sec. 135). Pay at the city or provincial treasurer and keep the receipt for the Registry of Deeds.
+      - reference: registry
+        subject: Register the deed and get the new title from the Registry of Deeds
+        type: :legal_type_filing
+        after: ecar
+        duration: 15
+        description: |
+          Present the deed, eCAR, tax receipts and the owner's duplicate title (P.D. 1529, Sec. 57).
+      - reference: assessor
+        subject: Transfer the tax declaration at the Assessor's Office
+        type: :default_type_task
+        after: registry
+        duration: 5
+      - subject: Deliver new title and tax declaration to the client
+        type: :legal_type_client_communication
+        after: assessor
+
+  extrajudicial-settlement:
+    name: "Template: Extrajudicial settlement of estate"
+    identifier: template-ph-extrajudicial-settlement
+    description: |
+      Settlement of an estate without court action under Rule 74, Sec. 1, when there is no will and no outstanding debts: deed, publication, estate tax and eCAR, and transfer of titles to the heirs.
+
+      Tax deadlines count calendar days and move to the next working day when they land on a weekend or holiday. Confirm each against the current BIR regulations and the local revenue code.
+    wiki:
+      - title: Intake checklist
+        content: |
+          # Extrajudicial settlement intake checklist
+
+          **Can it be settled out of court? (Rule 74, Sec. 1)**
+
+          - [ ] The decedent left no will
+          - [ ] The estate has no outstanding debts, or they have been paid
+          - [ ] All heirs are of age, or minors are represented by their judicial or legal representatives
+          - [ ] All heirs agree on the division (otherwise, judicial partition)
+
+          **Documents**
+
+          - [ ] PSA death certificate
+          - [ ] PSA birth and marriage certificates showing each heir's relationship to the decedent
+          - [ ] TINs of the estate and of each heir
+          - [ ] Titles, tax declarations and real property tax clearances
+          - [ ] Bank certificates of balance as of the date of death, shares of stock, vehicles
+
+          **Engagement**
+
+          - [ ] Conflict check on all heirs, and written consent if the firm represents more than one
+          - [ ] Fees agreed and engagement letter signed
+      - title: Key deadlines
+        content: |
+          # Key deadlines
+
+          | Step | Period | Source |
+          | --- | --- | --- |
+          | Estate tax return (BIR Form 1801), 6% of the net estate | 1 year from death, extendable in meritorious cases | National Internal Revenue Code, Secs. 84 and 90 |
+          | Publication of the deed | once a week for 3 consecutive weeks | Rule 74, Sec. 1 |
+          | Local transfer tax | 60 days from the decedent's death or the execution of the deed, as the local code provides | Local Government Code, Sec. 135 |
+          | Claims of excluded heirs or creditors | 2 years after the settlement, annotated on the titles | Rule 74, Sec. 4 |
+
+          Check the current BIR regulations and any estate tax amnesty in force before filing.
+    work_packages:
+      - reference: death
+        subject: Date of death of the decedent
+        type: :default_type_milestone
+        description: |
+          Move this to the actual date of death: the estate tax deadline follows it.
+      - reference: opened
+        subject: Matter opened
+        type: :default_type_milestone
+        after: death
+        lag: 10
+      - reference: conflict_check
+        subject: Run conflict check on all heirs
+        type: :default_type_task
+        after: opened
+      - reference: documents
+        subject: Collect PSA certificates, titles and asset documents
+        type: :legal_type_client_communication
+        status: :legal_status_awaiting_client
+        after: conflict_check
+        duration: 15
+      - reference: eligibility
+        subject: Confirm no will, no debts and heirs' capacity
+        type: :legal_type_legal_research
+        after: documents
+        description: |
+          Rule 74, Sec. 1.
+      - reference: inventory
+        subject: Inventory and valuation of the estate
+        type: :legal_type_document_review
+        after: eligibility
+        duration: 5
+      - reference: draft_deed
+        subject: Draft deed of extrajudicial settlement
+        type: :legal_type_filing
+        after: inventory
+        duration: 3
+      - reference: deed_signed
+        subject: Deed signed by all heirs and notarized
+        type: :default_type_milestone
+        after: draft_deed
+        lag: 5
+      - reference: publication
+        subject: Publish the deed once a week for 3 consecutive weeks
+        type: :default_type_task
+        after: deed_signed
+        duration: 15
+        description: |
+          In a newspaper of general circulation in the province (Rule 74, Sec. 1). Get the affidavit of publication. File a bond if the estate includes personal property.
+      - reference: estate_tax_due
+        subject: Estate tax return and payment due (BIR Form 1801)
+        type: :legal_type_court_deadline
+        after: death
+        lag: 365
+        description: |
+          Within 1 year from the date of death (National Internal Revenue Code, Sec. 90(B)). The Commissioner may extend payment in meritorious cases. Check whether an estate tax amnesty applies.
+      - reference: ecar
+        subject: Estate eCAR released by the BIR
+        type: :default_type_milestone
+        after: publication
+        lag: 20
+      - reference: transfer_tax_due
+        subject: Local transfer tax due
+        type: :legal_type_court_deadline
+        after: deed_signed
+        lag: 60
+        description: |
+          60 days from execution of the deed or from death, as the local revenue code provides (Local Government Code, Sec. 135). Ask the treasurer's office which date it counts from.
+      - reference: registry
+        subject: Register the deed and transfer titles at the Registry of Deeds
+        type: :legal_type_filing
+        after: ecar
+        duration: 15
+        description: |
+          The new titles carry a 2-year annotation for claims under Rule 74, Sec. 4.
+      - reference: assessor
+        subject: Transfer tax declarations at the Assessor's Office
+        type: :default_type_task
+        after: registry
+        duration: 5
+      - reference: deliver
+        subject: Deliver titles and documents to the heirs
+        type: :legal_type_client_communication
+        after: assessor
+      - subject: Rule 74 two-year annotation period ends
+        type: :legal_type_court_deadline
+        after: registry
+        lag: 730
+        description: |
+          2 years after the settlement (Rule 74, Sec. 4). The heirs can then ask the Registry of Deeds to cancel the annotation.
+
+  notarial:
+    name: "Template: Notarial work"
+    identifier: template-ph-notarial
+    description: |
+      A notarial request, from checking the commission and the document through personal appearance, the notarial register and the monthly report to the Executive Judge, under the 2004 Rules on Notarial Practice (A.M. No. 02-8-13-SC), as amended.
+
+      Confirm against the Supreme Court's current notarial rules, including any rules on electronic or remote notarization.
+    wiki:
+      - title: Notarial checklist
+        content: |
+          # Notarial checklist
+
+          **Before notarizing**
+
+          - [ ] The notary's commission is valid and covers this city or province
+          - [ ] The document is complete, with no blanks, and its purpose is lawful
+          - [ ] The notary is not a party and has no disqualifying interest (Rule IV, Sec. 3)
+
+          **At the appearance**
+
+          - [ ] Every signatory appears in person (Rule II, Secs. 1 and 6; Rule IV, Sec. 2(b))
+          - [ ] Competent evidence of identity: at least one current government ID with photo and signature, or credible witnesses (Rule II, Sec. 12)
+          - [ ] The signatory signs or acknowledges in the notary's presence, freely and knowingly
+          - [ ] Notarial certificate is complete (acknowledgment, jurat or other act)
+
+          **After**
+
+          - [ ] Entry in the notarial register, with the signatory's signature and thumbmark where required (Rule VI)
+          - [ ] Notarial seal and document, page and book numbers on the document
+          - [ ] Copy kept for the notarial records
+          - [ ] Monthly report: certified copy of the month's register entries and copies of the instruments to the Clerk of Court within the first 10 days of the next month (Rule VI, Sec. 2(h))
+          - [ ] Commission renewal: file the petition within 45 days before the commission expires (Rule III, Sec. 13)
+    work_packages:
+      - reference: received
+        subject: Notarial request received
+        type: :default_type_milestone
+      - reference: commission_check
+        subject: Confirm the notary's commission and territorial jurisdiction
+        type: :default_type_task
+      - reference: document_review
+        subject: Review the document for completeness and lawful purpose
+        type: :legal_type_document_review
+        after: commission_check
+      - reference: appearance
+        subject: Personal appearance, identity check and signing
+        type: :legal_type_hearing
+        after: document_review
+        description: |
+          Competent evidence of identity under Rule II, Sec. 12 of the Rules on Notarial Practice.
+      - reference: register
+        subject: Enter in notarial register and affix seal
+        type: :default_type_task
+        after: appearance
+      - reference: release
+        subject: Release notarized document and issue receipt
+        type: :legal_type_client_communication
+        after: register
+      - subject: Monthly notarial report to the Clerk of Court due
+        type: :legal_type_court_deadline
+        after: register
+        lag: 10
+        description: |
+          Within the first 10 days of the month after the notarization (Rules on Notarial Practice, Rule VI, Sec. 2(h)). This step is set 10 days after the entry as a reminder: move it to the 10th of the following month.
+
   contract-review:
     name: "Template: Contract review"
-    identifier: template-contract-review
+    identifier: template-ph-contract-review
     description: |
-      Review, redline and negotiate a commercial contract for a client, through signature and docketing of key dates.
+      Review, redline and negotiate a commercial contract governed by Philippine law, through signing, notarization where needed, and docketing of key dates.
     wiki:
       - title: Intake checklist
         content: |
           # Contract review intake checklist
 
-          - [ ] Client name and the signing entity
+          - [ ] Client name and the signing entity (with SEC registration and board authority if a corporation)
           - [ ] Counterparty name (for the conflict check)
           - [ ] Contract type and which side drafted it
-          - [ ] Deal value and term
+          - [ ] Deal value in pesos and term
           - [ ] Client's must-haves and red lines
           - [ ] Target signing date and who signs
-          - [ ] Governing law and dispute resolution the client prefers
-          - [ ] Related agreements (NDA, master agreement, order forms)
-          - [ ] Fee arrangement agreed (hourly or flat fee)
+          - [ ] Governing law and dispute resolution the client prefers (courts or arbitration under R.A. 9285)
+          - [ ] Related agreements (NDA, master agreement, purchase orders)
+          - [ ] Fees agreed (hourly or fixed) and engagement letter signed
       - title: Review checklist
         content: |
           # Review checklist
@@ -204,15 +1147,16 @@ matter_templates:
 
           - [ ] Parties, recitals and definitions
           - [ ] Scope, deliverables and acceptance
-          - [ ] Price, payment terms and late fees
+          - [ ] Price in pesos, VAT and withholding taxes, payment terms and interest on late payment
           - [ ] Term, renewal and termination rights (note any notice windows)
           - [ ] Warranties and disclaimers
-          - [ ] Indemnities and limitation of liability
-          - [ ] Confidentiality and data protection
-          - [ ] Intellectual property ownership and licenses
+          - [ ] Indemnities, liquidated damages (Civil Code, Arts. 2226 to 2228) and limitation of liability
+          - [ ] Confidentiality and personal data (Data Privacy Act, R.A. 10173)
+          - [ ] Intellectual property ownership and licenses (R.A. 8293)
           - [ ] Assignment and change of control
+          - [ ] Foreign ownership limits, if the counterparty is foreign (Constitution, Art. XII; R.A. 7042, as amended)
           - [ ] Governing law, venue and dispute resolution
-          - [ ] Signature blocks and authority
+          - [ ] Signature blocks, authority, notarization and documentary stamp tax
     work_packages:
       - reference: received
         subject: Contract received from client
@@ -230,7 +1174,7 @@ matter_templates:
         after: intake_call
         duration: 3
       - reference: clause_research
-        subject: Research unusual or high-risk clauses
+        subject: Research unusual or high-risk clauses under Philippine law
         type: :legal_type_legal_research
         after: intake_call
         duration: 2
@@ -259,308 +1203,10 @@ matter_templates:
         after: negotiation
         duration: 2
       - reference: signed
-        subject: Contract signed
+        subject: Contract signed and notarized, if required
         type: :default_type_milestone
         after: final_version
         lag: 2
-      - subject: Docket renewal and termination notice dates
+      - subject: Docket renewal, termination notice and tax filing dates
         type: :default_type_task
         after: signed
-
-  estate-planning:
-    name: "Template: Estate planning"
-    identifier: template-estate-planning
-    description: |
-      Will, revocable trust and incapacity documents for an individual or couple, through signing and trust funding.
-    wiki:
-      - title: Intake checklist
-        content: |
-          # Estate planning intake checklist
-
-          **Family**
-
-          - [ ] Client's full legal name, date of birth and address
-          - [ ] Spouse or partner, and whether this is joint representation (get a joint representation waiver)
-          - [ ] Children, including from prior relationships, and any with special needs
-          - [ ] Prior marriages and any prenuptial agreement
-
-          **Assets**
-
-          - [ ] Real estate, with how title is held
-          - [ ] Bank and brokerage accounts
-          - [ ] Retirement accounts and life insurance, with current beneficiaries
-          - [ ] Business interests
-          - [ ] Digital assets and accounts
-
-          **Wishes**
-
-          - [ ] Guardian for minor children
-          - [ ] Executor and successor trustee
-          - [ ] Agents under the financial power of attorney and healthcare directive
-          - [ ] Specific gifts and charitable gifts
-          - [ ] End-of-life wishes
-
-          **Capacity and engagement**
-
-          - [ ] Meet the client alone at least once
-          - [ ] Note any capacity or undue influence concerns
-          - [ ] Flat fee agreed and engagement letter signed
-      - title: Signing ceremony
-        content: |
-          # Signing ceremony checklist
-
-          - [ ] Two disinterested witnesses booked
-          - [ ] Notary booked
-          - [ ] Final documents printed, unstapled, with signature tabs
-          - [ ] Client brings photo ID
-          - [ ] Self-proving affidavit completed for the will
-          - [ ] Copies made for the client, originals stored in the firm vault or given to the client
-    work_packages:
-      - reference: opened
-        subject: Matter opened
-        type: :default_type_milestone
-      - reference: conflict_check
-        subject: Run conflict check
-        type: :default_type_task
-      - reference: questionnaire_sent
-        subject: Send intake questionnaire and engagement letter
-        type: :legal_type_client_communication
-        after: conflict_check
-      - reference: questionnaire_back
-        subject: Questionnaire and asset documents returned
-        type: :legal_type_client_communication
-        status: :legal_status_awaiting_client
-        after: questionnaire_sent
-        duration: 5
-      - reference: asset_review
-        subject: Review assets, titles and beneficiary designations
-        type: :legal_type_document_review
-        after: questionnaire_back
-        duration: 3
-      - reference: design_meeting
-        subject: Design meeting with client
-        type: :legal_type_client_communication
-        after: asset_review
-        lag: 2
-      - reference: draft_documents
-        subject: Draft will and revocable trust
-        type: :default_type_task
-        after: design_meeting
-        duration: 5
-      - reference: draft_poa
-        subject: Draft powers of attorney and healthcare directive
-        type: :default_type_task
-        after: design_meeting
-        duration: 2
-      - reference: partner_review
-        subject: Partner review of draft documents
-        type: :legal_type_document_review
-        after: draft_documents
-      - reference: client_review
-        subject: Client reviews drafts
-        type: :legal_type_client_communication
-        status: :legal_status_awaiting_client
-        after: partner_review
-        duration: 5
-      - reference: signing
-        subject: Signing ceremony
-        type: :default_type_milestone
-        after: client_review
-        lag: 3
-      - reference: funding
-        subject: Fund the trust and retitle assets
-        type: :default_type_task
-        after: signing
-        duration: 15
-      - subject: Deliver originals and closing letter
-        type: :legal_type_client_communication
-        after: funding
-
-  real-estate-closing:
-    name: "Template: Real estate closing"
-    identifier: template-real-estate-closing
-    description: |
-      Residential or commercial purchase for the buyer, from signed purchase agreement through closing and recording. Contingency gaps are common defaults; copy the real dates from the purchase agreement.
-    wiki:
-      - title: Intake checklist
-        content: |
-          # Real estate closing intake checklist
-
-          - [ ] Buyer names exactly as they will appear on the deed
-          - [ ] Seller names and seller's attorney or agent (for the conflict check)
-          - [ ] Property address and parcel number
-          - [ ] Signed purchase agreement with all addenda
-          - [ ] Purchase price, earnest money amount and who holds it
-          - [ ] Lender, loan officer and loan type
-          - [ ] Contingency dates: inspection, financing, appraisal, title
-          - [ ] Scheduled closing date and location
-          - [ ] How the buyer will take title (sole, joint, LLC, trust)
-          - [ ] Fee agreed and engagement letter signed
-      - title: Closing day
-        content: |
-          # Closing day checklist
-
-          - [ ] Final settlement statement approved by buyer and lender
-          - [ ] Wire instructions verified by phone with a known number (never by email alone)
-          - [ ] Buyer brings photo ID and certified funds if needed
-          - [ ] Deed, mortgage and transfer tax forms signed and notarized
-          - [ ] Keys and access codes handed over
-          - [ ] Documents sent for recording the same day
-    work_packages:
-      - reference: contract_signed
-        subject: Purchase agreement signed
-        type: :default_type_milestone
-      - reference: conflict_check
-        subject: Run conflict check on seller
-        type: :default_type_task
-      - reference: review_agreement
-        subject: Review purchase agreement and docket contingency dates
-        type: :legal_type_contract_review
-        after: conflict_check
-        duration: 2
-      - reference: earnest_money
-        subject: Earnest money due
-        type: :default_type_milestone
-        lag: 3
-      - reference: order_title
-        subject: Order title search and survey
-        type: :default_type_task
-        after: review_agreement
-        duration: 10
-      - reference: inspection_deadline
-        subject: Inspection contingency ends
-        type: :default_type_milestone
-        lag: 10
-      - reference: title_review
-        subject: Review title commitment and survey
-        type: :legal_type_document_review
-        after: order_title
-        duration: 3
-      - reference: title_objections
-        subject: Send and clear title objections
-        type: :default_type_task
-        after: title_review
-        duration: 5
-      - reference: financing_deadline
-        subject: Financing contingency ends
-        type: :default_type_milestone
-        lag: 21
-      - reference: closing_documents
-        subject: Prepare deed, settlement statement and closing documents
-        type: :default_type_task
-        after: title_objections
-        duration: 3
-      - reference: walkthrough
-        subject: Final walk-through
-        type: :default_type_task
-        after: closing_documents
-      - reference: closing
-        subject: Closing
-        type: :default_type_milestone
-        after: walkthrough
-      - reference: recording
-        subject: Record deed and mortgage
-        type: :legal_type_filing
-        after: closing
-        duration: 2
-      - subject: Deliver title policy and recorded documents to client
-        type: :legal_type_client_communication
-        after: recording
-        lag: 20
-
-  employment-dispute:
-    name: "Template: Employment dispute"
-    identifier: template-employment-dispute
-    description: |
-      Discrimination, retaliation or wrongful termination claim from intake through the agency charge, settlement talks and the right-to-sue deadline. Filing windows are US federal defaults; confirm state deadlines.
-    wiki:
-      - title: Intake checklist
-        content: |
-          # Employment dispute intake checklist
-
-          **Timing first**
-
-          - [ ] Date of the adverse action (termination, demotion, discipline)
-          - [ ] Days left to file an agency charge (180 or 300 days for the EEOC, state deadlines vary)
-          - [ ] Any severance offer and its signing deadline
-
-          **Facts**
-
-          - [ ] Employer's legal name and number of employees
-          - [ ] Client's job title, dates of employment and pay
-          - [ ] Protected characteristic or activity involved
-          - [ ] Timeline of events, with names of decision makers and witnesses
-          - [ ] Complaints made to HR or management, and when
-
-          **Documents**
-
-          - [ ] Offer letter, employment agreement, handbook
-          - [ ] Performance reviews and discipline records
-          - [ ] Termination letter and any separation agreement
-          - [ ] Emails, texts and notes the client kept
-          - [ ] Pay stubs and benefits information
-
-          **Engagement**
-
-          - [ ] Conflict check on the employer and named managers
-          - [ ] Fee arrangement agreed (contingency or hourly)
-          - [ ] Engagement letter signed
-    work_packages:
-      - reference: opened
-        subject: Matter opened
-        type: :default_type_milestone
-      - reference: conflict_check
-        subject: Run conflict check on employer and managers
-        type: :default_type_task
-      - reference: intake_interview
-        subject: Intake interview and timeline of events
-        type: :legal_type_client_communication
-        after: conflict_check
-      - reference: limitation_research
-        subject: Confirm filing deadlines and claims
-        type: :legal_type_legal_research
-        after: intake_interview
-        duration: 2
-      - reference: hold_notice
-        subject: Send preservation letter to employer
-        type: :legal_type_client_communication
-        after: intake_interview
-      - reference: collect_records
-        subject: Collect personnel file, pay records and messages
-        type: :legal_type_document_review
-        after: intake_interview
-        duration: 10
-      - reference: charge
-        subject: Draft and file agency charge
-        type: :legal_type_filing
-        after: limitation_research
-        duration: 5
-      - reference: position_statement
-        subject: Employer position statement expected
-        type: :legal_type_court_deadline
-        after: charge
-        lag: 20
-      - reference: rebuttal
-        subject: Draft rebuttal to position statement
-        type: :legal_type_filing
-        after: position_statement
-        duration: 5
-      - reference: demand
-        subject: Send demand letter and negotiate
-        type: :legal_type_client_communication
-        after: collect_records
-        duration: 10
-      - reference: mediation
-        subject: Agency mediation
-        type: :legal_type_hearing
-        after: rebuttal
-        lag: 10
-      - reference: right_to_sue
-        subject: Right-to-sue notice received
-        type: :default_type_milestone
-        after: mediation
-        lag: 40
-      - subject: Lawsuit filing deadline (90 days after right-to-sue)
-        type: :legal_type_court_deadline
-        after: right_to_sue
-        lag: 63

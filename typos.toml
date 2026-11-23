@@ -22,6 +22,7 @@ extend-ignore-re = [
   "code=[A-Za-z0-9]{20,}", # OAuth code in an example request
   "filemane with spaces", # file in the SCM test repository
   "FND-\\d+", # ticket reference
+  "BIR Form 2000-OT", # Philippine tax form name
   "\\b(Ben(jamin)? Tey|Valentin Ege|Abou-Rikab)\\b", # contributor names
   "Bitte stimmen Sie den neuen Bedingungen zu|deutsches Dokument|Mein schöner Titel|Noch mal ein Dialog", # German test strings
   "%<count>s Tage?|vor (%<time>s|\\d+ Tage?)", # German test strings in humanizer_spec
