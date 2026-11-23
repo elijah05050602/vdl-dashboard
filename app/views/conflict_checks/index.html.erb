@@ -1,0 +1,105 @@
+<%#-- copyright
+OpenProject is an open source project management software.
+Copyright (C) the OpenProject GmbH
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License version 3.
+
+OpenProject is a fork of ChiliProject, which is a fork of Redmine. The copyright follows:
+Copyright (C) 2006-2013 Jean-Philippe Lang
+Copyright (C) 2010-2013 the ChiliProject Team
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+See COPYRIGHT and LICENSE files for more details.
+
+++#%>
+
+<% html_title t(:label_conflict_check) -%>
+
+<%=
+  render Primer::OpenProject::PageHeader.new do |header|
+    header.with_title { t(:label_conflict_check) }
+    header.with_description { t("conflict_check.caption") }
+  end
+%>
+
+<%= form_tag conflict_check_path, method: :get, class: "conflict-check--form" do %>
+  <%= render Primer::Box.new(display: :flex, align_items: :flex_end, mb: 3, style: "gap: 8px; max-width: 640px;") do %>
+    <%= render Primer::Box.new(flex: 1) do %>
+      <%= render Primer::Alpha::TextField.new(
+            name: :q,
+            id: "conflict-check-query",
+            label: t("conflict_check.query_label"),
+            placeholder: t("conflict_check.query_placeholder"),
+            value: @search.query,
+            full_width: true,
+            autofocus: true
+          ) %>
+    <% end %>
+    <%= render Primer::Beta::Button.new(type: :submit, scheme: :primary) do |button|
+          button.with_leading_visual_icon(icon: :search)
+          t("conflict_check.submit")
+        end %>
+  <% end %>
+<% end %>
+
+<%= render Primer::Beta::Text.new(tag: :p, color: :subtle, font_size: :small, mb: 3) do %>
+  <%= t("conflict_check.scope_note") %>
+<% end %>
+
+<% if @search.searchable? %>
+  <% if @matches.empty? %>
+    <%= render Primer::Alpha::Banner.new(scheme: :success, icon: :check, mb: 3, test_selector: "conflict-check-result") do %>
+      <%= t("conflict_check.no_matches", query: @search.query) %>
+    <% end %>
+  <% else %>
+    <%= render Primer::Alpha::Banner.new(scheme: :warning, icon: :alert, mb: 3, test_selector: "conflict-check-result") do %>
+      <%= t("conflict_check.matches_found", count: @matches.size, query: @search.query) %>
+    <% end %>
+
+    <%= render Primer::Beta::BorderBox.new(test_selector: "conflict-check-matches") do |box| %>
+      <% box.with_header do %>
+        <%= render Primer::Box.new(display: :flex, font_weight: :bold) do %>
+          <%= render Primer::Box.new(col: 3) do %><%= t("conflict_check.column_matter") %><% end %>
+          <%= render Primer::Box.new(col: 3) do %><%= t("conflict_check.column_field") %><% end %>
+          <%= render Primer::Box.new(col: 4) do %><%= t("conflict_check.column_value") %><% end %>
+          <%= render Primer::Box.new(col: 2) do %><%= t("conflict_check.column_role") %><% end %>
+        <% end %>
+      <% end %>
+      <% @matches.each do |match| %>
+        <% box.with_row do %>
+          <%= render Primer::Box.new(display: :flex, align_items: :center) do %>
+            <%= render Primer::Box.new(col: 3) do %>
+              <%= link_to match.project.name, project_path(match.project) %>
+            <% end %>
+            <%= render Primer::Box.new(col: 3) do %>
+              <%= match.source || t("conflict_check.field_matter_name") %>
+            <% end %>
+            <%= render Primer::Box.new(col: 4) do %>
+              <%= truncate(match.value.to_s, length: 160) %>
+            <% end %>
+            <%= render Primer::Box.new(col: 2) do %>
+              <%= render Primer::Beta::Label.new(
+                    scheme: { opposing: :danger, client: :attention, matter: :accent, other: :secondary }[match.role]
+                  ) do %>
+                <%= t("conflict_check.roles.#{match.role}") %>
+              <% end %>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+<% end %>

@@ -1412,6 +1412,8 @@ Rails.application.routes.draw do
     end
   end
 
+  get "/conflict_check" => "conflict_checks#index", as: :conflict_check
+
   resources :users, constraints: { id: /(\d+|me)/ }, except: :edit do
     collection do
       get :configure_view_modal

@@ -276,6 +276,13 @@ Redmine::MenuManager.map :global_menu do |menu|
             parent: :projects,
             partial: "projects/menus/menu"
 
+  menu.push :conflict_check,
+            { controller: "/conflict_checks", action: "index" },
+            caption: :label_conflict_check,
+            icon: "shield-check",
+            after: :projects,
+            if: ->(_) { User.current.logged? }
+
   # Activity
   menu.push :activity,
             { controller: "/activities", action: "index" },

@@ -1,0 +1,111 @@
+# frozen_string_literal: true
+
+#-- copyright
+# OpenProject is an open source project management software.
+# Copyright (C) the OpenProject GmbH
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License version 3.
+#
+# OpenProject is a fork of ChiliProject, which is a fork of Redmine. The copyright follows:
+# Copyright (C) 2006-2013 Jean-Philippe Lang
+# Copyright (C) 2010-2013 the ChiliProject Team
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <https://www.gnu.org/licenses/>.
+#
+# See COPYRIGHT and LICENSE files for more details.
+#++
+
+require "spec_helper"
+
+RSpec.describe ConflictChecks::Search do
+  shared_let(:client_field) { create(:string_project_custom_field, name: "Client") }
+  shared_let(:opposing_field) { create(:string_project_custom_field, name: "Opposing party") }
+  shared_let(:secret_field) { create(:string_project_custom_field, :admin_only, name: "Opposing counsel") }
+
+  shared_let(:smith_matter) { create(:project, name: "Smith v. Acme Holdings") }
+  shared_let(:jones_matter) { create(:project, name: "Jones estate") }
+  shared_let(:hidden_matter) { create(:project, name: "Acme merger", public: false) }
+
+  shared_let(:user) do
+    create(:user, member_with_permissions: {
+             smith_matter => %i[view_project view_project_attributes],
+             jones_matter => %i[view_project view_project_attributes]
+           })
+  end
+
+  before do
+    create(:custom_value, custom_field: client_field, customized: smith_matter, value: "Jane Smith")
+    create(:custom_value, custom_field: opposing_field, customized: smith_matter, value: "ACME Holdings, Inc.")
+    create(:custom_value, custom_field: client_field, customized: jones_matter, value: "Robert Jones")
+    create(:custom_value, custom_field: secret_field, customized: jones_matter, value: "Acme Holdings legal team")
+    create(:custom_value, custom_field: opposing_field, customized: hidden_matter, value: "Acme Holdings LLC")
+  end
+
+  subject(:matches) { described_class.new(query:, user:).call }
+
+  describe ".normalize" do
+    it "drops company suffixes, punctuation and case" do
+      expect(described_class.normalize("ACME Holdings, Inc.")).to eq(%w[acme holdings])
+    end
+
+    it "keeps the words when only suffixes are given" do
+      expect(described_class.normalize("The Company")).to eq(%w[the company])
+    end
+  end
+
+  describe ".role_for" do
+    it "classifies field names" do
+      expect(described_class.role_for("Opposing party")).to eq(:opposing)
+      expect(described_class.role_for("Client")).to eq(:client)
+      expect(described_class.role_for("Court")).to eq(:other)
+    end
+  end
+
+  context "with a company name written differently" do
+    let(:query) { "acme holdings llc" }
+
+    it "finds the adverse party and the matter name in visible matters only" do
+      expect(matches.map { |m| [m.project, m.role] })
+        .to contain_exactly([smith_matter, :opposing], [smith_matter, :matter])
+      expect(matches.first.role).to eq(:opposing)
+    end
+  end
+
+  context "with a client name" do
+    let(:query) { "robert jones" }
+
+    it "finds the existing client" do
+      expect(matches.map { |m| [m.project, m.source, m.role] })
+        .to contain_exactly([jones_matter, "Client", :client])
+    end
+  end
+
+  context "when the user is an admin" do
+    let(:user) { create(:admin) }
+    let(:query) { "Acme" }
+
+    it "also searches admin only fields and all matters" do
+      expect(matches.map(&:project)).to include(hidden_matter, jones_matter)
+    end
+  end
+
+  context "with an empty query" do
+    let(:query) { "  " }
+
+    it "returns nothing" do
+      expect(matches).to be_empty
+    end
+  end
+end
