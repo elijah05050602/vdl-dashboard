@@ -26,7 +26,7 @@ See COPYRIGHT and LICENSE files for more details.
 
 ++#%>
 
-<%= form_with model: @party, id: "client-registry-party-form" do |f| %>
+<%= form_with model: @party, id: "client-registry-party-form" do %>
   <% if @party.errors.any? %>
     <%= render Primer::Alpha::Banner.new(scheme: :danger, icon: :stop, mb: 3, test_selector: "client-registry-form-errors") do %>
       <ul>
