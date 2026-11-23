@@ -195,7 +195,8 @@ module DemoData
         enabled_module_names: project_data.lookup("modules"),
         project_types: base_variant_rows_for(Type.all),
         parent: Project.find_by(identifier: project_data.lookup("parent")),
-        workspace_type: "project"
+        workspace_type: "project",
+        project_custom_field_ids: ProjectCustomField.where(is_for_all: true).pluck(:id)
       }
     end
   end

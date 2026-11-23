@@ -78,6 +78,10 @@ RSpec.describe RootSeeder,
       expect(DocumentType.count).to be >= 3 # at least the 3 default types
     end
 
+    it "activates the matter attributes in the demo projects" do
+      expect(Project.all).to all(have_attributes(project_custom_field_ids: match_array(ProjectCustomField.ids)))
+    end
+
     it "starts new projects with the task, milestone and summary task types" do
       expected_variants = %i[default_type_task default_type_milestone default_type_summary_task]
         .map { root_seeder.seed_data.find_reference(it).default_variant }
@@ -225,11 +229,13 @@ RSpec.describe RootSeeder,
     include_examples "it creates records", model: ProjectRole, expected_count: 5
     include_examples "it creates records", model: ProjectQueryRole, expected_count: 2
     include_examples "it creates records", model: IssuePriority, expected_count: 4
-    include_examples "it creates records", model: Status, expected_count: 14
-    include_examples "it creates records", model: TimeEntryActivity, expected_count: 6
-    include_examples "it creates records", model: Workflows::StatusTransition, expected_count: 1758
+    include_examples "it creates records", model: Status, expected_count: 21
+    include_examples "it creates records", model: TimeEntryActivity, expected_count: 8
+    include_examples "it creates records", model: Workflows::StatusTransition, expected_count: 2490
     include_examples "it creates records", model: RecurringMeeting, expected_count: 1
     include_examples "it creates records", model: AI::TextAction, expected_count: 11
+    include_examples "it creates records", model: ProjectCustomFieldSection, expected_count: 2
+    include_examples "it creates records", model: ProjectCustomField, expected_count: 19
     include_examples "it is compatible with the automatic scheduling mode"
   end
 
@@ -540,7 +546,8 @@ RSpec.describe RootSeeder,
 
     it "creates 1 project with custom fields" do
       # 14 development work package custom fields + 4 development user custom fields
-      expect(CustomField.count).to eq 18
+      # + 19 matter project custom fields
+      expect(CustomField.count).to eq 37
     end
 
     include_examples "creates the company staff and the demo data referencing it"
