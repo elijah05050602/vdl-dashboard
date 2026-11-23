@@ -1,0 +1,127 @@
+<%#-- copyright
+OpenProject is an open source project management software.
+Copyright (C) the OpenProject GmbH
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License version 3.
+
+OpenProject is a fork of ChiliProject, which is a fork of Redmine. The copyright follows:
+Copyright (C) 2006-2013 Jean-Philippe Lang
+Copyright (C) 2010-2013 the ChiliProject Team
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+See COPYRIGHT and LICENSE files for more details.
+
+++#%>
+<% html_title(t("law_firm_invoices.title")) %>
+
+<%=
+  render(Primer::OpenProject::PageHeader.new) do |header|
+    header.with_title { t("law_firm_invoices.title") }
+    header.with_breadcrumbs(
+      [{ href: project_overview_path(@project.id), text: @project.name },
+       t("law_firm_invoices.title")]
+    )
+  end
+%>
+
+<% if @can_issue %>
+  <%=
+    render(Primer::OpenProject::SubHeader.new) do |subheader|
+      subheader.with_action_button(
+        scheme: :primary,
+        leading_icon: :plus,
+        label: t("law_firm_invoices.new_title"),
+        tag: :a,
+        href: new_project_invoice_path(@project),
+        data: { test_selector: "invoice-new-button" }
+      ) do
+        t("law_firm_invoices.button_new")
+      end
+    end
+  %>
+<% end %>
+
+<% if @invoices.empty? %>
+  <%=
+    render(Primer::Beta::Blankslate.new(border: true)) do |blankslate|
+      blankslate.with_heading(tag: :h2) { t("law_firm_invoices.blankslate_title") }
+      blankslate.with_description { t("law_firm_invoices.blankslate_description") }
+    end
+  %>
+<% else %>
+  <div class="generic-table--container">
+    <div class="generic-table--results-container">
+      <table class="generic-table" data-test-selector="invoices-table">
+        <thead>
+          <tr>
+            <% %i[number issued_on client_name period total_amount amount_due status].each do |attribute| %>
+              <th class="<%= "currency" if %i[total_amount amount_due].include?(attribute) %>">
+                <div class="generic-table--sort-header-outer">
+                  <div class="generic-table--sort-header">
+                    <span><%= LawFirm::Invoices::Request.human_attribute_name(attribute) %></span>
+                  </div>
+                </div>
+              </th>
+            <% end %>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @invoices.each do |invoice| %>
+            <tr id="invoice-<%= invoice.id %>">
+              <td><%= link_to invoice.number, project_invoice_path(@project, invoice), target: "_blank", rel: "noopener" %></td>
+              <td><%= format_date(invoice.issued_on) %></td>
+              <td><%= invoice.client_name %></td>
+              <td><%= format_date(invoice.period_from) %> – <%= format_date(invoice.period_to) %></td>
+              <td class="currency">₱ <%= number_with_precision(invoice.total_amount, precision: 2, delimiter: ",") %></td>
+              <td class="currency">₱ <%= number_with_precision(invoice.amount_due, precision: 2, delimiter: ",") %></td>
+              <td>
+                <% if invoice.cancelled? %>
+                  <%= render(Primer::Beta::Label.new(scheme: :danger)) { t("law_firm_invoices.cancelled") } %>
+                  <div class="color-fg-muted">
+                    <%= t(
+                          "law_firm_invoices.cancelled_on",
+                          date: format_date(invoice.cancelled_at.to_date),
+                          name: invoice.cancelled_by&.name,
+                          reason: invoice.cancellation_reason
+                        ) %>
+                  </div>
+                <% end %>
+              </td>
+              <td>
+                <%= link_to t("law_firm_invoices.button_download"),
+                            project_invoice_path(@project, invoice),
+                            target: "_blank", rel: "noopener" %>
+                <% if @can_issue && !invoice.cancelled? %>
+                  <details class="mt-1">
+                    <summary><%= t("law_firm_invoices.button_cancel_invoice") %></summary>
+                    <%= form_with url: cancel_project_invoice_path(@project, invoice),
+                                  method: :post,
+                                  data: { turbo_confirm: t("law_firm_invoices.cancel_confirm", number: invoice.number) } do |f| %>
+                      <%= f.label :cancellation_reason, LawFirm::Invoices::Request.human_attribute_name(:cancellation_reason), class: "form--label" %>
+                      <%= f.text_field :cancellation_reason, required: true, class: "form--text-field" %>
+                      <%= f.submit t("law_firm_invoices.button_cancel_invoice"), class: "button -danger" %>
+                    <% end %>
+                  </details>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+<% end %>

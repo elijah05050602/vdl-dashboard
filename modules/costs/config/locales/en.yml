@@ -28,6 +28,14 @@
 
 ---
 en:
+  activemodel:
+    errors:
+      models:
+        invoice:
+          invoice_details_missing: "Invoices cannot be issued until the firm's BIR details are filled in: %{fields}. Ask an administrator to update config/law_firm_billing.yml."
+          invoice_nothing_to_bill: "There is no unbilled time, fee or disbursement in this period."
+          invoice_series_exhausted: "The registered invoice series is used up. Register a new series with the BIR and update series_end in config/law_firm_billing.yml."
+          invoice_unauthorized: "You are not allowed to issue invoices on this matter."
   activerecord:
     attributes:
       cost_entry:
@@ -79,6 +87,10 @@ en:
           attributes:
             project_ids:
               blank: "Please select a project."
+        law_firm/invoice:
+          attributes:
+            base:
+              invoice_issued: "An issued invoice cannot be changed. Cancel it and issue a new one."
         rate:
           attributes:
             principal:
@@ -277,6 +289,93 @@ en:
   label_valid_from: "Valid from"
   label_work_package_filter_add: "Add work package filter"
   label_yes: "Yes"
+  law_firm_invoices:
+    already_billed_hint: "Time and costs already on an active invoice are left out."
+    attributes:
+      amount_due: "Amount due"
+      cancellation_reason: "Reason for cancelling"
+      client_address: "Client's address"
+      client_name: "Client's registered name"
+      client_tin: "Client's TIN"
+      client_withholds: "Client withholds EWT (corporate client)"
+      ewt_rate: "EWT rate"
+      issued_on: "Date"
+      number: "Number"
+      period: "Period"
+      period_from: "From"
+      period_to: "To"
+      status: "Status"
+      total_amount: "Total (VAT inclusive)"
+    blankslate_description: "Issue an invoice for a period's billable time, fees and disbursements on this matter."
+    blankslate_title: "No invoices yet"
+    button_cancel_invoice: "Cancel invoice"
+    button_download: "Download PDF"
+    button_issue: "Issue invoice"
+    button_new: "Invoice"
+    button_preview: "Preview draft PDF"
+    cancel_confirm: "Cancel invoice %{number}? The number cannot be reused. Keep every copy of the cancelled invoice for the BIR."
+    cancel_reason_required: "Give a reason for cancelling the invoice."
+    cancelled: "Cancelled"
+    cancelled_notice: "Invoice %{number} has been cancelled. Its time and costs can be billed again."
+    cancelled_on: "Cancelled on %{date} by %{name}: %{reason}"
+    client_heading: "Client"
+    issue_explanation: "Issuing assigns the next invoice number, which can never be reused or changed. Preview the draft first."
+    issued_notice: "Invoice %{number} has been issued."
+    menu: "Invoices"
+    new_title: "New invoice"
+    not_ready: "Invoices cannot be issued yet: fill in the firm's %{fields} in config/law_firm_billing.yml. You can still preview drafts."
+    pdf:
+      accn: "Acknowledgement Certificate Control No."
+      activity: "Activity or type"
+      amount: "Amount"
+      amount_due: "Amount due"
+      billed_to: "Billed to"
+      cancelled_watermark: "CANCELLED"
+      date: "Date"
+      date_issued: "Date issued"
+      default_title: "SERVICE INVOICE"
+      description: "Description"
+      draft_title: "DRAFT BILLING STATEMENT"
+      draft_watermark: "DRAFT"
+      ewt_note: "Please send BIR Form 2307 for the tax withheld."
+      hours_or_units: "Hrs / units"
+      hours_unit: "hrs"
+      less_ewt: "Less: EWT %{rate} on %{base}"
+      matter: "Matter"
+      no_number: "(not yet issued)"
+      non_vat_reg_tin: "Non-VAT Reg TIN"
+      not_valid_for_input_tax: "THIS DOCUMENT IS NOT VALID FOR CLAIM OF INPUT TAX."
+      page: "Page %{page} of %{total}"
+      period: "Period covered"
+      person: "Person"
+      professional_services: "Professional services: %{name}"
+      quantity: "Quantity"
+      reprint: "REPRINT"
+      schedule_title: "Schedule of services and expenses for invoice %{number}"
+      section_disbursements: "Disbursements"
+      section_professional_fees: "Professional fees"
+      series_range: "Series range"
+      total_sales: "Total amount"
+      total_vat_inclusive: "Total amount (VAT inclusive)"
+      unit_cost: "Unit cost"
+      vat_amount: "VAT (%{rate})"
+      vat_exempt_marker: "VAT-exempt"
+      vat_exempt_sales: "VAT-exempt sales"
+      vat_reg_tin: "VAT Reg TIN"
+      vatable_sales: "VATable sales"
+      zero_rated_sales: "Zero-rated sales"
+    period_heading: "Billing period"
+    preview_summary: "Unbilled in this period: %{time} hours, %{entries} entries, %{amount} before VAT."
+    settings:
+      acknowledgement_certificate_no: "Acknowledgement Certificate number"
+      address: "registered address"
+      registered_name: "registered name"
+      tin: "TIN"
+    tax_heading: "Withholding tax"
+    title: "Invoices"
+    unpriced_warning:
+      one: "1 time entry in this period has no hourly rate and is billed at ₱ 0."
+      other: "%{count} time entries in this period have no hourly rate and are billed at ₱ 0."
   notice_cost_logged_successfully: "Unit cost logged successfully."
   notice_different_time_zones: "This user has a different time zone (%{tz}). Time will be logged using their time zone."
   notice_something_wrong: "Something went wrong. Please try again."
@@ -291,6 +390,7 @@ en:
   permission_edit_own_cost_entries: "Edit own booked unit costs"
   permission_edit_own_hourly_rate: "Edit own hourly rates"
   permission_edit_rates: "Edit rates"
+  permission_issue_law_firm_invoices: "Issue and cancel invoices"
   permission_log_costs: "Book unit costs"
   permission_log_own_costs: "Book unit costs for oneself"
   permission_manage_default_hourly_rates: "Manage default hourly rates"
@@ -299,6 +399,7 @@ en:
   permission_view_cost_entries: "View booked costs"
   permission_view_cost_rates: "View cost rates"
   permission_view_hourly_rates: "View all hourly rates"
+  permission_view_law_firm_invoices: "View invoices"
   permission_view_own_cost_entries: "View own booked costs"
   permission_view_own_hourly_rate: "View own hourly rate"
   permission_view_own_time_entries: "View own spent time"

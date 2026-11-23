@@ -72,7 +72,11 @@ module LawFirm
       edit_cost_entries
       edit_budgets
       save_cost_reports
+      view_law_firm_invoices
+      issue_law_firm_invoices
     ]).freeze
+
+    INVOICE_PERMISSIONS = %i[view_law_firm_invoices issue_law_firm_invoices].freeze
 
     PERMISSION_PRESETS = {
       "timekeeper" => TIMEKEEPER_PERMISSIONS,
@@ -95,6 +99,14 @@ module LawFirm
 
     def initialize(data)
       @data = data.deep_stringify_keys
+    end
+
+    def vat_rate
+      decimal("vat_rate")
+    end
+
+    def ewt_rate
+      decimal("ewt_rate")
     end
 
     def default_project_modules
@@ -120,6 +132,18 @@ module LawFirm
       Array(@data["expense_types"]).map(&:symbolize_keys)
     end
 
+    def disbursement_type_names
+      expense_types.select { |type| type[:kind].to_s == "disbursement" }.map { |type| type[:name].to_s }
+    end
+
+    def vat_registered?
+      vat_rate.present? && vat_rate.positive?
+    end
+
+    def invoice
+      @invoice ||= InvoiceSettings.new(@data["invoice"] || {})
+    end
+
     def hourly_rate_for(role_names)
       wanted = role_names.map { |name| name.to_s.downcase }
 
@@ -127,6 +151,12 @@ module LawFirm
         .select { |role| wanted.include?(role[:name].downcase) && role[:hourly_rate].present? }
         .map { |role| BigDecimal(role[:hourly_rate].to_s) }
         .max
+    end
+
+    private
+
+    def decimal(key)
+      BigDecimal(@data[key].to_s) if @data[key].present?
     end
   end
 end

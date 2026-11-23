@@ -65,12 +65,26 @@ module BasicData
         position = Role.maximum(:position).to_i
 
         config.billing_roles.each do |role|
-          next if ProjectRole.exists?(name: role[:name])
+          existing = ProjectRole.find_by(name: role[:name])
+          if existing
+            grant_invoice_permissions(existing, role)
+            next
+          end
 
           ProjectRole.create!(name: role[:name],
                               position: position += 1,
                               permissions: known_permissions(base_permissions + role[:permissions]))
         end
+      end
+
+      # Invoices came after the billing roles, so partners on an existing
+      # installation are given the invoice permissions their preset includes.
+      def grant_invoice_permissions(existing, role)
+        missing = known_permissions(role[:permissions] & ::LawFirm::BillingConfig::INVOICE_PERMISSIONS) - existing.permissions
+        return if missing.empty?
+
+        existing.add_permission!(*missing)
+        existing.save!
       end
 
       def member_role

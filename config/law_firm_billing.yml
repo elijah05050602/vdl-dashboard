@@ -53,47 +53,103 @@ non_billable_activities:
 
 # Fees and disbursements billed to the client, logged on a matter with
 # "Log unit costs". A rate of 1 per peso means the amount is entered directly.
+# The kind decides where an entry goes on an invoice: fees are professional
+# fees (subject to EWT), disbursements are expenses billed back to the client.
+# Cost types not listed here are treated as fees.
 expense_types:
   # Professional fees
   - name: Acceptance fee
+    kind: fee
     unit: peso
     unit_plural: pesos
     rate: 1
     default: true
   - name: Appearance fee
+    kind: fee
     unit: hearing
     unit_plural: hearings
     rate: 5000
   - name: Monthly retainer
+    kind: fee
     unit: month
     unit_plural: months
     rate: 30000
   - name: Fixed fee
+    kind: fee
     unit: peso
     unit_plural: pesos
     rate: 1
   - name: Success fee
+    kind: fee
     unit: peso
     unit_plural: pesos
     rate: 1
   # Disbursements
   - name: Docket and filing fees
+    kind: disbursement
     unit: peso
     unit_plural: pesos
     rate: 1
   - name: Notarial fee
+    kind: disbursement
     unit: document
     unit_plural: documents
     rate: 300
   - name: Photocopies
+    kind: disbursement
     unit: page
     unit_plural: pages
     rate: 3
   - name: Courier
+    kind: disbursement
     unit: delivery
     unit_plural: deliveries
     rate: 150
   - name: Transportation
+    kind: disbursement
     unit: peso
     unit_plural: pesos
     rate: 1
+
+# Invoices issued from a matter's Invoices page. The firm details below are
+# printed on every invoice and must match the firm's BIR Certificate of
+# Registration (Form 2303) and the Acknowledgement Certificate the BIR issues
+# for this system. Invoices cannot be issued while the TIN, address or
+# Acknowledgement Certificate is still a placeholder; drafts still work.
+invoice:
+  # "Service Invoice" or "Billing Invoice" (RR 7-2024). Never "Official
+  # Receipt" or "Billing Statement": those are only supplementary documents.
+  title: "SERVICE INVOICE"
+  registered_name: "Law Offices of Villanueva, Dorin & Lozano"
+  trade_name: ""
+  # TIN with the 5-digit branch code, e.g. 123-456-789-00000.
+  tin: "000-000-000-00000"
+  address: "[Registered business address on Form 2303]"
+  phone: ""
+  email: ""
+
+  # Serial numbers. Each invoice takes the next number in this range and
+  # numbers are never reused, even for cancelled invoices. The range must be
+  # the one registered with the BIR.
+  number_prefix: ""
+  number_digits: 6
+  series_start: 1
+  series_end: 999999
+
+  # Printed at the bottom of every invoice (RR 7-2024 Sec. 6(B)(21)).
+  acknowledgement_certificate_no: "[ACCN]"
+  acknowledgement_certificate_date: ""
+
+  # Whether disbursements billed back to the client are part of VATable
+  # sales. Set to false only if your accountant confirms they qualify as
+  # reimbursements; they are then shown as VAT-exempt.
+  disbursements_vatable: true
+
+  # EWT rates offered when the client withholds. ewt_rate above is the
+  # default; 10% applies while the firm's gross income for the year is
+  # ₱720,000 or less.
+  ewt_rates: [0.10, 0.15]
+
+  payment_terms: "Payable within 15 days of receipt."
+  # Optional bank details printed under the totals, one line each.
+  payment_instructions: []
