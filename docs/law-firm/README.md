@@ -11,6 +11,22 @@ Seed data in `app/seeders/standard.yml` (used on a fresh database):
 - **Time entry activities:** Legal research, Drafting, Client communication, Court appearance, Discovery and document review, Negotiation, Travel, Administrative (non-billable).
 - **Welcome text** on the home page.
 
+## Matter templates
+
+`bin/rails db:seed` creates five template matters, defined in `app/seeders/law_firm/matter_templates.yml`:
+
+- Civil litigation
+- Contract review
+- Estate planning
+- Real estate closing
+- Employment dispute
+
+Each template has a step-by-step work package plan using the legal types and statuses, a "Matter plan" Gantt view, a "Deadlines and hearings" list, and wiki pages with an intake checklist.
+
+To open a new matter from one, click **New matter**, pick the template from the list, and give the matter its name. In the new matter, move the first milestone (for example "Matter opened") to the real date: every other step follows it with a gap in working days, so the whole plan moves with it. The gaps are common US defaults, so check them against the court's rules and the actual contract dates.
+
+Seeding only adds templates that are missing, so it is safe to run on a database that already has matters. To change a template, edit it in the app, or edit the YAML file, delete the template matter and seed again.
+
 Branding is set by configuration, not code, so upstream merges stay easy. See `lawfirm.env.example`.
 
 ## License
