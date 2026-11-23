@@ -65,7 +65,7 @@ RSpec.describe LawFirm::Invoices::PDF, type: :model do
                             "Professional services: Maria Villanueva", "2.50 hrs", "₱ 8,000.00",
                             "VATable sales", "VAT-exempt sales", "Zero-rated sales", "VAT (12%)", "₱ 3,600.00",
                             "Total amount (VAT inclusive)", "₱ 33,600.00",
-                            "Less: EWT 10% on ₱ 30,000.00", "(₱ 3,000.00)", "₱ 30,600.00",
+                            "Less: EWT 10% on ₱ 30,000.00", "₱ 3,000.00)", "₱ 30,600.00",
                             "Acknowledgement Certificate Control No.: AC-0001", "Series range: 000001 to 999999")
     expect(text).not_to include("REPRINT", "NOT VALID FOR CLAIM OF INPUT TAX")
   end
