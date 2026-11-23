@@ -142,6 +142,6 @@ firm's accountant to confirm these with the firm's Revenue District Office (RDO)
    CLAIM OF INPUT TAX".
 4. **Keep the records:** issued and cancelled invoices, and the books, for the period the BIR
    requires, and file the sales in the VAT returns and the Summary List of Sales where required.
-5. **E-invoicing:** if the firm is ever covered by the BIR Electronic Invoicing System (EIS), the
+5. **E-invoicing:** if the firm is ever covered by the BIR Electronic Invoicing System, the
    invoices also need to be sent to the BIR electronically. This is not built in yet.
 6. **Collect BIR Form 2307** from corporate clients for every EWT deducted, to claim the tax credit.
