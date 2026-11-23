@@ -55,7 +55,8 @@ module LawFirm
       end
 
       def self.human_attribute_name(attribute, options = {})
-        I18n.t("law_firm_invoices.attributes.#{attribute}", default: super)
+        key = "law_firm_invoices.attributes.#{attribute}"
+        I18n.exists?(key) ? I18n.t(key) : super
       end
 
       def effective_ewt_rate

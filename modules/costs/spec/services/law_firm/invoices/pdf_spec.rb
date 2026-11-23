@@ -55,7 +55,7 @@ RSpec.describe LawFirm::Invoices::PDF, type: :model do
   let(:reprint) { false }
 
   subject(:text) do
-    PDF::Inspector::Text.analyze(described_class.new(invoice, draft:, reprint:).render).strings.join(" ")
+    PDF::Inspector::Text.analyze(described_class.new(invoice, draft:, reprint:).render).strings.join(" ").squeeze(" ")
   end
 
   it "prints the information the BIR requires on an invoice" do

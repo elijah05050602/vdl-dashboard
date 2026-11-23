@@ -53,7 +53,7 @@ module LawFirm
     end
 
     def number_digits
-      [@data["number_digits"].to_i, 1].max
+      [@data.fetch("number_digits", 6).to_i, 1].max
     end
 
     def series_start
