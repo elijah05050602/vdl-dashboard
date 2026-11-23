@@ -842,6 +842,13 @@ Redmine::MenuManager.map :project_menu do |menu|
             last: true,
             caption: :label_all_open_wps
 
+  menu.push :deadline_calculator,
+            { controller: "/deadline_calculators", action: "show" },
+            caption: :label_deadline_calculator,
+            after: :work_packages,
+            if: ->(project) { project.module_enabled?("work_package_tracking") },
+            icon: "stopwatch"
+
   menu.push :news,
             { controller: "/news", action: "index" },
             caption: :label_news_plural,

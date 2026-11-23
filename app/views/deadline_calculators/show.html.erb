@@ -1,0 +1,211 @@
+<%#-- copyright
+OpenProject is an open source project management software.
+Copyright (C) the OpenProject GmbH
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License version 3.
+
+OpenProject is a fork of ChiliProject, which is a fork of Redmine. The copyright follows:
+Copyright (C) 2006-2013 Jean-Philippe Lang
+Copyright (C) 2010-2013 the ChiliProject Team
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+See COPYRIGHT and LICENSE files for more details.
+
+++#%>
+
+<% html_title t(:label_deadline_calculator) -%>
+
+<%=
+  render Primer::OpenProject::PageHeader.new do |header|
+    header.with_title { t(:label_deadline_calculator) }
+    header.with_description { t("deadline_calculator.caption") }
+  end
+%>
+
+<%= render Primer::Alpha::Banner.new(scheme: :warning, icon: :alert, mb: 3, test_selector: "deadline-calculator-disclaimer") do %>
+  <%= t("deadline_calculator.disclaimer") %>
+<% end %>
+
+<% unless @court_deadline_type %>
+  <%= render Primer::Alpha::Banner.new(scheme: :danger, mb: 3, test_selector: "deadline-calculator-no-type") do %>
+    <%= t("deadline_calculator.no_type") %>
+  <% end %>
+<% end %>
+
+<% if @errors.present? || (!@calculation && (request.post? || params[:received_on].present? || params[:period].present?)) %>
+  <%= render Primer::Alpha::Banner.new(scheme: :danger, mb: 3, test_selector: "deadline-calculator-errors") do %>
+    <%= @errors.present? ? @errors.to_sentence : t("deadline_calculator.invalid", max: DeadlineCalculator::Period::MAX_DAYS) %>
+  <% end %>
+<% end %>
+
+<%= form_tag project_deadline_calculator_path(@project), method: :get, class: "deadline-calculator--form" do %>
+  <%= render Primer::Box.new(display: :flex, direction: :column, mb: 3, style: "gap: 16px; max-width: 640px;") do %>
+    <%= render Primer::Alpha::TextField.new(
+          name: :received_on,
+          id: "deadline-calculator-received-on",
+          type: :date,
+          label: t("deadline_calculator.received_on_label"),
+          caption: t("deadline_calculator.received_on_caption"),
+          value: @received_on&.iso8601,
+          required: true,
+          input_width: :small
+        ) %>
+
+    <div class="FormControl">
+      <label class="FormControl-label" for="deadline-calculator-period"><%= t("deadline_calculator.period_label") %></label>
+      <%= select_tag :period,
+                     grouped_options_for_select(
+                       @grouped_periods.transform_values { |periods| periods.map { |p| [p.label, p.key] } },
+                       params[:period]
+                     ) +
+                     options_for_select([[t("deadline_calculator.custom_option"), DeadlineCalculator::Period::CUSTOM_KEY]],
+                                        params[:period]),
+                     id: "deadline-calculator-period",
+                     include_blank: t("deadline_calculator.period_placeholder"),
+                     required: true,
+                     class: "FormControl-select FormControl-medium FormControl--fullWidth" %>
+    </div>
+
+    <%= render Primer::Beta::Details.new(open: params[:period] == DeadlineCalculator::Period::CUSTOM_KEY) do |details| %>
+      <% details.with_summary(button: false) do %>
+        <%= t("deadline_calculator.custom_option") %>
+      <% end %>
+      <% details.with_body do %>
+        <%= render Primer::Box.new(display: :flex, direction: :column, mt: 2, style: "gap: 12px;") do %>
+          <%= render Primer::Alpha::TextField.new(
+                name: :custom_name,
+                id: "deadline-calculator-custom-name",
+                label: t("deadline_calculator.custom_name_label"),
+                placeholder: t("deadline_calculator.custom_name_placeholder"),
+                value: params[:custom_name],
+                full_width: true
+              ) %>
+          <%= render Primer::Alpha::TextField.new(
+                name: :custom_days,
+                id: "deadline-calculator-custom-days",
+                type: :number,
+                min: 1,
+                max: DeadlineCalculator::Period::MAX_DAYS,
+                label: t("deadline_calculator.custom_days_label"),
+                value: params[:custom_days],
+                input_width: :xsmall
+              ) %>
+          <%= render Primer::Alpha::TextField.new(
+                name: :custom_rule,
+                id: "deadline-calculator-custom-rule",
+                label: t("deadline_calculator.custom_rule_label"),
+                placeholder: t("deadline_calculator.custom_rule_placeholder"),
+                value: params[:custom_rule],
+                full_width: true
+              ) %>
+        <% end %>
+      <% end %>
+    <% end %>
+
+    <div>
+      <%= render Primer::Beta::Button.new(type: :submit, scheme: :primary) do |button|
+            button.with_leading_visual_icon(icon: :calendar)
+            t("deadline_calculator.preview_submit")
+          end %>
+    </div>
+  <% end %>
+<% end %>
+
+<% if @calculation %>
+  <%= render Primer::Beta::Heading.new(tag: :h3, mt: 4, mb: 2) do %>
+    <%= t("deadline_calculator.result_heading") %>
+  <% end %>
+
+  <%= render Primer::Beta::BorderBox.new(mb: 3, style: "max-width: 640px;", test_selector: "deadline-calculator-result") do |box| %>
+    <% box.with_header do %>
+      <%= render Primer::Beta::Text.new(font_weight: :bold) do %><%= @calculation.period.label %><% end %>
+    <% end %>
+    <% box.with_row do %>
+      <%= render Primer::Box.new(display: :flex) do %>
+        <%= render Primer::Box.new(col: 6) do %><%= t("deadline_calculator.received_on_label") %><% end %>
+        <%= render Primer::Box.new(col: 6) do %><%= format_date(@calculation.received_on) %><% end %>
+      <% end %>
+    <% end %>
+    <% box.with_row do %>
+      <%= render Primer::Box.new(display: :flex) do %>
+        <%= render Primer::Box.new(col: 6) do %><%= t("deadline_calculator.period_label") %><% end %>
+        <%= render Primer::Box.new(col: 6) do %><%= t(:label_x_days, count: @calculation.period.days) %><% end %>
+      <% end %>
+    <% end %>
+    <% box.with_row do %>
+      <%= render Primer::Box.new(display: :flex) do %>
+        <%= render Primer::Box.new(col: 6) do %><%= t("deadline_calculator.last_day_label") %><% end %>
+        <%= render Primer::Box.new(col: 6) do %><%= format_date(@calculation.last_day) %> (<%= l(@calculation.last_day, format: "%A") %>)<% end %>
+      <% end %>
+    <% end %>
+    <% box.with_row do %>
+      <%= render Primer::Box.new(display: :flex, font_weight: :bold) do %>
+        <%= render Primer::Box.new(col: 6) do %><%= t("deadline_calculator.due_on_label") %><% end %>
+        <%= render Primer::Box.new(col: 6, test_selector: "deadline-calculator-due-on") do %>
+          <%= format_date(@calculation.due_on) %> (<%= l(@calculation.due_on, format: "%A") %>)
+        <% end %>
+      <% end %>
+    <% end %>
+    <% if @calculation.moved? %>
+      <% box.with_row do %>
+        <%= render Primer::Beta::Text.new(tag: :p, font_weight: :bold, mb: 1) do %><%= t("deadline_calculator.moved_title") %><% end %>
+        <ul class="ml-3" data-test-selector="deadline-calculator-skipped">
+          <% @calculation.skipped_days.each do |day| %>
+            <li><%= t("deadline_calculator.moved_reason", date: format_date(day.date), reason: day.reason) %></li>
+          <% end %>
+        </ul>
+        <%= render Primer::Beta::Text.new(tag: :p, color: :subtle, font_size: :small, mt: 2) do %>
+          <%= t("deadline_calculator.extension_hint", date: format_date(@calculation.last_day)) %>
+        <% end %>
+      <% end %>
+    <% end %>
+    <% if @calculation.period.note.present? %>
+      <% box.with_row do %>
+        <%= render Primer::Beta::Text.new(color: :attention) do %><%= @calculation.period.note %><% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+
+  <%= render Primer::Beta::Text.new(tag: :p, color: :subtle, font_size: :small, mb: 3, style: "max-width: 640px;") do %>
+    <%= t("deadline_calculator.counting_note") %>
+  <% end %>
+
+  <% if @court_deadline_type %>
+    <%= form_tag project_deadline_calculator_path(@project), method: :post, class: "deadline-calculator--create" do %>
+      <%= hidden_field_tag :received_on, @calculation.received_on.iso8601, id: nil %>
+      <%= hidden_field_tag :period, @calculation.period.key, id: nil %>
+      <% if @calculation.period.custom? %>
+        <%= hidden_field_tag :custom_name, @calculation.period.name, id: nil %>
+        <%= hidden_field_tag :custom_days, @calculation.period.days, id: nil %>
+        <%= hidden_field_tag :custom_rule, @calculation.period.rule, id: nil %>
+      <% end %>
+      <%= render Primer::Box.new(display: :flex, align_items: :flex_end, style: "gap: 8px; max-width: 640px;") do %>
+        <div class="FormControl" style="flex: 1;">
+          <label class="FormControl-label" for="deadline-calculator-assignee"><%= t("deadline_calculator.assignee_label") %></label>
+          <%= select_tag :assigned_to_id,
+                         options_from_collection_for_select(@assignees, :id, :name, params[:assigned_to_id]),
+                         id: "deadline-calculator-assignee",
+                         include_blank: t("deadline_calculator.assignee_none"),
+                         class: "FormControl-select FormControl-medium FormControl--fullWidth" %>
+        </div>
+        <%= render Primer::Beta::Button.new(type: :submit, scheme: :primary, test_selector: "deadline-calculator-create") do |button|
+              button.with_leading_visual_icon(icon: :plus)
+              t("deadline_calculator.create_submit")
+            end %>
+      <% end %>
+    <% end %>
+  <% end %>
+<% end %>

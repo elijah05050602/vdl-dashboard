@@ -313,6 +313,7 @@ Rails.application.reloader.to_prepare do
 
       wpt.permission :add_work_packages,
                      {
+                       deadline_calculators: %i[show create],
                        work_package_relations: %i[new create],
                        work_packages: %i[new split_create]
                      },

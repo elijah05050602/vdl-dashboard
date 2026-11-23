@@ -27,6 +27,17 @@ To open a new matter from one, click **New matter**, pick the template from the 
 
 Seeding only adds templates that are missing, so it is safe to run on a database that already has matters. To change a template, edit it in the app, or edit the YAML file, delete the template matter and seed again.
 
+## Deadline calculator
+
+Every matter has a **Deadline calculator** in its menu, under Work packages. Enter the date a notice, order, decision or pleading was received and pick a period, such as an answer (30 days, Rule 11), a motion for reconsideration or notice of appeal (15 days), a Rule 45 petition (15 days), a Rule 65 petition (60 days) or an NLRC appeal (10 days). For anything else, choose **Other period** and enter what is due, the number of days and the rule or order.
+
+The calculator counts calendar days, leaving out the day of receipt and including the last day. If the last day falls on a Saturday, Sunday or non-working day, it moves the deadline to the next working day and says why (Rules of Court, Rule 22, Sec. 1). It also shows the original last day, because an extension runs from that day and not from the moved date (A.M. No. 00-2-14-SC). **Add Court deadline to this matter** then creates a Court deadline work package on the due date, with the date of receipt, the period and the rule written into its description.
+
+- Holidays and court closures come from **Administration > Calendars and dates > Working days**. Keep that list current: a missing holiday can only make a deadline earlier.
+- The periods are in `config/law_firm/reglementary_periods.yml`. To add or change one, edit the file and restart the app.
+- Users need the "Add work packages" permission in the matter, and the matter must use the Court deadline type.
+- The page shows a reminder that the result is an aid only. Always check it against the notice and the rules.
+
 ## Branding
 
 - **Name:** the app title defaults to "VDL Dashboard" and the organization name to "Law Offices of Villanueva, Dorin & Lozano" in development and production (`config/constants/settings/definition.rb`). The test environment keeps the upstream defaults so upstream specs pass. Override with the variables in `lawfirm.env.example`, or under Administration. A value saved in Administration wins over the default.

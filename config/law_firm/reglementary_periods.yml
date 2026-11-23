@@ -1,0 +1,161 @@
+# Reglementary periods offered by the deadline calculator (Matter > Deadline calculator).
+#
+# Every period counts calendar days from the day after receipt of the notice, order,
+# decision or pleading. If the last day falls on a Saturday, Sunday or non-working day,
+# the deadline moves to the next working day (Rules of Court, Rule 22, Sec. 1).
+# Non-working days come from Administration > Calendars and dates > Working days.
+#
+# Citations are to the 2019 Amendments to the 1997 Rules of Civil Procedure unless
+# stated otherwise. Check each period against the current rules and any special law
+# or court order before relying on it. To add a period, copy an entry and give it a
+# unique key. Keys only appear in the page address, so renaming one is safe.
+#
+# group: heading the period is listed under
+# name:  what the deadline is for; also the subject of the Court deadline work package
+# days:  length of the period in calendar days
+# rule:  citation shown on the page and written into the work package
+# note:  optional caveat shown with the result
+groups:
+  civil: "Civil cases"
+  appeals: "Appeals and special civil actions"
+  criminal: "Criminal cases and preliminary investigation"
+  labor: "Labor cases (NLRC)"
+  tax: "Tax cases (BIR and CTA)"
+
+periods:
+  - key: answer
+    group: civil
+    name: "Answer to the complaint"
+    days: 30
+    rule: "Rule 11, Sec. 1"
+    note: "Counted from service of summons. A defendant that is a foreign private juridical entity served through a government official has 60 days (Rule 11, Sec. 2)."
+  - key: answer_amended_as_of_right
+    group: civil
+    name: "Answer to an amended complaint (amended as a matter of right)"
+    days: 30
+    rule: "Rule 11, Sec. 3"
+  - key: answer_amended_with_leave
+    group: civil
+    name: "Answer to an amended complaint (amended with leave of court)"
+    days: 15
+    rule: "Rule 11, Sec. 3"
+    note: "Counted from notice of the order admitting the amended complaint."
+  - key: answer_counterclaim
+    group: civil
+    name: "Answer to a counterclaim or cross-claim"
+    days: 20
+    rule: "Rule 11, Sec. 4"
+  - key: answer_third_party
+    group: civil
+    name: "Answer to a third-party complaint"
+    days: 30
+    rule: "Rule 11, Sec. 5"
+  - key: reply
+    group: civil
+    name: "Reply"
+    days: 15
+    rule: "Rule 11, Sec. 6"
+    note: "Only where a reply is allowed (Rule 6, Sec. 10)."
+  - key: answer_ejectment
+    group: civil
+    name: "Answer in an ejectment case"
+    days: 10
+    rule: "Rule 70, Sec. 6"
+  - key: motion_reconsideration
+    group: civil
+    name: "Motion for new trial or reconsideration (trial court judgment)"
+    days: 15
+    rule: "Rule 37, Sec. 1"
+    note: "Within the period for taking an appeal. If denied, a fresh 15-day period to appeal runs from receipt of the order of denial (Neypes v. CA)."
+  - key: relief_from_judgment
+    group: civil
+    name: "Petition for relief from judgment"
+    days: 60
+    rule: "Rule 38, Sec. 3"
+    note: "60 days from learning of the judgment, and never more than 6 months after its entry. Check both limits."
+  - key: appeal_mtc_to_rtc
+    group: appeals
+    name: "Notice of appeal from the MTC, MeTC or MCTC to the RTC"
+    days: 15
+    rule: "Rule 40, Sec. 2"
+  - key: notice_of_appeal
+    group: appeals
+    name: "Notice of appeal from the RTC (ordinary appeal)"
+    days: 15
+    rule: "Rule 41, Sec. 3"
+    note: "Where a record on appeal is required, the period is 30 days."
+  - key: record_on_appeal
+    group: appeals
+    name: "Notice of appeal and record on appeal (special proceedings, multiple appeals)"
+    days: 30
+    rule: "Rule 41, Sec. 3"
+  - key: rule_42
+    group: appeals
+    name: "Petition for review to the CA (RTC in its appellate jurisdiction)"
+    days: 15
+    rule: "Rule 42, Sec. 1"
+  - key: rule_43
+    group: appeals
+    name: "Petition for review to the CA (quasi-judicial agency)"
+    days: 15
+    rule: "Rule 43, Sec. 4"
+  - key: ca_motion_reconsideration
+    group: appeals
+    name: "Motion for reconsideration of a CA decision or resolution"
+    days: 15
+    rule: "Rule 52, Sec. 1"
+  - key: rule_45
+    group: appeals
+    name: "Petition for review on certiorari to the Supreme Court"
+    days: 15
+    rule: "Rule 45, Sec. 2"
+  - key: rule_65
+    group: appeals
+    name: "Petition for certiorari, prohibition or mandamus"
+    days: 60
+    rule: "Rule 65, Sec. 4"
+    note: "If a motion for reconsideration was filed, count from notice of its denial."
+  - key: counter_affidavit
+    group: criminal
+    name: "Counter-affidavit in preliminary investigation"
+    days: 10
+    rule: "Rule 112, Sec. 3(b), Revised Rules of Criminal Procedure"
+    note: "Check the period set in the subpoena and any newer DOJ or Ombudsman rules that apply."
+  - key: criminal_motion_reconsideration
+    group: criminal
+    name: "Motion for new trial or reconsideration (criminal judgment)"
+    days: 15
+    rule: "Rule 121, Sec. 1, Revised Rules of Criminal Procedure"
+  - key: criminal_appeal
+    group: criminal
+    name: "Notice of appeal (criminal judgment)"
+    days: 15
+    rule: "Rule 122, Sec. 6, Revised Rules of Criminal Procedure"
+  - key: nlrc_appeal
+    group: labor
+    name: "Appeal of a Labor Arbiter decision to the NLRC"
+    days: 10
+    rule: "Labor Code, Art. 229; 2011 NLRC Rules of Procedure, Rule VI, Sec. 1"
+    note: "The appeal bond and memorandum of appeal must be filed within the same 10 days."
+  - key: nlrc_motion_reconsideration
+    group: labor
+    name: "Motion for reconsideration of an NLRC decision"
+    days: 10
+    rule: "2011 NLRC Rules of Procedure, Rule VII, Sec. 15"
+  - key: bir_protest
+    group: tax
+    name: "Protest of a final assessment notice (FAN/FLD)"
+    days: 30
+    rule: "National Internal Revenue Code, Sec. 228"
+    note: "Supporting documents are due 60 days after the protest is filed."
+  - key: cta_petition_for_review
+    group: tax
+    name: "Petition for review to the CTA (CIR decision or RTC tax decision)"
+    days: 30
+    rule: "R.A. No. 1125, Sec. 11, as amended by R.A. No. 9282"
+  - key: cta_en_banc
+    group: tax
+    name: "Petition for review to the CTA en banc"
+    days: 15
+    rule: "R.A. No. 1125, Sec. 18, as amended by R.A. No. 9282"
+    note: "A motion for reconsideration or new trial before the CTA division must be filed first."

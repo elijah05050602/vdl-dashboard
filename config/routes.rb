@@ -706,6 +706,8 @@ Rails.application.routes.draw do
     # work as a catchall for everything under /wiki
     get "wiki" => "wiki#show"
 
+    resource :deadline_calculator, only: %i[show create]
+
     resources :work_packages, only: %i[index show] do
       collection do
         get "/report/:detail" => "work_packages/reports#report_details"
