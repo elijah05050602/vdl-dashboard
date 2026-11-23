@@ -1,6 +1,6 @@
 # Ready-made matter templates for the Law Firm Dashboard.
 #
-# Each entry becomes a template project (Projects > New project > Use template).
+# Each entry becomes a template matter, offered when creating a New matter.
 # Dates are relative: the first work package is the anchor milestone, and every
 # other step follows another step with a lag in working days. In a matter created
 # from a template, move the anchor to the real date and the whole plan follows.
