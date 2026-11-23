@@ -1119,20 +1119,67 @@ statuses:
     category: closed
     position: 14
 
+  - reference: :legal_status_intake
+    t_name: Intake
+    color_name: cyan-3
+    default_done_ratio: 0
+    category: to_do
+    position: 15
+  - reference: :legal_status_conflict_check
+    t_name: Conflict check
+    color_name: yellow-5
+    default_done_ratio: 5
+    category: to_do
+    position: 16
+  - reference: :legal_status_drafting
+    t_name: Drafting
+    color_name: blue-5
+    default_done_ratio: 30
+    category: in_progress
+    position: 17
+  - reference: :legal_status_partner_review
+    t_name: Partner review
+    color_name: violet-5
+    default_done_ratio: 60
+    category: in_progress
+    position: 18
+  - reference: :legal_status_awaiting_client
+    t_name: Awaiting client
+    color_name: orange-5
+    default_done_ratio: 50
+    category: in_progress
+    position: 19
+  - reference: :legal_status_filed
+    t_name: Filed
+    color_name: teal-5
+    default_done_ratio: 90
+    category: in_progress
+    position: 20
+  - reference: :legal_status_awaiting_court
+    t_name: Awaiting court
+    color_name: grape-3
+    default_done_ratio: 90
+    category: in_progress
+    position: 21
+
 time_entry_activities:
-  - t_name: Management
+  - t_name: Legal research
     is_default: true
     position: 1
-  - t_name: Specification
+  - t_name: Drafting
     position: 2
-  - t_name: Development
+  - t_name: Client communication
     position: 3
-  - t_name: Testing
+  - t_name: Court appearance
     position: 4
-  - t_name: Support
+  - t_name: Discovery and document review
     position: 5
-  - t_name: Other
+  - t_name: Negotiation
     position: 6
+  - t_name: Travel
+    position: 7
+  - t_name: Administrative (non-billable)
+    position: 8
 
 types:
   - reference: :default_type_task
@@ -1172,6 +1219,44 @@ types:
     color_name: "red-7"
     is_in_roadmap: true
     position: 7
+
+  - reference: :legal_type_court_deadline
+    t_name: Court deadline
+    enabled_in_new_projects: true
+    color_name: "red-9"
+    is_milestone: true
+    position: 8
+  - reference: :legal_type_hearing
+    t_name: Hearing
+    enabled_in_new_projects: true
+    color_name: "grape-7"
+    is_milestone: true
+    position: 9
+  - reference: :legal_type_filing
+    t_name: Filing
+    enabled_in_new_projects: true
+    color_name: "teal-7"
+    position: 10
+  - reference: :legal_type_legal_research
+    t_name: Legal research
+    enabled_in_new_projects: true
+    color_name: "indigo-3"
+    position: 11
+  - reference: :legal_type_document_review
+    t_name: Document review
+    enabled_in_new_projects: true
+    color_name: "cyan-7"
+    position: 12
+  - reference: :legal_type_client_communication
+    t_name: Client communication
+    enabled_in_new_projects: true
+    color_name: "orange-7"
+    position: 13
+  - reference: :legal_type_contract_review
+    t_name: Contract review
+    enabled_in_new_projects: true
+    color_name: "lime-7"
+    position: 14
 
 global_queries:
   - t_name: "Epic children: User stories and bugs"
@@ -1305,21 +1390,71 @@ workflows:
       - :default_status_rejected
       - :default_status_closed
 
+  - type: :legal_type_court_deadline
+    statuses:
+      - :default_status_new
+      - :default_status_scheduled
+      - :default_status_in_progress
+      - :legal_status_filed
+      - :default_status_closed
+  - type: :legal_type_hearing
+    statuses:
+      - :default_status_new
+      - :default_status_scheduled
+      - :legal_status_awaiting_court
+      - :default_status_on_hold
+      - :default_status_closed
+  - type: :legal_type_filing
+    statuses:
+      - :default_status_new
+      - :legal_status_drafting
+      - :legal_status_partner_review
+      - :legal_status_awaiting_client
+      - :legal_status_filed
+      - :legal_status_awaiting_court
+      - :default_status_rejected
+      - :default_status_closed
+  - type: :legal_type_legal_research
+    statuses:
+      - :default_status_new
+      - :default_status_in_progress
+      - :legal_status_partner_review
+      - :default_status_on_hold
+      - :default_status_closed
+  - type: :legal_type_document_review
+    statuses:
+      - :default_status_new
+      - :default_status_in_progress
+      - :legal_status_partner_review
+      - :default_status_on_hold
+      - :default_status_closed
+  - type: :legal_type_client_communication
+    statuses:
+      - :default_status_new
+      - :default_status_in_progress
+      - :legal_status_awaiting_client
+      - :default_status_closed
+  - type: :legal_type_contract_review
+    statuses:
+      - :legal_status_intake
+      - :legal_status_conflict_check
+      - :legal_status_drafting
+      - :legal_status_partner_review
+      - :legal_status_awaiting_client
+      - :default_status_on_hold
+      - :default_status_rejected
+      - :default_status_closed
+
 welcome:
-  t_title: "Welcome to OpenProject!"
+  t_title: "Welcome to the Law Firm Dashboard"
   t_text: |
-    OpenProject is the leading open source project management software. It supports classic, agile as well as hybrid project management and gives you full control over your data.
+    This workspace tracks the firm's matters from intake to close. Each project is a matter, and each work package is a piece of work on it.
 
-    Core features and use cases:
+    Getting started:
 
-    * [Project Portfolio Management](https://www.openproject.org/collaboration-software-features/project-portfolio-management/)
-    * [Project Planning and Scheduling](https://www.openproject.org/collaboration-software-features/project-planning-scheduling/)
-    * [Task Management and Issue Tracking](https://www.openproject.org/collaboration-software-features/task-management/)
-    * [Agile Boards (Scrum and Kanban)](https://www.openproject.org/collaboration-software-features/agile-project-management/)
-    * [Requirements Management and Release Planning](https://www.openproject.org/collaboration-software-features/product-development/)
-    * [Time and Cost Tracking, Budgets](https://www.openproject.org/collaboration-software-features/time-tracking/)
-    * [Team Collaboration and Documentation](https://www.openproject.org/collaboration-software-features/team-collaboration/)
-
-    Welcome to the future of project management.
+    * Open a matter and add its **Court deadlines** and **Hearings** so they appear on the calendar and Gantt chart.
+    * Track drafting with **Filing** and **Contract review** work packages, moving them through Drafting, Partner review and Filed.
+    * Log time against each matter with the legal activities (Legal research, Drafting, Court appearance and more) to feed billing reports.
+    * Use **Client communication** work packages to record what is waiting on the client.
 
     For Admins: You can change this welcome text [here]({{opSetting:base_url}}/admin/settings/general).
