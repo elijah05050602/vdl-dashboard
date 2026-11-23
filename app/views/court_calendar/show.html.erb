@@ -63,17 +63,17 @@ See COPYRIGHT and LICENSE files for more details.
   <%= hidden_field_tag :date, @calendar.date.iso8601 %>
   <%= render Primer::Box.new(display: :flex, flex_wrap: :wrap, align_items: :flex_end, mb: 3, style: "gap: 8px;") do %>
     <%= render(Primer::Alpha::Select.new(name: :lawyer, label: t("court_calendar.filter_lawyer"), input_width: :medium,
-                                         data: { test_selector: "court-calendar-lawyer" })) do |select| %>
-      <% select.option(value: "", label: t("court_calendar.all_lawyers")) %>
+                                         data: { test_selector: "court-calendar-lawyer" })) do |lawyer_select| %>
+      <% lawyer_select.option(value: "", label: t("court_calendar.all_lawyers")) %>
       <% @calendar.lawyer_options.each do |principal| %>
-        <% select.option(value: principal.id, label: principal.name, selected: @calendar.lawyer_id == principal.id) %>
+        <% lawyer_select.option(value: principal.id, label: principal.name, selected: @calendar.lawyer_id == principal.id) %>
       <% end %>
     <% end %>
     <%= render(Primer::Alpha::Select.new(name: :court, label: t("court_calendar.filter_court"), input_width: :medium,
-                                         data: { test_selector: "court-calendar-court" })) do |select| %>
-      <% select.option(value: "", label: t("court_calendar.all_courts")) %>
+                                         data: { test_selector: "court-calendar-court" })) do |court_select| %>
+      <% court_select.option(value: "", label: t("court_calendar.all_courts")) %>
       <% @calendar.court_options.each do |option| %>
-        <% select.option(value: option.id, label: option.value, selected: @calendar.court_id == option.id) %>
+        <% court_select.option(value: option.id, label: option.value, selected: @calendar.court_id == option.id) %>
       <% end %>
     <% end %>
     <%= render Primer::Beta::Button.new(type: :submit) do %>
