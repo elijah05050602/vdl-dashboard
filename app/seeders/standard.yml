@@ -247,6 +247,9 @@ project_custom_fields:
   - reference: :matter_cf__date_opened
     t_name: Date opened
     field_format: date
+  - reference: :matter_cf__conflict_check_cleared
+    t_name: Conflict check cleared on
+    field_format: date
   - reference: :matter_cf__court
     t_name: Court or tribunal
     field_format: list
