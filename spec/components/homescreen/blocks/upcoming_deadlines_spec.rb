@@ -69,7 +69,7 @@ RSpec.describe Homescreen::Blocks::UpcomingDeadlines, type: :component do
     end
 
     it "lists open deadlines and hearings due within 30 days, overdue first", :aggregate_failures do
-      rows = rendered_component.all("[data-test-selector='upcoming-deadlines-widget-row']")
+      rows = Capybara.string(rendered_component.to_html).all("[data-test-selector='upcoming-deadlines-widget-row']")
       expect(rows.map { it.find("a").text }).to eq(["File answer", "Pretrial hearing", "Discovery cutoff"])
 
       expect(rows[0]).to have_text("Overdue by 3 days")

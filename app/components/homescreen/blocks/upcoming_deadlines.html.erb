@@ -28,10 +28,12 @@ See COPYRIGHT and LICENSE files for more details.
 <%=
   widget_wrapper do |container|
     if deadlines.empty?
-      render(Primer::Beta::Blankslate.new(test_selector: "upcoming-deadlines-widget-empty")) do |component|
-        component.with_visual_icon(icon: :calendar)
-        component.with_heading(tag: :h4).with_content(t("law_firm.deadlines.widget.empty_heading"))
-        component.with_description { t("law_firm.deadlines.widget.empty_description", days: LawFirm::Deadlines::LOOKAHEAD_DAYS) }
+      container.with_body do
+        render(Primer::Beta::Blankslate.new(test_selector: "upcoming-deadlines-widget-empty")) do |component|
+          component.with_visual_icon(icon: :calendar)
+          component.with_heading(tag: :h4).with_content(t("law_firm.deadlines.widget.empty_heading"))
+          component.with_description { t("law_firm.deadlines.widget.empty_description", days: LawFirm::Deadlines::LOOKAHEAD_DAYS) }
+        end
       end
     else
       deadlines.each do |work_package|
