@@ -140,7 +140,7 @@ matter_templates:
             after: demand_lapses
             duration: 20
             description: |
-              Required before filing when the Local Government Code, Secs. 408 to 412 applies. Mediation by the Punong Barangay runs 15 days, then the Pangkat 15 days, extendible by another 15 (Sec. 410). Prescription is suspended while the dispute is pending, for up to 60 days (Sec. 410(c)).
+              Required before filing when the Local Government Code, Secs. 408 to 412 applies. Mediation by the Punong Barangay runs 15 days, then the Pangkat 15 days, extendable by another 15 (Sec. 410). Prescription is suspended while the dispute is pending, for up to 60 days (Sec. 410(c)).
           - reference: certificate_to_file
             subject: Certificate to File Action issued
             type: :default_type_milestone
@@ -564,7 +564,7 @@ matter_templates:
         after: la_decision
         lag: 10
         description: |
-          10 calendar days from receipt of the decision (Labor Code, Art. 229; NLRC Rules of Procedure, Rule VI). An employer appealing a monetary award must post a cash or surety bond in the same amount within the same period. The period is not extendible.
+          10 calendar days from receipt of the decision (Labor Code, Art. 229; NLRC Rules of Procedure, Rule VI). An employer appealing a monetary award must post a cash or surety bond in the same amount within the same period. The period is not extendable.
       - reference: nlrc_decision
         subject: NLRC decision expected
         type: :default_type_milestone
@@ -959,7 +959,7 @@ matter_templates:
 
           | Step | Period | Source |
           | --- | --- | --- |
-          | Estate tax return (BIR Form 1801), 6% of the net estate | 1 year from death, extendible in meritorious cases | National Internal Revenue Code, Secs. 84 and 90 |
+          | Estate tax return (BIR Form 1801), 6% of the net estate | 1 year from death, extendable in meritorious cases | National Internal Revenue Code, Secs. 84 and 90 |
           | Publication of the deed | once a week for 3 consecutive weeks | Rule 74, Sec. 1 |
           | Local transfer tax | 60 days from the decedent's death or the execution of the deed, as the local code provides | Local Government Code, Sec. 135 |
           | Claims of excluded heirs or creditors | 2 years after the settlement, annotated on the titles | Rule 74, Sec. 4 |
