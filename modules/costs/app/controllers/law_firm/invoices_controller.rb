@@ -42,7 +42,7 @@ module LawFirm
 
     def show
       reprint = @invoice.reprint?
-      pdf = Invoices::Pdf.new(@invoice, reprint:)
+      pdf = Invoices::PDF.new(@invoice, reprint:)
       data = pdf.render
       @invoice.record_print!
 
@@ -58,7 +58,7 @@ module LawFirm
       @invoice_request = new_request(request_params)
 
       if @invoice_request.valid?
-        pdf = Invoices::Pdf.new(draft_invoice, draft: true)
+        pdf = Invoices::PDF.new(draft_invoice, draft: true)
         send_data pdf.render, filename: pdf.filename, type: "application/pdf", disposition: "inline"
       else
         prepare_form
@@ -86,8 +86,8 @@ module LawFirm
 
     private
 
-    def config
-      @config ||= BillingConfig.current
+    def billing_config
+      @billing_config ||= BillingConfig.current
     end
 
     def cancel_invoice(reason)
@@ -100,7 +100,7 @@ module LawFirm
     end
 
     def issue_service
-      Invoices::IssueService.new(user: User.current, project: @project, config:)
+      Invoices::IssueService.new(user: User.current, project: @project, config: billing_config)
     end
 
     def find_invoice
@@ -108,7 +108,7 @@ module LawFirm
     end
 
     def new_request(attributes)
-      Invoices::Request.new(attributes).tap { |request| request.allowed_ewt_rates = config.invoice.ewt_rates }
+      Invoices::Request.new(attributes).tap { |request| request.allowed_ewt_rates = billing_config.invoice.ewt_rates }
     end
 
     def request_params
@@ -127,7 +127,7 @@ module LawFirm
         client_address: last&.client_address,
         client_tin: last&.client_tin,
         client_withholds: last&.ewt_rate.present?,
-        ewt_rate: last&.ewt_rate || config.ewt_rate
+        ewt_rate: last&.ewt_rate || billing_config.ewt_rate
       }
     end
 
@@ -137,8 +137,8 @@ module LawFirm
     end
 
     def prepare_form
-      @ewt_rates = config.invoice.ewt_rates
-      @missing_details = config.invoice.missing_details
+      @ewt_rates = billing_config.invoice.ewt_rates
+      @missing_details = billing_config.invoice.missing_details
       @statement = issue_service.build_statement(@invoice_request) if period_valid?
     end
 

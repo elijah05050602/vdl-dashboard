@@ -29,7 +29,7 @@
 
 module LawFirm
   module Invoices
-    class Pdf < ::Exports::PDF::Common::View
+    class PDF < ::Exports::PDF::Common::View
       LOGO_PATH = Rails.root.join("app/assets/images/law_firm/vdl-mark-charcoal.png")
       CHARCOAL = "3A3A3A"
       MUTED = "6B6B6B"

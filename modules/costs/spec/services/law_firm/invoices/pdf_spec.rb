@@ -29,7 +29,7 @@
 
 require_relative "../../../spec_helper"
 
-RSpec.describe LawFirm::Invoices::Pdf, type: :model do
+RSpec.describe LawFirm::Invoices::PDF, type: :model do
   let(:project) { build_stubbed(:project, name: "ABC Holdings v. DEF Corp.") }
   let(:vat_rate) { BigDecimal("0.12") }
   let(:invoice) do
