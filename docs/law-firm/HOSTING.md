@@ -77,9 +77,51 @@ sudo -u postgres createuser vdl
 sudo -u postgres createdb -O vdl vdl_dashboard
 ```
 
-*TODO (next):* Ruby and Node versions from `.ruby-version` and `package.json`, clone, `RAILS_ENV=production`
-asset build, `db:migrate` and `db:seed`, the `law_firm:ph_holidays` task, and systemd units for the web
-server and background jobs.
+### 4.3 Ruby 4.0.10 and Node 24 (as the `vdl` user)
+
+```bash
+su - vdl
+git clone https://github.com/rbenv/rbenv.git ~/.rbenv
+git clone https://github.com/rbenv/ruby-build.git ~/.rbenv/plugins/ruby-build
+echo 'eval "$(~/.rbenv/bin/rbenv init - bash)"' >> ~/.bashrc && source ~/.bashrc
+rbenv install 4.0.10 && rbenv global 4.0.10
+curl -fsSL https://deb.nodesource.com/setup_24.x | sudo -E bash -   # or run this part as root
+sudo apt -y install nodejs
+```
+
+### 4.4 Get the code and build it
+
+```bash
+git clone --branch dev https://github.com/elijah05050602/vdl-dashboard.git /opt/vdl-dashboard
+cd /opt/vdl-dashboard
+bundle config set --local deployment true
+bundle config set --local without 'development test'
+bundle install
+npm ci
+```
+
+As root, copy `docs/law-firm/hosting/vdl-dashboard.env.example` to `/etc/vdl-dashboard.env`, fill it in
+(`openssl rand -hex 64` for `SECRET_KEY_BASE`), then `chown vdl /etc/vdl-dashboard.env && chmod 600 /etc/vdl-dashboard.env`.
+
+Back as `vdl`:
+
+```bash
+set -a; source /etc/vdl-dashboard.env; set +a
+bundle exec rails assets:precompile
+bundle exec rails db:migrate db:seed
+bundle exec rails law_firm:ph_holidays
+```
+
+### 4.5 Run it as a service (as root)
+
+```bash
+cp /opt/vdl-dashboard/docs/law-firm/hosting/vdl-dashboard-{web,worker}.service /etc/systemd/system/
+systemctl daemon-reload
+systemctl enable --now vdl-dashboard-web vdl-dashboard-worker
+systemctl status vdl-dashboard-web
+```
+
+Log in with `admin` / `admin` (or the seed admin), change the password at once, and delete the demo projects.
 
 ## 5. HTTPS with Let's Encrypt
 
