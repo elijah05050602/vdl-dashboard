@@ -78,16 +78,7 @@ module LawFirm
     end
 
     def create_board(project)
-      statuses = BOARD_STATUSES.filter_map { |name| Status.find_by(name:) }
-      statuses = Status.order(:position).to_a if statuses.empty?
-
-      widgets = statuses.each_with_index.map do |status, index|
-        Grids::Widget.new(start_row: 1, end_row: 2,
-                          start_column: index + 1, end_column: index + 2,
-                          identifier: "work_package_query",
-                          options: { query_id: status_query(project, status).id,
-                                     filters: [{ status: { operator: "=", values: [status.id.to_s] } }] })
-      end
+      widgets = board_statuses.each_with_index.map { |status, index| status_widget(project, status, index) }
 
       ::Boards::Grid.create!(
         project:,
@@ -97,6 +88,19 @@ module LawFirm
         column_count: widgets.count,
         row_count: 1
       )
+    end
+
+    def board_statuses
+      statuses = BOARD_STATUSES.filter_map { |name| Status.find_by(name:) }
+      statuses.presence || Status.order(:position).to_a
+    end
+
+    def status_widget(project, status, index)
+      Grids::Widget.new(start_row: 1, end_row: 2,
+                        start_column: index + 1, end_column: index + 2,
+                        identifier: "work_package_query",
+                        options: { query_id: status_query(project, status).id,
+                                   filters: [{ status: { operator: "=", values: [status.id.to_s] } }] })
     end
 
     def status_query(project, status)
