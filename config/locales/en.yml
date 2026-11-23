@@ -4230,6 +4230,21 @@ en:
       time_entry_activity: "a non-visible activity"
       version: "a non-visible version"
       work_package: "a non-visible work package"
+  law_firm:
+    deadlines:
+      widget:
+        empty_description: "No open court deadlines or hearings are due in the next %{days} days."
+        empty_heading: "Nothing due soon"
+        in_days:
+          one: "In 1 day"
+          other: "In %{count} days"
+        overdue_by:
+          one: "Overdue by 1 day"
+          other: "Overdue by %{count} days"
+        title: "Upcoming court deadlines and hearings"
+        today: "Today"
+        view_overdue: "All overdue"
+        view_upcoming: "All upcoming"
   label_accessibility: "Accessibility"
 
   label_account: "Account"

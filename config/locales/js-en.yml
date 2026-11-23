@@ -707,6 +707,7 @@ en:
       date_alerts:
         milestone_date: "Milestone date"
         overdue: "Overdue"
+        overdue_deadlines: "Overdue deadlines"
         overdue_since: "for %{difference_in_days}."
         property_is: "is in %{difference_in_days}."
         property_is_deleted: "is deleted."
@@ -1070,6 +1071,7 @@ en:
         shared_with_users: "Shared with users"
         summary: "Summary"
         to_do: "To-do"
+        upcoming_deadlines: "Upcoming deadlines"
       description_enter_text: "Enter text"
       description_filter: "Filter"
       description_options_hide: "Hide options"
