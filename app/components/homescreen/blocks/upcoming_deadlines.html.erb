@@ -39,7 +39,7 @@ See COPYRIGHT and LICENSE files for more details.
       deadlines.each do |work_package|
         container.with_row(test_selector: "upcoming-deadlines-widget-row") do
           flex_layout(justify_content: :space_between, align_items: :flex_start) do |row|
-            row.with_column(mr: 2) do
+            row.with_column(mr: 2, flex: 1, style: "min-width: 0; overflow-wrap: anywhere;") do
               component_collection do |body|
                 body.with_component(
                   render(Primer::Beta::Link.new(href: work_package_path(work_package), font_weight: :bold)) { work_package.subject }
@@ -51,7 +51,7 @@ See COPYRIGHT and LICENSE files for more details.
                 )
               end
             end
-            row.with_column(text_align: :right) do
+            row.with_column(text_align: :right, flex_shrink: 0) do
               component_collection do |body|
                 body.with_component(
                   render(Primer::Beta::Label.new(scheme: date_scheme(work_package), test_selector: "upcoming-deadlines-widget-label")) do
@@ -71,7 +71,7 @@ See COPYRIGHT and LICENSE files for more details.
     end
 
     container.with_footer do
-      flex_layout(direction: :row) do |links|
+      flex_layout(direction: :row, flex_wrap: :wrap) do |links|
         if (upcoming = query_link(:upcoming_deadlines))
           links.with_column(mr: 3) do
             render(Primer::Beta::Link.new(href: upcoming)) { t("law_firm.deadlines.widget.view_upcoming") }
