@@ -1,0 +1,38 @@
+en:
+  law_firm:
+    firm_setup:
+      board_name: "Firm board"
+      project_description: "The firm itself. Create each client matter as a sub-matter of VDL Firm so its work shows on the firm board."
+      project_name: "VDL Firm"
+      welcome_text: |
+        Start from **Firm shortcuts** on this page, or from the menu on the left.
+
+        * **New matter** opens a matter under VDL Firm, so its work appears on the **Firm board**. You can also start from a ready-made matter template.
+        * **Court deadlines** lists every open court deadline and hearing in the next 30 days, across all matters.
+        * **Firm board** shows all work by stage: Intake, Conflict check, Drafting, Partner review, Awaiting client, Filed, Awaiting court and Closed. Drag a card to move it to the next stage.
+        * Log your hours in **My time**, and issue BIR invoices from a matter's **Invoices** page.
+      welcome_title: "Law Offices of Villanueva, Dorin & Lozano"
+    navigation:
+      court_deadlines: "Court deadlines"
+      firm_board: "Firm board"
+      firm_board_missing: "The firm board isn't set up yet. An administrator can create it with: bin/rails law_firm:setup_firm"
+    shortcuts:
+      billing_reports:
+        description: "Billable hours and costs by matter, lawyer or client."
+        label: "Time and billing reports"
+      court_deadlines:
+        description: "Open court deadlines and hearings for the next 30 days."
+        label: "Court deadlines"
+      firm_board:
+        description: "All work across the firm's matters, by stage."
+        label: "Firm board"
+      matters:
+        description: "Every active matter of the firm."
+        label: "Matters"
+      my_time:
+        description: "Log and review your hours."
+        label: "My time"
+      new_matter:
+        description: "Open a new client matter under VDL Firm."
+        label: "New matter"
+      title: "Firm shortcuts"

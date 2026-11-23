@@ -19,7 +19,9 @@ Nothing has been rebased.
 - Files shared with upstream (likely conflicts on any rebase or upstream merge):
   - `app/seeders/standard.yml` (legal types, statuses, activities)
   - `app/views/account/login.html.erb` (branding)
-  - `config/constants/settings/definition.rb` (PH defaults)
+  - `config/constants/settings/definition.rb` (PH defaults; firm UI defaults: no
+    development banner, no Enterprise banners or community links, default
+    modules for new matters)
   - `frontend/src/global_styles/openproject/_variable_defaults.scss`
   - `lib/open_project/custom_styles/color_themes.rb`
   - logo and favicon images under `app/assets/images/`

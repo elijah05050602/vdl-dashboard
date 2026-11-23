@@ -35,3 +35,29 @@ ruby modules/law_firm/script/generate_matter_terminology
 ```
 
 Don't edit the generated file by hand.
+
+## Firm navigation and home page
+
+Outside the test environment the engine trims OpenProject to a law-office
+workflow (`lib/open_project/law_firm/navigation.rb`):
+
+- The left menu drops My page, Portfolios, Activity, Gantt charts, Team
+  planners, Boards, News, Wikis and Resource management, and adds
+  **Court deadlines** and **Firm board**.
+- The home page drops New features, Meetings, My account, News, Community and
+  the Enterprise upsell, and adds **Firm shortcuts**.
+
+`OPENPROJECT_LAW_FIRM_SIMPLE_NAVIGATION=false` brings the stock menu back.
+
+## Firm board
+
+`bin/rails db:seed` (or `bin/rails law_firm:setup_firm`) creates the public
+**VDL Firm** matter with a status board (Intake to Closed) and the firm welcome
+text. Its board shows work from VDL Firm and all of its sub-matters, so new
+matters should be opened under VDL Firm; the **New matter** shortcut does that.
+
+## Removing sample data
+
+`bin/rails law_firm:remove_sample_data` deletes OpenProject's demo and
+developer projects (matched by their stock identifiers only) and locks the
+sample `@example.net` users, whose passwords equal their logins.
