@@ -132,7 +132,24 @@ module Costs
         permission :view_own_cost_entries,
                    { costlog: [:index] },
                    permissible_on: :project
+
+        permission :view_law_firm_invoices,
+                   { "law_firm/invoices": %i[index show] },
+                   permissible_on: :project
+        permission :issue_law_firm_invoices,
+                   { "law_firm/invoices": %i[new draft create cancel] },
+                   permissible_on: :project,
+                   require: :member,
+                   dependencies: :view_law_firm_invoices
       end
+
+      menu :project_menu,
+           :law_firm_invoices,
+           { controller: "/law_firm/invoices", action: "index" },
+           after: :costs,
+           caption: ->(*) { I18n.t("law_firm_invoices.menu") },
+           if: ->(project) { project.module_enabled?(:costs) },
+           icon: "file"
 
       # Menu extensions
       menu :admin_menu,
@@ -207,7 +224,8 @@ module Costs
 
     activity_provider :time_entries, class_name: "Activities::TimeEntryActivityProvider", default: false
 
-    replace_principal_references "CostEntry" => %i[logged_by_id user_id]
+    replace_principal_references "CostEntry" => %i[logged_by_id user_id],
+                                 "LawFirm::Invoice" => %i[issued_by_id cancelled_by_id]
 
     include_module "Costs::HasRates", into: %w[User PlaceholderUser]
     include_module "Projects::Costs", into: "Project"

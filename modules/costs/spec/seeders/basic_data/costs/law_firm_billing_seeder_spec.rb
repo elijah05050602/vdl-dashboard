@@ -70,6 +70,15 @@ RSpec.describe BasicData::Costs::LawFirmBillingSeeder do
       .to include(:view_work_packages, :edit_work_packages, :add_work_package_comments)
   end
 
+  it "lets partners issue invoices, also on an installation seeded before invoices existed" do
+    create(:project_role, name: "Partner", permissions: %i[view_project log_time])
+    seeder.seed!
+
+    expect(ProjectRole.find_by(name: "Partner").permissions)
+      .to include(:log_time, :view_law_firm_invoices, :issue_law_firm_invoices)
+    expect(ProjectRole.find_by(name: "Paralegal").permissions).not_to include(:issue_law_firm_invoices)
+  end
+
   it "creates the non-billable activities" do
     seeder.seed!
 

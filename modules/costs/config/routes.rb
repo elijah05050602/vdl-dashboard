@@ -50,6 +50,13 @@ Rails.application.routes.draw do
     get "/time_entries/dialog" => "time_entries#dialog"
   end
 
+  scope "projects/:project_id", as: "project" do
+    resources :invoices, controller: "law_firm/invoices", only: %i[index new create show] do
+      post :draft, on: :collection
+      post :cancel, on: :member
+    end
+  end
+
   namespace "my" do
     get "/hourly_rates" => "hourly_rates#show", as: "hourly_rates"
 

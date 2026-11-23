@@ -1,0 +1,156 @@
+<%#-- copyright
+OpenProject is an open source project management software.
+Copyright (C) the OpenProject GmbH
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License version 3.
+
+OpenProject is a fork of ChiliProject, which is a fork of Redmine. The copyright follows:
+Copyright (C) 2006-2013 Jean-Philippe Lang
+Copyright (C) 2010-2013 the ChiliProject Team
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+See COPYRIGHT and LICENSE files for more details.
+
+++#%>
+<% html_title(t("law_firm_invoices.new_title")) %>
+
+<%=
+  render(Primer::OpenProject::PageHeader.new) do |header|
+    header.with_title { t("law_firm_invoices.new_title") }
+    header.with_breadcrumbs(
+      [{ href: project_overview_path(@project.id), text: @project.name },
+       { href: project_invoices_path(@project), text: t("law_firm_invoices.title") },
+       t("law_firm_invoices.new_title")]
+    )
+  end
+%>
+
+<% if @missing_details.any? %>
+  <%=
+    render(Primer::Alpha::Banner.new(scheme: :warning, icon: :alert, mb: 3)) do
+      t("law_firm_invoices.not_ready",
+        fields: @missing_details.map { |key| t("law_firm_invoices.settings.#{key}") }.to_sentence)
+    end
+  %>
+<% end %>
+
+<% if @invoice_request.errors.any? %>
+  <%=
+    render(Primer::Alpha::Banner.new(scheme: :danger, icon: :stop, mb: 3)) do
+      safe_join(@invoice_request.errors.full_messages, tag.br)
+    end
+  %>
+<% end %>
+
+<% if @statement %>
+  <%=
+    render(Primer::Beta::Text.new(tag: :p, color: :muted)) do
+      hours = @statement.time_entries.sum { |entry| entry.hours.to_d }
+      amount = @statement.lines.sum(0.to_d) { |line| line[:amount] }
+      t("law_firm_invoices.preview_summary",
+        time: number_with_precision(hours, precision: 2, strip_insignificant_zeros: true),
+        entries: @statement.time_entries.size + @statement.cost_entries.size,
+        amount: "₱ #{number_with_precision(amount, precision: 2, delimiter: ',')}") + " " +
+        t("law_firm_invoices.already_billed_hint")
+    end
+  %>
+  <% if @statement.unpriced_entry_count.positive? %>
+    <%=
+      render(Primer::Alpha::Banner.new(scheme: :warning, icon: :alert, mb: 3)) do
+        t("law_firm_invoices.unpriced_warning", count: @statement.unpriced_entry_count)
+      end
+    %>
+  <% end %>
+<% end %>
+
+<%= form_with url: project_invoices_path(@project), scope: :invoice, method: :post,
+              data: { turbo: false, test_selector: "invoice-form" }, class: "form" do |f| %>
+  <section class="form--section">
+    <h3 class="form--section-title"><%= t("law_firm_invoices.period_heading") %></h3>
+    <% %i[period_from period_to].each do |attribute| %>
+      <div class="form--field -required">
+        <%= f.label attribute, LawFirm::Invoices::Request.human_attribute_name(attribute), class: "form--label" %>
+        <div class="form--field-container">
+          <div class="form--text-field-container">
+            <%= f.date_field attribute, value: @invoice_request.public_send(attribute), required: true, class: "form--text-field" %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </section>
+
+  <section class="form--section">
+    <h3 class="form--section-title"><%= t("law_firm_invoices.client_heading") %></h3>
+    <div class="form--field -required">
+      <%= f.label :client_name, LawFirm::Invoices::Request.human_attribute_name(:client_name), class: "form--label" %>
+      <div class="form--field-container">
+        <div class="form--text-field-container -wide">
+          <%= f.text_field :client_name, value: @invoice_request.client_name, required: true, class: "form--text-field" %>
+        </div>
+      </div>
+    </div>
+    <div class="form--field -required">
+      <%= f.label :client_address, LawFirm::Invoices::Request.human_attribute_name(:client_address), class: "form--label" %>
+      <div class="form--field-container">
+        <div class="form--text-area-container -wide">
+          <%= f.text_area :client_address, value: @invoice_request.client_address, required: true, rows: 3, class: "form--text-area" %>
+        </div>
+      </div>
+    </div>
+    <div class="form--field">
+      <%= f.label :client_tin, LawFirm::Invoices::Request.human_attribute_name(:client_tin), class: "form--label" %>
+      <div class="form--field-container">
+        <div class="form--text-field-container">
+          <%= f.text_field :client_tin, value: @invoice_request.client_tin, placeholder: "000-000-000-00000", class: "form--text-field" %>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="form--section">
+    <h3 class="form--section-title"><%= t("law_firm_invoices.tax_heading") %></h3>
+    <div class="form--field">
+      <%= f.label :client_withholds, LawFirm::Invoices::Request.human_attribute_name(:client_withholds), class: "form--label" %>
+      <div class="form--field-container">
+        <%= f.check_box :client_withholds, { checked: @invoice_request.client_withholds, class: "form--check-box" }, "1", "0" %>
+      </div>
+    </div>
+    <div class="form--field">
+      <%= f.label :ewt_rate, LawFirm::Invoices::Request.human_attribute_name(:ewt_rate), class: "form--label" %>
+      <div class="form--field-container">
+        <div class="form--select-container">
+          <%= f.select :ewt_rate,
+                       options_for_select(@ewt_rates.map { |rate| ["#{(rate * 100).to_i}%", rate.to_s("F")] },
+                                          @invoice_request.ewt_rate&.to_d&.to_s("F")),
+                       {},
+                       class: "form--select" %>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <p class="color-fg-muted"><%= t("law_firm_invoices.issue_explanation") %></p>
+
+  <%= f.button t("law_firm_invoices.button_preview"),
+               type: :submit,
+               formaction: draft_project_invoices_path(@project),
+               formtarget: "_blank",
+               class: "button" %>
+  <% if @missing_details.empty? %>
+    <%= f.button t("law_firm_invoices.button_issue"), type: :submit, class: "button -primary",
+                 data: { test_selector: "invoice-issue-button" } %>
+  <% end %>
+<% end %>

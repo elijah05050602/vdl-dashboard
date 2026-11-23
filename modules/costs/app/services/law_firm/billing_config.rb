@@ -72,7 +72,11 @@ module LawFirm
       edit_cost_entries
       edit_budgets
       save_cost_reports
+      view_law_firm_invoices
+      issue_law_firm_invoices
     ]).freeze
+
+    INVOICE_PERMISSIONS = %i[view_law_firm_invoices issue_law_firm_invoices].freeze
 
     PERMISSION_PRESETS = {
       "timekeeper" => TIMEKEEPER_PERMISSIONS,
@@ -118,6 +122,18 @@ module LawFirm
 
     def expense_types
       Array(@data["expense_types"]).map(&:symbolize_keys)
+    end
+
+    def disbursement_type_names
+      expense_types.select { |type| type[:kind].to_s == "disbursement" }.map { |type| type[:name].to_s }
+    end
+
+    def vat_registered?
+      vat_rate.present? && vat_rate.positive?
+    end
+
+    def invoice
+      @invoice ||= InvoiceSettings.new(@data["invoice"] || {})
     end
 
     def hourly_rate_for(role_names)
