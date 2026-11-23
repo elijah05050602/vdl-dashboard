@@ -1,0 +1,122 @@
+---
+en:
+  activerecord:
+    attributes:
+      matter_party:
+        notes: Notes
+        party: Party
+        party_id: Party
+        role: Role on the matter
+      party:
+        address: Address
+        aliases: Alternate names
+        email: Email
+        kind: Type
+        matter_parties: Matters
+        name: Name
+        notes: Notes
+        phone: Phone
+        tin: TIN
+      party_alias:
+        alias_type: Kind of name
+        name: Alternate name
+    errors:
+      models:
+        matter_party:
+          attributes:
+            party_id:
+              taken: already has this role on the matter
+        party:
+          attributes:
+            tin:
+              invalid_tin: must have 9 digits, followed by a 3 or 5 digit branch code
+                if any (e.g. 123-456-789-00000)
+    models:
+      matter_party: Matter party
+      party: Party
+      party_alias: Alternate name
+  client_registry:
+    alias_types:
+      abbreviation: Abbreviation or acronym
+      former_company_name: Former company name
+      former_name: Former or married name
+      maiden_name: Maiden name
+      nickname: Nickname or short form
+      other_name: Other name or spelling
+      trade_name: Trade or business name
+    caption: 'Every client, adverse party, opposing counsel, witness and related party
+      the firm deals with, with their other names. The conflict check searches this
+      registry.
+
+      '
+    columns:
+      contact: Contact
+      kind: Type
+      matters: Matters
+      name: Name
+      tin: TIN
+    kinds:
+      government: Government agency or GOCC
+      organization: Company or organization
+      person: Person
+    matter_count:
+      one: 1 matter
+      other: "%{count} matters"
+      zero: None
+    matter_parties:
+      add_heading: Link a party
+      add_submit: Link party
+      add_to_registry: Add a new client or party
+      also_known_as: Also known as %{names}
+      caption: The clients, adverse parties, counsel and witnesses on this matter,
+        from the firm's registry.
+      change_role: Change role
+      none: No parties linked to this matter yet.
+      not_in_registry: Not in the registry yet?
+      party_placeholder: Choose from the registry
+      unlink: Unlink
+      unlink_confirm: Unlink this party from the matter? The party stays in the registry.
+    new_party: Add client or party
+    no_parties: No clients or parties yet.
+    no_results: No client or party matches "%{query}".
+    party:
+      aliases_caption: 'Add every other name this party is known by, so the conflict
+        check finds it: maiden or married names, "Ma." and "Sto." forms, nicknames,
+        trade names, and former company names. Leave a row empty to skip it.
+
+        '
+      aliases_heading: Alternate names
+      cannot_delete_linked: This party is linked to matters. Unlink it from every
+        matter before deleting it.
+      delete_confirm: Delete this party from the registry?
+      details: Details
+      hidden_matters:
+        one: Also linked to 1 matter you cannot see.
+        other: Also linked to %{count} matters you cannot see.
+      matters_heading: Matters
+      no_aliases: No alternate names recorded.
+      no_matters: Not linked to any matter yet. Link it from the matter's Parties
+        page.
+      not_set: Not set
+      remove_alias: Remove
+      tin_caption: BIR Taxpayer Identification Number, with branch code if any. Dashes
+        are optional.
+    roles:
+      adverse_party: Adverse party
+      client: Client
+      opposing_counsel: Opposing counsel
+      related_party: Related party
+      witness: Witness
+    search_label: Search by name, alternate name, email or TIN
+    search_placeholder: e.g. Ma. Cristina Dela Cruz, ABC Holdings, 123-456-789
+    search_submit: Search
+  label_client_registry: Clients and parties
+  label_matter_parties: Parties
+  permission_manage_client_registry: Add and edit clients and parties in the registry
+  permission_manage_matter_parties: Link and unlink parties on a matter
+  permission_view_client_registry: View the client and party registry
+  permission_view_matter_parties: View the parties of a matter
+  plugin_openproject_client_registry:
+    description: Firm-wide registry of clients and parties with aliases, linked to
+      matters by role.
+    name: VDL client and party registry

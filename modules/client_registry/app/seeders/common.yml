@@ -1,0 +1,13 @@
+modules_permissions:
+  client_registry:
+  - role: :default_role_member
+    add:
+    - :view_matter_parties
+    - :manage_matter_parties
+  - role: :default_role_reader
+    add:
+    - :view_matter_parties
+  - role: :default_role_standard_global
+    add:
+    - :view_client_registry
+    - :manage_client_registry

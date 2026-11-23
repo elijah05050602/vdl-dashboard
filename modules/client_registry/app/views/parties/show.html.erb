@@ -1,0 +1,128 @@
+<%#-- copyright
+OpenProject is an open source project management software.
+Copyright (C) the OpenProject GmbH
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License version 3.
+
+OpenProject is a fork of ChiliProject, which is a fork of Redmine. The copyright follows:
+Copyright (C) 2006-2013 Jean-Philippe Lang
+Copyright (C) 2010-2013 the ChiliProject Team
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+See COPYRIGHT and LICENSE files for more details.
+
+++#%>
+
+<% html_title t(:label_client_registry), @party.name -%>
+
+<%=
+  render Primer::OpenProject::PageHeader.new do |header|
+    header.with_title { @party.name }
+    header.with_breadcrumbs([{ href: parties_path, text: t(:label_client_registry) }, @party.name])
+    if User.current.allowed_globally?(:manage_client_registry)
+      header.with_action_button(
+        mobile_icon: :pencil,
+        mobile_label: t(:button_edit),
+        tag: :a,
+        href: edit_party_path(@party),
+        test_selector: "client-registry-edit-party"
+      ) do |button|
+        button.with_leading_visual_icon(icon: :pencil)
+        t(:button_edit)
+      end
+      if @party.matter_parties.empty?
+        header.with_action_button(
+          scheme: :danger,
+          mobile_icon: :trash,
+          mobile_label: t(:button_delete),
+          tag: :a,
+          href: party_path(@party),
+          data: { turbo_method: :delete, turbo_confirm: t("client_registry.party.delete_confirm") },
+          test_selector: "client-registry-delete-party"
+        ) do |button|
+          button.with_leading_visual_icon(icon: :trash)
+          t(:button_delete)
+        end
+      end
+    end
+  end
+%>
+
+<%= render Primer::Beta::Heading.new(tag: :h3, mb: 2) do %><%= t("client_registry.party.details") %><% end %>
+<%= render Primer::Beta::BorderBox.new(mb: 4, test_selector: "client-registry-party-details") do |box| %>
+  <% [
+       [Party.human_attribute_name(:kind), t("client_registry.kinds.#{@party.kind}")],
+       [Party.human_attribute_name(:tin), @party.formatted_tin],
+       [Party.human_attribute_name(:email), @party.email && mail_to(@party.email)],
+       [Party.human_attribute_name(:phone), @party.phone],
+       [Party.human_attribute_name(:address), @party.address && simple_format(@party.address)],
+       [Party.human_attribute_name(:notes), @party.notes && simple_format(@party.notes)]
+     ].each do |label, value| %>
+    <% box.with_row do %>
+      <%= render Primer::Box.new(display: :flex) do %>
+        <%= render(Primer::Box.new(col: 3, font_weight: :bold)) { label } %>
+        <%= render Primer::Box.new(col: 9) do %>
+          <% if value.present? %>
+            <%= value %>
+          <% else %>
+            <%= render(Primer::Beta::Text.new(color: :muted)) { t("client_registry.party.not_set") } %>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+<% end %>
+
+<%= render Primer::Beta::Heading.new(tag: :h3, mb: 2) do %><%= t("client_registry.party.aliases_heading") %><% end %>
+<% if @party.aliases.any? %>
+  <%= render Primer::Beta::BorderBox.new(mb: 4, test_selector: "client-registry-party-aliases") do |box| %>
+    <% @party.aliases.each do |party_alias| %>
+      <% box.with_row do %>
+        <%= render Primer::Box.new(display: :flex) do %>
+          <%= render(Primer::Box.new(col: 6)) { party_alias.name } %>
+          <%= render(Primer::Box.new(col: 6, color: :muted)) { t("client_registry.alias_types.#{party_alias.alias_type}") } %>
+        <% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+<% else %>
+  <%= render(Primer::Beta::Text.new(tag: :p, color: :muted, mb: 4)) { t("client_registry.party.no_aliases") } %>
+<% end %>
+
+<%= render Primer::Beta::Heading.new(tag: :h3, mb: 2) do %><%= t("client_registry.party.matters_heading") %><% end %>
+<% if @visible_links.any? %>
+  <%= render Primer::Beta::BorderBox.new(mb: 2, test_selector: "client-registry-party-matters") do |box| %>
+    <% @visible_links.each do |link| %>
+      <% box.with_row do %>
+        <%= render Primer::Box.new(display: :flex, align_items: :center) do %>
+          <%= render(Primer::Box.new(col: 6)) { link_to link.project.name, project_matter_parties_path(link.project) } %>
+          <%= render Primer::Box.new(col: 3) do %>
+            <%= render(Primer::Beta::Label.new(scheme: role_label_scheme(link.role))) { t("client_registry.roles.#{link.role}") } %>
+          <% end %>
+          <%= render(Primer::Box.new(col: 3, color: :muted)) { link.notes } %>
+        <% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+<% elsif @hidden_matter_count.zero? %>
+  <%= render(Primer::Beta::Text.new(tag: :p, color: :muted)) { t("client_registry.party.no_matters") } %>
+<% end %>
+<% if @hidden_matter_count.positive? %>
+  <%= render(Primer::Beta::Text.new(tag: :p, color: :muted, test_selector: "client-registry-hidden-matters")) do %>
+    <%= render Primer::Beta::Octicon.new(icon: :lock, mr: 1) %>
+    <%= t("client_registry.party.hidden_matters", count: @hidden_matter_count) %>
+  <% end %>
+<% end %>

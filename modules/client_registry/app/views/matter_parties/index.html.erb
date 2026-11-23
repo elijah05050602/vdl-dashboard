@@ -1,0 +1,163 @@
+<%#-- copyright
+OpenProject is an open source project management software.
+Copyright (C) the OpenProject GmbH
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License version 3.
+
+OpenProject is a fork of ChiliProject, which is a fork of Redmine. The copyright follows:
+Copyright (C) 2006-2013 Jean-Philippe Lang
+Copyright (C) 2010-2013 the ChiliProject Team
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+See COPYRIGHT and LICENSE files for more details.
+
+++#%>
+
+<% html_title t(:label_matter_parties) -%>
+
+<%=
+  render Primer::OpenProject::PageHeader.new do |header|
+    header.with_title { t(:label_matter_parties) }
+    header.with_description { t("client_registry.matter_parties.caption") }
+    header.with_breadcrumbs([{ href: project_overview_path(@project.id), text: @project.name }, t(:label_matter_parties)])
+  end
+%>
+
+<% can_manage = User.current.allowed_in_project?(:manage_matter_parties, @project) %>
+<% can_view_registry = User.current.allowed_globally?(:view_client_registry) %>
+
+<% if @matter_parties.empty? %>
+  <%= render Primer::Beta::Blankslate.new(border: true, mb: 4, test_selector: "matter-parties-empty") do |blankslate|
+        blankslate.with_visual_icon(icon: :people)
+        blankslate.with_heading(tag: :h3).with_content(t("client_registry.matter_parties.none"))
+      end %>
+<% else %>
+  <%= render Primer::Beta::BorderBox.new(mb: 4, test_selector: "matter-parties") do |box| %>
+    <% @matter_parties.each do |link| %>
+      <% box.with_row(test_selector: "matter-party-#{link.id}") do %>
+        <%= render Primer::Box.new(display: :flex, align_items: :center, style: "gap: 8px;") do %>
+          <%= render Primer::Box.new(col: 5) do %>
+            <% if can_view_registry %>
+              <%= link_to link.party.name, party_path(link.party) %>
+            <% else %>
+              <%= link.party.name %>
+            <% end %>
+            <% if link.party.aliases.any? %>
+              <%= render(Primer::Beta::Text.new(tag: :div, color: :muted, font_size: :small)) do %>
+                <%= t("client_registry.matter_parties.also_known_as", names: link.party.aliases.map(&:name).join("; ")) %>
+              <% end %>
+            <% end %>
+            <% if link.notes.present? %>
+              <%= render(Primer::Beta::Text.new(tag: :div, font_size: :small)) { link.notes } %>
+            <% end %>
+          <% end %>
+          <%= render Primer::Box.new(col: 4) do %>
+            <% if can_manage %>
+              <%= form_with model: link, url: project_matter_party_path(@project, link), method: :patch,
+                            class: "d-flex flex-items-center", style: "gap: 8px;" do %>
+                <%= render Primer::Alpha::Select.new(
+                      name: "matter_party[role]",
+                      id: "matter_party_#{link.id}_role",
+                      label: MatterParty.human_attribute_name(:role),
+                      visually_hide_label: true,
+                      size: :small
+                    ) do |select|
+                      MatterParty::ROLES.each do |role|
+                        select.option(label: t("client_registry.roles.#{role}"), value: role, selected: link.role == role)
+                      end
+                    end %>
+                <%= render(Primer::Beta::Button.new(type: :submit, size: :small)) { t("client_registry.matter_parties.change_role") } %>
+              <% end %>
+            <% else %>
+              <%= render(Primer::Beta::Label.new(scheme: role_label_scheme(link.role))) { t("client_registry.roles.#{link.role}") } %>
+            <% end %>
+          <% end %>
+          <%= render Primer::Box.new(col: 3, text_align: :right) do %>
+            <% if can_manage %>
+              <%= render Primer::Beta::Button.new(
+                    tag: :a,
+                    href: project_matter_party_path(@project, link),
+                    size: :small,
+                    scheme: :danger,
+                    data: { turbo_method: :delete, turbo_confirm: t("client_registry.matter_parties.unlink_confirm") }
+                  ) do %>
+                <%= t("client_registry.matter_parties.unlink") %>
+              <% end %>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+<% end %>
+
+<% if can_manage %>
+  <%= render Primer::Beta::Heading.new(tag: :h3, mb: 2) do %><%= t("client_registry.matter_parties.add_heading") %><% end %>
+
+  <% if @new_matter_party.errors.any? %>
+    <%= render Primer::Alpha::Banner.new(scheme: :danger, icon: :stop, mb: 3, test_selector: "matter-party-errors") do %>
+      <%= @new_matter_party.errors.full_messages.to_sentence %>
+    <% end %>
+  <% end %>
+
+  <%= form_with model: @new_matter_party, url: project_matter_parties_path(@project), method: :post,
+                id: "matter-party-form" do %>
+    <%= render Primer::Box.new(style: "max-width: 720px;") do %>
+      <%= render Primer::Box.new(display: :flex, align_items: :flex_end, mb: 3, style: "gap: 8px;") do %>
+        <%= render Primer::Box.new(flex: 1) do %>
+          <%= render Primer::Alpha::Select.new(
+                name: "matter_party[party_id]",
+                id: "matter_party_party_id",
+                label: MatterParty.human_attribute_name(:party),
+                include_blank: t("client_registry.matter_parties.party_placeholder"),
+                full_width: true,
+                required: true
+              ) do |select|
+                @party_options.each do |name, id|
+                  select.option(label: name, value: id, selected: @new_matter_party.party_id == id)
+                end
+              end %>
+        <% end %>
+        <%= render Primer::Alpha::Select.new(
+              name: "matter_party[role]",
+              id: "matter_party_role",
+              label: MatterParty.human_attribute_name(:role)
+            ) do |select|
+              MatterParty::ROLES.each do |role|
+                select.option(label: t("client_registry.roles.#{role}"), value: role, selected: @new_matter_party.role == role)
+              end
+            end %>
+      <% end %>
+      <%= render Primer::Box.new(mb: 3) do %>
+        <%= render Primer::Alpha::TextField.new(
+              name: "matter_party[notes]",
+              id: "matter_party_notes",
+              label: MatterParty.human_attribute_name(:notes),
+              value: @new_matter_party.notes,
+              full_width: true
+            ) %>
+      <% end %>
+      <%= render(Primer::Beta::Button.new(type: :submit, scheme: :primary)) { t("client_registry.matter_parties.add_submit") } %>
+    <% end %>
+  <% end %>
+
+  <% if User.current.allowed_globally?(:manage_client_registry) %>
+    <%= render(Primer::Beta::Text.new(tag: :p, color: :muted, mt: 3)) do %>
+      <%= t("client_registry.matter_parties.not_in_registry") %>
+      <%= link_to t("client_registry.matter_parties.add_to_registry"), new_party_path %>
+    <% end %>
+  <% end %>
+<% end %>
