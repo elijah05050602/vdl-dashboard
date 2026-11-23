@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self'; style-src 'self'; script-src 'self'">
+  <title>Cannot reach the dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="card">
+    <div class="brand">
+      <img src="../build/icon.png" alt="">
+      <div>
+        <h1>Law Firm Dashboard</h1>
+        <p>Desktop app</p>
+      </div>
+    </div>
+    <h2>Cannot reach the dashboard</h2>
+    <p class="lead">The app could not connect to <code id="url"></code>. Check the internet connection, or that the server is running.</p>
+    <p class="lead" id="error"></p>
+    <div class="actions">
+      <button type="button" id="settings">Server settings</button>
+      <span class="spacer"></span>
+      <button type="button" class="primary" id="retry">Try again</button>
+    </div>
+    <div class="status" id="countdown" role="status" aria-live="polite"></div>
+  </main>
+  <script src="offline.js"></script>
+</body>
+</html>

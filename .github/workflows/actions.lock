@@ -37,6 +37,9 @@ workflows:
     '.github/workflows/dependency-review.yml':
         - 'actions/checkout@v7.0.1'
         - 'actions/dependency-review-action@v5.0.0'
+    '.github/workflows/desktop-app.yml':
+        - 'actions/checkout@v7.0.1'
+        - 'actions/setup-node@v7.1.0'
     '.github/workflows/docs.yaml':
         - 'actions/checkout@v7.0.1'
         - 'ruby/setup-ruby@v1.342.0'

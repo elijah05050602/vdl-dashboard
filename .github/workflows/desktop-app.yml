@@ -1,0 +1,88 @@
+name: Desktop app (Windows installer)
+
+on:
+  pull_request:
+    paths:
+      - 'desktop/**'
+      - '.github/workflows/desktop-app.yml'
+  push:
+    branches:
+      - dev
+    paths:
+      - 'desktop/**'
+      - '.github/workflows/desktop-app.yml'
+  workflow_dispatch:
+    inputs:
+      server_url:
+        description: 'Server address to pre-fill in the installer (leave empty to use the DASHBOARD_SERVER_URL variable or localhost:3000)'
+        required: false
+        default: ''
+
+permissions: {}
+
+concurrency:
+  group: desktop-app-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build Windows installer
+    runs-on: windows-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+    defaults:
+      run:
+        working-directory: desktop
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Node
+        uses: actions/setup-node@v7.1.0
+        with:
+          node-version: '24.22.1'
+          package-manager-cache: false
+
+      - name: Install packages
+        run: npm ci --no-audit --no-fund
+
+      - name: Run tests
+        run: npm test
+
+      - name: Pre-fill server address
+        shell: bash
+        env:
+          INPUT_URL: ${{ inputs.server_url }}
+          VARIABLE_URL: ${{ vars.DASHBOARD_SERVER_URL }}
+        run: |
+          url="${INPUT_URL:-$VARIABLE_URL}"
+          if [ -n "$url" ]; then
+            node -e 'require("fs").writeFileSync("src/default-server.json", JSON.stringify({ serverUrl: process.argv[1] }))' "$url"
+            echo "Installer pre-filled with $url"
+          else
+            echo "No server address given, the installer suggests http://localhost:3000"
+          fi
+
+      - name: Build installer
+        run: npm run dist
+
+      - name: Publish release
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/dev'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SHA: ${{ github.sha }}
+        run: |
+          version="$(node -p 'require("./package.json").version')"
+          tag="desktop-v${version}"
+          installer="dist/Law-Firm-Dashboard-Setup-${version}.exe"
+          notes="Windows installer for the Law Firm Dashboard desktop app. Download the .exe below and run it. Windows may show a SmartScreen warning because the installer is not code-signed yet: click More info, then Run anyway."
+          if gh release view "$tag" --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
+            gh release upload "$tag" "$installer" --clobber --repo "$GITHUB_REPOSITORY"
+          else
+            gh release create "$tag" "$installer" --repo "$GITHUB_REPOSITORY" --target "$SHA" --title "Law Firm Dashboard desktop ${version}" --notes "$notes" --latest
+          fi
+          echo "Released $installer as $tag" >> "$GITHUB_STEP_SUMMARY"
