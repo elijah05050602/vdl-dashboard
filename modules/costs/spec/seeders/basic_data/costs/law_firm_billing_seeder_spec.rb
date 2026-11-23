@@ -35,9 +35,6 @@ RSpec.describe BasicData::Costs::LawFirmBillingSeeder do
   let(:seed_data) { Source::SeedData.new({}) }
   let(:config) do
     LawFirm::BillingConfig.new(
-      "currency" => "₱",
-      "currency_format" => "%u %n",
-      "vat_rate" => 0.12,
       "default_project_modules" => %w[costs budgets],
       "billing_roles" => [
         { "name" => "Partner", "hourly_rate" => 8000, "permissions" => :partner },
@@ -66,6 +63,13 @@ RSpec.describe BasicData::Costs::LawFirmBillingSeeder do
     expect(ProjectRole.find_by(name: "Paralegal").permissions).not_to include(:view_hourly_rates)
   end
 
+  it "gives billing roles matter permissions even without a Member role to copy from" do
+    seeder.seed!
+
+    expect(ProjectRole.find_by(name: "Paralegal").permissions)
+      .to include(:view_work_packages, :edit_work_packages, :add_work_package_comments)
+  end
+
   it "creates the non-billable activities" do
     seeder.seed!
 
@@ -80,19 +84,10 @@ RSpec.describe BasicData::Costs::LawFirmBillingSeeder do
     expect(CostType.find_by(name: "Appearance fee").current_rate).to eq 5000
   end
 
-  it "switches on time and budgets for new matters and sets the currency" do
+  it "switches on time and budgets for new matters" do
     seeder.seed!
 
     expect(Setting.default_projects_modules).to include("costs", "budgets")
-    expect(Setting.costs_currency).to eq "₱"
-    expect(Setting.costs_currency_format).to eq "%u %n"
-  end
-
-  it "keeps a currency that was already chosen" do
-    Setting.costs_currency = "PHP"
-    seeder.seed!
-
-    expect(Setting.costs_currency).to eq "PHP"
   end
 
   it "leaves settings alone that are set through the environment" do
@@ -112,7 +107,7 @@ RSpec.describe BasicData::Costs::LawFirmBillingSeeder do
                                         pivot_rows: %w[project_id user_id], pivot_columns: %w[tyear tmonth])
     expect(billable.query.filters.map { [it.name, it.operator, it.values] })
       .to eq([[:activity_id, "!", non_billable_ids]])
-    expect(CostReport.find_by(name: "Billable amounts by matter (excl. 12% VAT)").unit_id).to eq 0
+    expect(CostReport.find_by(name: "Billable amounts by matter (before tax)").unit_id).to eq 0
     expect(CostReport.find_by(name: "Non-billable time by person").query.filters.first.operator).to eq "="
   end
 

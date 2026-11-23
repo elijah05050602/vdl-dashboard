@@ -31,6 +31,23 @@ module LawFirm
   class BillingConfig
     PATH = Rails.root.join("config/law_firm_billing.yml")
 
+    # Matter work every billing role needs, also when the Member role it
+    # otherwise copies from cannot be found.
+    MATTER_PERMISSIONS = %i[
+      view_work_packages
+      add_work_packages
+      edit_work_packages
+      work_package_assigned
+      add_work_package_comments
+      edit_own_work_package_comments
+      add_work_package_attachments
+      save_queries
+      view_calendar
+      view_members
+      view_project_attributes
+      view_wiki_pages
+    ].freeze
+
     TIMEKEEPER_PERMISSIONS = %i[
       view_own_time_entries
       log_own_time
@@ -80,26 +97,6 @@ module LawFirm
       @data = data.deep_stringify_keys
     end
 
-    def currency
-      @data["currency"].presence
-    end
-
-    def currency_format
-      @data["currency_format"].presence
-    end
-
-    def vat_rate
-      BigDecimal(@data["vat_rate"].to_s) if @data["vat_rate"].present?
-    end
-
-    def ewt_rate
-      BigDecimal(@data["ewt_rate"].to_s) if @data["ewt_rate"].present?
-    end
-
-    def vat_percentage
-      (vat_rate * 100).to_i if vat_rate
-    end
-
     def default_project_modules
       Array(@data["default_project_modules"]).map(&:to_s)
     end
@@ -109,7 +106,8 @@ module LawFirm
         {
           name: role["name"].to_s,
           hourly_rate: role["hourly_rate"],
-          permissions: PERMISSION_PRESETS.fetch(role["permissions"].to_s, TIMEKEEPER_PERMISSIONS)
+          permissions: MATTER_PERMISSIONS +
+            PERMISSION_PRESETS.fetch(role["permissions"].to_s, TIMEKEEPER_PERMISSIONS)
         }
       end
     end

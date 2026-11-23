@@ -64,8 +64,11 @@ module LawFirm
       member.project
     end
 
-    # Starting at the first time already logged on the matter prices that time too.
+    # Time logged before the rate existed is priced with it only when it has no
+    # price yet, so amounts already costed with a default rate do not change.
     def valid_from
+      return Date.current if DefaultHourlyRate.for_principal(principal).exists?
+
       [TimeEntry.for_principal(principal).in_project(project).minimum(:spent_on), Date.current].compact.min
     end
   end

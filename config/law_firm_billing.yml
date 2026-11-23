@@ -6,20 +6,16 @@
 #
 # All amounts are in Philippine pesos and exclude VAT.
 
-# Applied only while the currency is still OpenProject's default (€) and can
-# be changed in Administration > Time and costs.
-currency: "₱"
-currency_format: "%u %n"
-
 # Value-added tax on professional fees. Amounts in OpenProject stay
 # VAT-exclusive; add VAT when invoicing.
 vat_rate: 0.12
 
-# Expanded withholding tax (EWT) that corporate clients withhold from
-# professional fees and remit to the BIR (they give the firm BIR Form 2307).
-# For a law firm partnership it is 10%, or 15% once a client's payments to the
-# firm exceed ₱720,000 in the year. Like VAT, it is applied when invoicing.
-ewt_rate: 0.10
+# Expanded withholding tax (EWT) that corporate and government clients withhold
+# from professional fees and remit to the BIR (they give the firm BIR Form 2307).
+# For a law firm (juridical person) it is 15% when the firm's gross income for
+# the year exceeds ₱720,000, otherwise 10%. Like VAT, it is applied when
+# preparing the billing statement.
+ewt_rate: 0.15
 
 # Project modules switched on for new matters, so time, fees, budgets and
 # cost reports are available without extra setup.

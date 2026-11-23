@@ -17,7 +17,8 @@ that already exist.
   role's rate on the matter, unless they already have one there. With several roles the highest
   rate wins. Change a person's rate on a matter in the matter's *Members* page or on their
   profile. To give rates to people who were already on matters, run
-  `bin/rails law_firm:apply_role_rates`.
+  `bin/rails law_firm:apply_role_rates`. A new rate also prices time the person logged on the
+  matter earlier, unless that time was already priced with their default rate.
 - **Billable and non-billable time:** time logged as *Administrative*, *Pro bono* or *Business
   development* (the activities ending in "(non-billable)") is non-billable. Everything else is
   billable.
@@ -39,8 +40,6 @@ that already exist.
 - **Budgets and time tracking** are switched on for new matters. Add a budget under *Budgets* in
   the matter with the planned hours per person and planned fees. The budget page shows spent
   against planned.
-- **Currency** is set to ₱, shown before the amount, unless it was already changed in
-  *Administration > Time and costs*.
 
 ## VAT and withholding tax
 
@@ -49,14 +48,19 @@ the billing statement:
 
 - **VAT:** add 12% (`vat_rate` in the config). Firms that are not VAT-registered set `vat_rate` to
   nothing and pay percentage tax instead.
-- **Expanded withholding tax (EWT):** corporate clients withhold it from professional fees and
-  give the firm BIR Form 2307. For a law firm partnership it is 10%, or 15% once a client's
-  payments to the firm pass ₱720,000 in the year (`ewt_rate` in the config). EWT is computed on
-  the fee before VAT.
+- **Expanded withholding tax (EWT):** corporate and government clients withhold it from
+  professional fees and give the firm BIR Form 2307. For a law firm it is 15% when the firm's
+  gross income for the year exceeds ₱720,000, otherwise 10% (`ewt_rate` in the config, 15% by
+  default). A lawyer billing as a sole practitioner uses 10%, or 5% with gross income up to
+  ₱3 million. EWT is computed on the fee before VAT.
+- **Government clients** also withhold 5% final VAT.
 
-For a ₱100,000 fee to a corporate client: VAT ₱12,000, EWT ₱10,000, so the client pays
-₱102,000 and the ₱10,000 is a tax credit for the firm. Individual clients usually do not
+For a ₱100,000 fee to a corporate client: VAT ₱12,000, EWT ₱15,000, so the client pays
+₱97,000 and the ₱15,000 is a tax credit for the firm. Individual clients usually do not
 withhold.
+
+`vat_rate` and `ewt_rate` are recorded for billing statements; nothing in OpenProject applies
+them yet.
 
 ## Reports
 
@@ -65,7 +69,10 @@ Three shared cost reports appear under *Time and costs* (globally and in every m
 | Report | Shows |
 | --- | --- |
 | Billable hours by matter | Billable hours per matter and lawyer, by month |
-| Billable amounts by matter (excl. 12% VAT) | Billable time, fees and disbursements in pesos |
+| Billable amounts by matter (before tax) | Billable time, fees and disbursements in pesos, before VAT and EWT |
 | Non-billable time by person | Non-billable hours per person and activity, by month |
 
 Filter a report by date, matter or person and save your own copy with *Save as*.
+
+Non-billable time is recognised by the activity names in the config, so keep those names (they
+are English in this setup) if you rename activities.

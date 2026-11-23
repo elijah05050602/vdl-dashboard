@@ -31,8 +31,10 @@ namespace :law_firm do
   desc "Give every matter member without an hourly rate the rate of their billing role (config/law_firm_billing.yml)"
   task apply_role_rates: :environment do
     config = LawFirm::BillingConfig.current
-    created = Member.includes(:principal, :project, :roles)
+    created = Member.where(entity_type: nil)
                     .where.not(project_id: nil)
+                    .includes(:principal, :project, :roles)
+                    .find_each
                     .count { |member| LawFirm::ApplyRoleRateService.new(member, config:).call }
 
     puts "Created #{created} hourly rate(s)."

@@ -77,6 +77,21 @@ RSpec.describe LawFirm::ApplyRoleRateService, type: :model do
     end
   end
 
+  context "with time already priced at the person's default rate" do
+    let!(:time_entry) do
+      member
+      create(:time_entry, entity: create(:work_package, project:), user:, spent_on: 10.days.ago, hours: 2)
+    end
+
+    before { create(:default_hourly_rate, user:, rate: 1000, valid_from: 1.year.ago) }
+
+    it "starts the rate today and leaves earlier amounts alone" do
+      call
+      expect(HourlyRate.last.valid_from).to eq Date.current
+      expect(time_entry.reload.costs).to eq 2000
+    end
+  end
+
   context "with a role that has no rate" do
     let(:roles) { [other_role] }
 
