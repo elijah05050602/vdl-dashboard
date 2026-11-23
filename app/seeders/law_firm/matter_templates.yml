@@ -1,0 +1,566 @@
+# Ready-made matter templates for the Law Firm Dashboard.
+#
+# Each entry becomes a template project (Projects > New project > Use template).
+# Dates are relative: the first work package is the anchor milestone, and every
+# other step follows another step with a lag in working days. In a matter created
+# from a template, move the anchor to the real date and the whole plan follows.
+#
+# Work package keys:
+#   reference  name other steps can follow (unique within the template)
+#   type       work package type reference
+#   status     optional, defaults to New (Intake for Contract review)
+#   duration   working days, defaults to 1 (milestones are always 1)
+#   after      reference of the step this one follows, defaults to the anchor
+#   lag        working days between the two steps, defaults to 0
+#   children   steps grouped under a summary task; the summary has no dates of its own
+matter_templates:
+  civil-litigation:
+    name: "Template: Civil litigation"
+    identifier: template-civil-litigation
+    description: |
+      Standard plan for a civil lawsuit from intake to trial. Deadlines use common US federal defaults; confirm them against the court's rules and the scheduling order.
+    wiki:
+      - title: Intake checklist
+        content: |
+          # Civil litigation intake checklist
+
+          Complete before the engagement letter goes out.
+
+          **Parties and conflicts**
+
+          - [ ] Full legal names of the client, opposing parties and related entities
+          - [ ] Opposing counsel, insurers and key witnesses
+          - [ ] Conflict check run and cleared (record the result on the Conflict check work package)
+
+          **Claim**
+
+          - [ ] Short statement of what happened, with dates
+          - [ ] Date the claim arose and the limitation period that applies
+          - [ ] Court and venue, and whether an arbitration clause applies
+          - [ ] Relief the client wants and their budget
+
+          **Documents**
+
+          - [ ] Contracts, correspondence, photos and any prior filings
+          - [ ] Litigation hold explained to the client
+          - [ ] Insurance policies that might cover the claim
+
+          **Engagement**
+
+          - [ ] Fee arrangement agreed (hourly, contingency, flat)
+          - [ ] Retainer received
+          - [ ] Engagement letter signed
+      - title: Key deadlines
+        content: |
+          # Key deadlines
+
+          The work packages in this matter carry default gaps between steps. Check each one against the court's local rules and any scheduling order, then adjust the dates.
+
+          | Step | Default | Common source |
+          | --- | --- | --- |
+          | Answer to complaint | 21 days after service | FRCP 12(a) |
+          | Initial disclosures | 14 days after the Rule 26(f) conference | FRCP 26(a)(1) |
+          | Discovery responses | 30 days after service | FRCP 33, 34, 36 |
+          | Summary judgment | 30 days after discovery closes | FRCP 56(b) |
+    work_packages:
+      - reference: opened
+        subject: Matter opened
+        type: :default_type_milestone
+      - subject: Intake and engagement
+        type: :default_type_summary_task
+        children:
+          - reference: conflict_check
+            subject: Run conflict check
+            type: :default_type_task
+            duration: 1
+          - reference: engagement
+            subject: Send engagement letter and collect retainer
+            type: :legal_type_client_communication
+            after: conflict_check
+            duration: 3
+          - reference: hold_letter
+            subject: Send litigation hold letter to client
+            type: :legal_type_client_communication
+            after: engagement
+            duration: 1
+          - reference: collect_documents
+            subject: Collect and index client documents
+            type: :legal_type_document_review
+            after: engagement
+            duration: 10
+      - subject: Pleadings
+        type: :default_type_summary_task
+        children:
+          - reference: claims_research
+            subject: Research claims, defenses and limitation periods
+            type: :legal_type_legal_research
+            after: engagement
+            duration: 5
+          - reference: draft_pleading
+            subject: Draft complaint or answer
+            type: :legal_type_filing
+            after: claims_research
+            duration: 5
+          - reference: file_pleading
+            subject: File and serve pleading
+            type: :legal_type_filing
+            after: draft_pleading
+            duration: 1
+          - reference: response_due
+            subject: Responsive pleading due
+            type: :legal_type_court_deadline
+            after: file_pleading
+            lag: 15
+      - subject: Discovery
+        type: :default_type_summary_task
+        children:
+          - reference: rule_26f
+            subject: Rule 26(f) conference with opposing counsel
+            type: :default_type_task
+            after: response_due
+            lag: 10
+          - reference: initial_disclosures
+            subject: Initial disclosures due
+            type: :legal_type_court_deadline
+            after: rule_26f
+            lag: 10
+          - reference: written_discovery
+            subject: Serve interrogatories, document requests and admissions
+            type: :legal_type_filing
+            after: rule_26f
+            duration: 5
+          - reference: production
+            subject: Review and produce documents
+            type: :legal_type_document_review
+            after: written_discovery
+            duration: 20
+          - reference: depositions
+            subject: Take and defend depositions
+            type: :default_type_task
+            after: production
+            duration: 15
+          - reference: discovery_cutoff
+            subject: Discovery closes
+            type: :legal_type_court_deadline
+            after: depositions
+      - subject: Motions and trial
+        type: :default_type_summary_task
+        children:
+          - reference: sj_research
+            subject: Research summary judgment issues
+            type: :legal_type_legal_research
+            after: production
+            duration: 5
+          - reference: sj_deadline
+            subject: Summary judgment motions due
+            type: :legal_type_court_deadline
+            after: discovery_cutoff
+            lag: 20
+          - reference: mediation
+            subject: Mediation or settlement conference
+            type: :legal_type_hearing
+            after: discovery_cutoff
+            lag: 10
+          - reference: pretrial
+            subject: Final pretrial conference
+            type: :legal_type_hearing
+            after: sj_deadline
+            lag: 30
+          - reference: trial
+            subject: Trial
+            type: :legal_type_hearing
+            after: pretrial
+            lag: 15
+      - subject: Close file, send final bill and return client documents
+        type: :default_type_task
+        after: trial
+        lag: 10
+        duration: 3
+
+  contract-review:
+    name: "Template: Contract review"
+    identifier: template-contract-review
+    description: |
+      Review, redline and negotiate a commercial contract for a client, through signature and docketing of key dates.
+    wiki:
+      - title: Intake checklist
+        content: |
+          # Contract review intake checklist
+
+          - [ ] Client name and the signing entity
+          - [ ] Counterparty name (for the conflict check)
+          - [ ] Contract type and which side drafted it
+          - [ ] Deal value and term
+          - [ ] Client's must-haves and red lines
+          - [ ] Target signing date and who signs
+          - [ ] Governing law and dispute resolution the client prefers
+          - [ ] Related agreements (NDA, master agreement, order forms)
+          - [ ] Fee arrangement agreed (hourly or flat fee)
+      - title: Review checklist
+        content: |
+          # Review checklist
+
+          Work through these on the first pass and record issues in the issues list.
+
+          - [ ] Parties, recitals and definitions
+          - [ ] Scope, deliverables and acceptance
+          - [ ] Price, payment terms and late fees
+          - [ ] Term, renewal and termination rights (note any notice windows)
+          - [ ] Warranties and disclaimers
+          - [ ] Indemnities and limitation of liability
+          - [ ] Confidentiality and data protection
+          - [ ] Intellectual property ownership and licenses
+          - [ ] Assignment and change of control
+          - [ ] Governing law, venue and dispute resolution
+          - [ ] Signature blocks and authority
+    work_packages:
+      - reference: received
+        subject: Contract received from client
+        type: :default_type_milestone
+      - reference: conflict_check
+        subject: Run conflict check on counterparty
+        type: :default_type_task
+      - reference: intake_call
+        subject: Intake call on goals and red lines
+        type: :legal_type_client_communication
+        after: conflict_check
+      - reference: first_pass
+        subject: First-pass review and issues list
+        type: :legal_type_contract_review
+        after: intake_call
+        duration: 3
+      - reference: clause_research
+        subject: Research unusual or high-risk clauses
+        type: :legal_type_legal_research
+        after: intake_call
+        duration: 2
+      - reference: redline
+        subject: Prepare redline and cover memo
+        type: :legal_type_contract_review
+        after: first_pass
+        duration: 2
+      - reference: partner_signoff
+        subject: Partner sign-off on redline
+        type: :legal_type_document_review
+        after: redline
+      - reference: send_redline
+        subject: Send redline to client for approval
+        type: :legal_type_client_communication
+        after: partner_signoff
+      - reference: negotiation
+        subject: Negotiate with counterparty
+        type: :default_type_task
+        after: send_redline
+        lag: 2
+        duration: 10
+      - reference: final_version
+        subject: Prepare execution version
+        type: :legal_type_contract_review
+        after: negotiation
+        duration: 2
+      - reference: signed
+        subject: Contract signed
+        type: :default_type_milestone
+        after: final_version
+        lag: 2
+      - subject: Docket renewal and termination notice dates
+        type: :default_type_task
+        after: signed
+
+  estate-planning:
+    name: "Template: Estate planning"
+    identifier: template-estate-planning
+    description: |
+      Will, revocable trust and incapacity documents for an individual or couple, through signing and trust funding.
+    wiki:
+      - title: Intake checklist
+        content: |
+          # Estate planning intake checklist
+
+          **Family**
+
+          - [ ] Client's full legal name, date of birth and address
+          - [ ] Spouse or partner, and whether this is joint representation (get a joint representation waiver)
+          - [ ] Children, including from prior relationships, and any with special needs
+          - [ ] Prior marriages and any prenuptial agreement
+
+          **Assets**
+
+          - [ ] Real estate, with how title is held
+          - [ ] Bank and brokerage accounts
+          - [ ] Retirement accounts and life insurance, with current beneficiaries
+          - [ ] Business interests
+          - [ ] Digital assets and accounts
+
+          **Wishes**
+
+          - [ ] Guardian for minor children
+          - [ ] Executor and successor trustee
+          - [ ] Agents under the financial power of attorney and healthcare directive
+          - [ ] Specific gifts and charitable gifts
+          - [ ] End-of-life wishes
+
+          **Capacity and engagement**
+
+          - [ ] Meet the client alone at least once
+          - [ ] Note any capacity or undue influence concerns
+          - [ ] Flat fee agreed and engagement letter signed
+      - title: Signing ceremony
+        content: |
+          # Signing ceremony checklist
+
+          - [ ] Two disinterested witnesses booked
+          - [ ] Notary booked
+          - [ ] Final documents printed, unstapled, with signature tabs
+          - [ ] Client brings photo ID
+          - [ ] Self-proving affidavit completed for the will
+          - [ ] Copies made for the client, originals stored in the firm vault or given to the client
+    work_packages:
+      - reference: opened
+        subject: Matter opened
+        type: :default_type_milestone
+      - reference: conflict_check
+        subject: Run conflict check
+        type: :default_type_task
+      - reference: questionnaire_sent
+        subject: Send intake questionnaire and engagement letter
+        type: :legal_type_client_communication
+        after: conflict_check
+      - reference: questionnaire_back
+        subject: Questionnaire and asset documents returned
+        type: :legal_type_client_communication
+        status: :legal_status_awaiting_client
+        after: questionnaire_sent
+        duration: 5
+      - reference: asset_review
+        subject: Review assets, titles and beneficiary designations
+        type: :legal_type_document_review
+        after: questionnaire_back
+        duration: 3
+      - reference: design_meeting
+        subject: Design meeting with client
+        type: :legal_type_client_communication
+        after: asset_review
+        lag: 2
+      - reference: draft_documents
+        subject: Draft will and revocable trust
+        type: :default_type_task
+        after: design_meeting
+        duration: 5
+      - reference: draft_poa
+        subject: Draft powers of attorney and healthcare directive
+        type: :default_type_task
+        after: design_meeting
+        duration: 2
+      - reference: partner_review
+        subject: Partner review of draft documents
+        type: :legal_type_document_review
+        after: draft_documents
+      - reference: client_review
+        subject: Client reviews drafts
+        type: :legal_type_client_communication
+        status: :legal_status_awaiting_client
+        after: partner_review
+        duration: 5
+      - reference: signing
+        subject: Signing ceremony
+        type: :default_type_milestone
+        after: client_review
+        lag: 3
+      - reference: funding
+        subject: Fund the trust and retitle assets
+        type: :default_type_task
+        after: signing
+        duration: 15
+      - subject: Deliver originals and closing letter
+        type: :legal_type_client_communication
+        after: funding
+
+  real-estate-closing:
+    name: "Template: Real estate closing"
+    identifier: template-real-estate-closing
+    description: |
+      Residential or commercial purchase for the buyer, from signed purchase agreement through closing and recording. Contingency gaps are common defaults; copy the real dates from the purchase agreement.
+    wiki:
+      - title: Intake checklist
+        content: |
+          # Real estate closing intake checklist
+
+          - [ ] Buyer names exactly as they will appear on the deed
+          - [ ] Seller names and seller's attorney or agent (for the conflict check)
+          - [ ] Property address and parcel number
+          - [ ] Signed purchase agreement with all addenda
+          - [ ] Purchase price, earnest money amount and who holds it
+          - [ ] Lender, loan officer and loan type
+          - [ ] Contingency dates: inspection, financing, appraisal, title
+          - [ ] Scheduled closing date and location
+          - [ ] How the buyer will take title (sole, joint, LLC, trust)
+          - [ ] Fee agreed and engagement letter signed
+      - title: Closing day
+        content: |
+          # Closing day checklist
+
+          - [ ] Final settlement statement approved by buyer and lender
+          - [ ] Wire instructions verified by phone with a known number (never by email alone)
+          - [ ] Buyer brings photo ID and certified funds if needed
+          - [ ] Deed, mortgage and transfer tax forms signed and notarized
+          - [ ] Keys and access codes handed over
+          - [ ] Documents sent for recording the same day
+    work_packages:
+      - reference: contract_signed
+        subject: Purchase agreement signed
+        type: :default_type_milestone
+      - reference: conflict_check
+        subject: Run conflict check on seller
+        type: :default_type_task
+      - reference: review_agreement
+        subject: Review purchase agreement and docket contingency dates
+        type: :legal_type_contract_review
+        after: conflict_check
+        duration: 2
+      - reference: earnest_money
+        subject: Earnest money due
+        type: :default_type_milestone
+        lag: 3
+      - reference: order_title
+        subject: Order title search and survey
+        type: :default_type_task
+        after: review_agreement
+        duration: 10
+      - reference: inspection_deadline
+        subject: Inspection contingency ends
+        type: :default_type_milestone
+        lag: 10
+      - reference: title_review
+        subject: Review title commitment and survey
+        type: :legal_type_document_review
+        after: order_title
+        duration: 3
+      - reference: title_objections
+        subject: Send and clear title objections
+        type: :default_type_task
+        after: title_review
+        duration: 5
+      - reference: financing_deadline
+        subject: Financing contingency ends
+        type: :default_type_milestone
+        lag: 21
+      - reference: closing_documents
+        subject: Prepare deed, settlement statement and closing documents
+        type: :default_type_task
+        after: title_objections
+        duration: 3
+      - reference: walkthrough
+        subject: Final walk-through
+        type: :default_type_task
+        after: closing_documents
+      - reference: closing
+        subject: Closing
+        type: :default_type_milestone
+        after: walkthrough
+      - reference: recording
+        subject: Record deed and mortgage
+        type: :legal_type_filing
+        after: closing
+        duration: 2
+      - subject: Deliver title policy and recorded documents to client
+        type: :legal_type_client_communication
+        after: recording
+        lag: 20
+
+  employment-dispute:
+    name: "Template: Employment dispute"
+    identifier: template-employment-dispute
+    description: |
+      Discrimination, retaliation or wrongful termination claim from intake through the agency charge, settlement talks and the right-to-sue deadline. Filing windows are US federal defaults; confirm state deadlines.
+    wiki:
+      - title: Intake checklist
+        content: |
+          # Employment dispute intake checklist
+
+          **Timing first**
+
+          - [ ] Date of the adverse action (termination, demotion, discipline)
+          - [ ] Days left to file an agency charge (180 or 300 days for the EEOC, state deadlines vary)
+          - [ ] Any severance offer and its signing deadline
+
+          **Facts**
+
+          - [ ] Employer's legal name and number of employees
+          - [ ] Client's job title, dates of employment and pay
+          - [ ] Protected characteristic or activity involved
+          - [ ] Timeline of events, with names of decision makers and witnesses
+          - [ ] Complaints made to HR or management, and when
+
+          **Documents**
+
+          - [ ] Offer letter, employment agreement, handbook
+          - [ ] Performance reviews and discipline records
+          - [ ] Termination letter and any separation agreement
+          - [ ] Emails, texts and notes the client kept
+          - [ ] Pay stubs and benefits information
+
+          **Engagement**
+
+          - [ ] Conflict check on the employer and named managers
+          - [ ] Fee arrangement agreed (contingency or hourly)
+          - [ ] Engagement letter signed
+    work_packages:
+      - reference: opened
+        subject: Matter opened
+        type: :default_type_milestone
+      - reference: conflict_check
+        subject: Run conflict check on employer and managers
+        type: :default_type_task
+      - reference: intake_interview
+        subject: Intake interview and timeline of events
+        type: :legal_type_client_communication
+        after: conflict_check
+      - reference: limitation_research
+        subject: Confirm filing deadlines and claims
+        type: :legal_type_legal_research
+        after: intake_interview
+        duration: 2
+      - reference: hold_notice
+        subject: Send preservation letter to employer
+        type: :legal_type_client_communication
+        after: intake_interview
+      - reference: collect_records
+        subject: Collect personnel file, pay records and messages
+        type: :legal_type_document_review
+        after: intake_interview
+        duration: 10
+      - reference: charge
+        subject: Draft and file agency charge
+        type: :legal_type_filing
+        after: limitation_research
+        duration: 5
+      - reference: position_statement
+        subject: Employer position statement expected
+        type: :legal_type_court_deadline
+        after: charge
+        lag: 20
+      - reference: rebuttal
+        subject: Draft rebuttal to position statement
+        type: :legal_type_filing
+        after: position_statement
+        duration: 5
+      - reference: demand
+        subject: Send demand letter and negotiate
+        type: :legal_type_client_communication
+        after: collect_records
+        duration: 10
+      - reference: mediation
+        subject: Agency mediation
+        type: :legal_type_hearing
+        after: rebuttal
+        lag: 10
+      - reference: right_to_sue
+        subject: Right-to-sue notice received
+        type: :default_type_milestone
+        after: mediation
+        lag: 40
+      - subject: Lawsuit filing deadline (90 days after right-to-sue)
+        type: :legal_type_court_deadline
+        after: right_to_sue
+        lag: 63
