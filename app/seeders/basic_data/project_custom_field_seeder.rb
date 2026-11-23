@@ -32,7 +32,6 @@ module BasicData
     self.model_class = ProjectCustomField
     self.seed_data_model_key = "project_custom_fields"
     self.needs = [BasicData::ProjectCustomFieldSectionSeeder]
-    self.attribute_names_for_lookups = %i[name]
 
     SECTION_REFERENCE = :matter_details
 
@@ -45,13 +44,19 @@ module BasicData
         searchable: true?(field_data["searchable"]),
         is_required: false,
         is_for_all: true,
-        position: models_data.index(field_data) + 1,
         project_custom_field_section: section
       }.compact
     end
 
     def applicable?
-      models_data.any? && ProjectCustomField.where(name: models_data.pluck("name")).none?
+      models_data.any? && section_data.present? && ProjectCustomField.where(name: field_names).none?
+    end
+
+    def lookup_existing_references
+      models_data.each do |field_data|
+        field = ProjectCustomField.find_by(name: field_data["name"])
+        seed_data.store_reference(field_data["reference"], field) if field
+      end
     end
 
     def not_applicable_message
@@ -60,19 +65,25 @@ module BasicData
 
     private
 
-    # Instances seeded before this section was added skip the section seeder, so it is created here.
+    def field_names
+      models_data.pluck("name")
+    end
+
+    # Sections are looked up by position when re-seeding, so the reference may point to an admin-created section.
     def section
-      @section ||= seed_data.find_reference(SECTION_REFERENCE, default: nil) || create_section!
+      @section ||= ProjectCustomFieldSection.find_by(name: section_data["name"]) || create_section!
     end
 
     def create_section!
-      section_data = Array(seed_data.lookup("project_custom_field_sections"))
-                       .find { it["reference"] == SECTION_REFERENCE }
-      ProjectCustomFieldSection
-        .find_or_create_by!(name: section_data["name"]) do |new_section|
-          new_section.position = ProjectCustomFieldSection.maximum(:position).to_i + 1
-        end
-        .tap { seed_data.store_reference(SECTION_REFERENCE, it) }
+      ProjectCustomFieldSection.create!(
+        name: section_data["name"],
+        position: ProjectCustomFieldSection.maximum(:position).to_i + 1
+      )
+    end
+
+    def section_data
+      Array(seed_data.lookup("project_custom_field_sections"))
+        .find { it["reference"] == SECTION_REFERENCE }
     end
   end
 end

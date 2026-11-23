@@ -55,6 +55,10 @@ RSpec.describe BasicData::ProjectCustomFieldSeeder do
           possible_values:
             - Civil litigation
             - Family law and annulment
+        - reference: :matter_cf__handling_lawyers
+          name: Handling lawyers
+          field_format: user
+          multi_value: true
         - reference: :matter_cf__prescriptive_period
           name: Prescriptive period ends
           field_format: date
@@ -70,11 +74,12 @@ RSpec.describe BasicData::ProjectCustomFieldSeeder do
       section = ProjectCustomFieldSection.find_by!(name: "Matter details")
 
       expect(ProjectCustomField.order(:position).pluck(:name))
-        .to eq(["Client", "Practice area", "Prescriptive period ends"])
+        .to eq(["Client", "Practice area", "Handling lawyers", "Prescriptive period ends"])
       expect(ProjectCustomField.all).to all(have_attributes(custom_field_section_id: section.id,
                                                             is_for_all: true,
                                                             is_required: false))
       expect(ProjectCustomField.find_by!(name: "Client")).to have_attributes(field_format: "string", searchable: true)
+      expect(ProjectCustomField.find_by!(name: "Handling lawyers")).to have_attributes(field_format: "user", multi_value: true)
       expect(ProjectCustomField.find_by!(name: "Practice area").possible_values.map(&:value))
         .to eq(["Civil litigation", "Family law and annulment"])
       expect(seed_data.find_reference(:matter_cf__client)).to eq(ProjectCustomField.find_by!(name: "Client"))
@@ -96,7 +101,22 @@ RSpec.describe BasicData::ProjectCustomFieldSeeder do
 
     it "adds the missing section after the existing ones" do
       expect(ProjectCustomFieldSection.order(:position).pluck(:name)).to eq(["Project attributes", "Matter details"])
-      expect(ProjectCustomField.count).to eq(3)
+      expect(ProjectCustomField.count).to eq(4)
+    end
+  end
+
+  context "when an admin-created section sits where the matter details section would be" do
+    subject(:seeder) { described_class.new(Source::SeedData.new(data_hash)) }
+
+    before do
+      ProjectCustomFieldSection.where(name: "Matter details").delete_all
+      create(:project_custom_field_section, name: "Billing", position: 2)
+      BasicData::ProjectCustomFieldSectionSeeder.new(Source::SeedData.new(data_hash)).seed!
+      seeder.seed!
+    end
+
+    it "puts the fields in their own section" do
+      expect(ProjectCustomField.all.map { it.project_custom_field_section.name }.uniq).to eq(["Matter details"])
     end
   end
 

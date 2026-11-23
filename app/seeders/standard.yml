@@ -202,18 +202,47 @@ project_custom_fields:
       - Civil litigation
       - Criminal
       - Labor and employment
-      - Family law and annulment
+      - Family law (nullity, annulment, legal separation)
       - Corporate and SEC
       - Land and property
+      - Agrarian reform
       - Tax and BIR
       - Estate and succession
+      - Banking and insolvency (FRIA)
+      - Data privacy
+      - Election law
+      - Environmental
+      - Construction and arbitration
       - Notarial
       - Immigration
       - Intellectual property
       - Administrative
       - Other
-  - reference: :matter_cf__handling_lawyer
-    t_name: Handling lawyer
+  - reference: :matter_cf__stage
+    t_name: Stage
+    field_format: list
+    t_possible_values:
+      - Pre-filing
+      - Katarungang Pambarangay
+      - Preliminary investigation
+      - Filed
+      - Arraignment
+      - Pre-trial
+      - Mediation (CAM/JDR)
+      - Trial
+      - Submitted for decision
+      - Decided
+      - Motion for reconsideration
+      - Appeal
+      - Finality and entry of judgment
+      - Execution
+      - Closed
+  - reference: :matter_cf__handling_lawyers
+    t_name: Handling lawyers
+    field_format: user
+    multi_value: true
+  - reference: :matter_cf__responsible_partner
+    t_name: Responsible partner
     field_format: user
   - reference: :matter_cf__date_opened
     t_name: Date opened
@@ -231,18 +260,33 @@ project_custom_fields:
       - Municipal Trial Court in Cities
       - Municipal Trial Court
       - Municipal Circuit Trial Court
-      - Shari'a court
-      - NLRC
-      - Office of the Prosecutor
+      - Shari'a District Court
+      - Shari'a Circuit Court
+      - NLRC Labor Arbiter (RAB)
+      - NLRC Commission
+      - NCMB or Voluntary Arbitrator
+      - DOLE Regional Office
+      - DARAB
+      - DHSUD or HSAC
+      - IPOPHL Bureau of Legal Affairs
+      - Civil Service Commission
+      - COMELEC, HRET or SET
+      - CIAC or arbitral tribunal
+      - Office of the City or Provincial Prosecutor
       - Department of Justice
       - Office of the Ombudsman
       - SEC
-      - Barangay (Lupon)
+      - BIR
+      - Bureau of Immigration
+      - Lupong Tagapamayapa (Barangay)
       - Other
   - reference: :matter_cf__branch_and_station
     t_name: Branch and station
     field_format: string
     searchable: true
+  - reference: :matter_cf__division
+    t_name: Division and ponente
+    field_format: string
   - reference: :matter_cf__case_type
     t_name: Case type
     field_format: list
@@ -250,15 +294,23 @@ project_custom_fields:
       - Civil Case No.
       - Criminal Case No.
       - Special Proceedings No.
+      - Special Civil Action No.
+      - LRC Case No.
       - G.R. No.
+      - A.M. No.
+      - A.C. No.
       - CA-G.R. CV No.
       - CA-G.R. CR No.
       - CA-G.R. SP No.
       - CTA Case No.
       - SB Case No.
-      - NLRC Case No.
+      - NLRC RAB Case No.
+      - NLRC LAC No.
       - NPS Docket No.
+      - I.S. No.
       - OMB Case No.
+      - DARAB Case No.
+      - CIAC Case No.
       - SEC Case No.
       - Other
   - reference: :matter_cf__case_number
@@ -276,6 +328,12 @@ project_custom_fields:
     t_name: Opposing counsel
     field_format: string
     searchable: true
+  - reference: :matter_cf__amount_in_controversy
+    t_name: Amount in controversy (PHP)
+    field_format: float
+  - reference: :matter_cf__judgment_received
+    t_name: Date judgment or order received
+    field_format: date
   - reference: :matter_cf__prescriptive_period
     t_name: Prescriptive period ends
     field_format: date
