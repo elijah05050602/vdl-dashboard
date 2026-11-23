@@ -161,6 +161,11 @@ PATH
     openproject-job_status (1.0.0)
 
 PATH
+  remote: modules/law_firm
+  specs:
+    openproject-law_firm (1.0.0)
+
+PATH
   remote: modules/ldap_departments
   specs:
     openproject-ldap_departments (1.0.0)
@@ -1775,6 +1780,7 @@ DEPENDENCIES
   openproject-gitlab_integration!
   openproject-itsm!
   openproject-job_status!
+  openproject-law_firm!
   openproject-ldap_departments!
   openproject-ldap_groups!
   openproject-llm!
@@ -2174,6 +2180,7 @@ CHECKSUMS
   openproject-gitlab_integration (3.0.0)
   openproject-itsm (1.0.0)
   openproject-job_status (1.0.0)
+  openproject-law_firm (1.0.0)
   openproject-ldap_departments (1.0.0)
   openproject-ldap_groups (1.0.0)
   openproject-llm (1.0.0)
