@@ -1,6 +1,8 @@
 # Upgrade plan: move VDL Dashboard to a stable OpenProject release
 
-Status: draft (2026-11-23). Investigation only. Nothing has been rebased.
+Status: in progress. Step 2 has started: `modules/law_firm` exists and holds the
+matter terminology. New law-firm code goes there (see `modules/law_firm/README.md`).
+Nothing has been rebased.
 
 ## Findings
 

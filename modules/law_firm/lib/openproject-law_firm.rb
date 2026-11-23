@@ -27,11 +27,4 @@
 # See COPYRIGHT and LICENSE files for more details.
 #++
 
-
-# Law firm customization: English UI says "matter" instead of "project".
-# Loaded after every other locale file so it wins. Upstream specs expect the
-# stock wording, so it stays off in the test environment.
-# Set OPENPROJECT_LAW_FIRM_MATTER_TERMINOLOGY=false to turn it off.
-unless Rails.env.test? || ENV["OPENPROJECT_LAW_FIRM_MATTER_TERMINOLOGY"] == "false"
-  Rails.application.config.i18n.load_path << Rails.root.join("config/law_firm/locales/en.matter_terminology.yml").to_s
-end
+require "open_project/law_firm"
