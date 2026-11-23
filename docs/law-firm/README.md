@@ -37,6 +37,10 @@ Seeding only adds templates that are missing, so it is safe to run on a database
 
 The welcome text is seeded only on a fresh database. On an existing one, change it under Administration > System settings > General.
 
+## Putting it online
+
+[HOSTING.md](HOSTING.md) explains how to run the dashboard on a server in Singapore with HTTPS, email, 2FA and encrypted nightly backups, and how to point the desktop app at it. The config files and scripts it uses are in `hosting/`.
+
 ## License
 
 OpenProject is GPLv3. If you run a modified version for others, or distribute it, you must publish the modified source under GPLv3 and keep the existing copyright notices and `LICENSE`, `COPYRIGHT` files.
