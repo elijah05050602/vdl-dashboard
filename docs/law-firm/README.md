@@ -10,6 +10,12 @@ Seed data in `app/seeders/standard.yml` (used on a fresh database):
 - **Statuses:** Intake, Conflict check, Drafting, Partner review, Awaiting client, Filed, Awaiting court, with workflows for each legal type.
 - **Time entry activities:** Legal research, Drafting, Client communication, Court appearance, Discovery and document review, Negotiation, Travel, Administrative (non-billable).
 - **Welcome text** on the home page.
+- **Sample matters** in place of OpenProject's demo and Scrum projects. They are set up for a Philippine firm. All names, parties, case numbers and facts are fictional:
+  - *Dela Cruz Trading v. Bayanihan Freight* (`dela-cruz-v-bayanihan`): a collection suit at the RTC Makati with pleadings, discovery, pre-trial, court-annexed mediation and JDR, a filings board, a team planner and a weekly case review meeting. The onboarding tour runs in this matter.
+  - *Reyes v. Luzon Metalworks* (`reyes-v-luzon-metalworks`): an illegal dismissal case at the NLRC, from SEnA through the mandatory conference and position papers.
+  - *Santos condominium title transfer* (`santos-title-transfer`): deed of absolute sale, BIR taxes and eCAR, transfer tax and registration of the new title.
+
+  The sample matters are only seeded on an empty database. Delete or archive them once you add real matters.
 
 ## Matter templates
 

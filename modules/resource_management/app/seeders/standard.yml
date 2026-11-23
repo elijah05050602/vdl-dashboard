@@ -27,7 +27,7 @@
 #++
 
 projects:
-  demo-project:
+  dela-cruz-v-bayanihan:
     resource_planner:
       t_name: Team allocations
       work_package_list:
@@ -39,4 +39,4 @@ projects:
       user_timeline:
         t_name: Team timeline
       generic_allocation:
-        t_filter_name: Software Developer
+        t_filter_name: Associate

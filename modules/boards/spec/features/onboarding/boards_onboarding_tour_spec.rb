@@ -55,8 +55,8 @@ RSpec.describe "boards onboarding tour",
   let(:demo_project) do
     create(:project,
            :with_internal_wiki,
-           name: "Demo project",
-           identifier: "demo-project",
+           name: "Dela Cruz Trading v. Bayanihan Freight",
+           identifier: "dela-cruz-v-bayanihan",
            public: true,
            enabled_module_names: %w[work_package_tracking gantt board_view]).reload
   end

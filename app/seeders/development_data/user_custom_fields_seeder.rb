@@ -33,41 +33,41 @@ module DevelopmentData
   # to the users created by the DepartmentSeeder.
   class UserCustomFieldsSeeder < Seeder
     JOB_TITLES = [
-      "Project Manager",
-      "Product Owner",
-      "Scrum Master",
-      "Software Developer",
-      "UX/UI Designer",
-      "QA Engineer",
-      "Marketing Manager",
-      "Event Coordinator",
-      "Technical Writer"
+      "Managing Partner",
+      "Partner",
+      "Senior Associate",
+      "Associate",
+      "Legal Researcher",
+      "Paralegal",
+      "Docket Clerk",
+      "Legal Secretary",
+      "Office Manager"
     ].freeze
 
     SPOKEN_LANGUAGES = [
       "English",
-      "German",
-      "French",
-      "Spanish",
-      "Italian",
-      "Dutch",
-      "Portuguese",
-      "Polish"
+      "Filipino",
+      "Cebuano",
+      "Ilocano",
+      "Hiligaynon",
+      "Kapampangan",
+      "Bikol",
+      "Waray"
     ].freeze
 
     KEY_SKILLS = [
-      "Project Management",
-      "Agile & Scrum",
-      "Software Development",
-      "UX/UI Design",
-      "Quality Assurance",
-      "DevOps",
-      "Public Speaking",
-      "Event Planning",
-      "Marketing & Communications",
-      "Copywriting",
-      "Budgeting",
-      "Stakeholder Management"
+      "Litigation",
+      "Labor Law",
+      "Corporate Law",
+      "Real Estate and Land Titles",
+      "Appellate Practice",
+      "Legal Research",
+      "Legal Writing",
+      "Notarial Practice",
+      "Negotiation",
+      "Docketing",
+      "Client Relations",
+      "Billing and Collections"
     ].freeze
 
     def seed_data!

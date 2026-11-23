@@ -51,7 +51,7 @@ RSpec.describe DevelopmentData::UserCustomFieldsSeeder do
     expect(job_title).not_to be_multi_value
     expect(job_title).not_to be_user_self_editable
     expect(job_title.semantic_key).to eq("job_title")
-    expect(job_title.custom_options.pluck(:value)).to include("Project Manager", "Software Developer")
+    expect(job_title.custom_options.pluck(:value)).to include("Managing Partner", "Associate")
   end
 
   it "creates Spoken languages and Key skills as user-editable multi-value lists" do

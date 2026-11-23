@@ -27,49 +27,49 @@
 #++
 
 projects:
-  demo-project:
+  dela-cruz-v-bayanihan:
     meeting_series:
       - reference: :weekly_meeting
-        t_title: Weekly
+        t_title: Weekly case review
         duration: 60
         interval: 1
         frequency: :weekly
-        time_zone: "Europe/Berlin"
+        time_zone: "Asia/Manila"
         author: :openproject_admin
     meeting_agenda_items:
-      - t_title: Good news
-        t_notes: "What went well this week?"
+      - t_title: Deadlines this week
+        t_notes: "Court deadlines and hearings coming up in the next 7 days."
         meeting: :weekly_meeting_template
         author: :openproject_admin
         presenter: :openproject_admin
         duration: 10
-      - t_title: Team updates
-        t_notes: "News and focused topics for the upcoming week."
+      - work_package: :delacruz__discovery
+        t_notes: "**Today's topic**: Discovery status in Dela Cruz Trading v. Bayanihan Freight."
         meeting: :weekly_meeting_template
         author: :openproject_admin
         presenter: :user__wanda_web
-        duration: 10
-      - work_package: :organize_open_source_conference
-        t_notes: "**Today's topic**: Organizing the open-source conference."
+        duration: 15
+      - t_title: Client updates
+        t_notes: "What each client is waiting on from us, and what we are waiting on from them."
         meeting: :weekly_meeting_template
         author: :openproject_admin
         presenter: :user__evan_events
-        duration: 5
-      - t_title: Review of quarterly goals
-        t_notes: "Assessing the status and progress of the defined quarterly goals."
+        duration: 10
+      - t_title: New matters and conflict checks
+        t_notes: "Intake for new matters and any open conflict checks."
+        meeting: :weekly_meeting_template
+        author: :openproject_admin
+        presenter: :openproject_admin
+        duration: 10
+      - t_title: Time entries and billing
+        t_notes: "Unlogged time and invoices going out this month."
         meeting: :weekly_meeting_template
         author: :openproject_admin
         presenter: :user__fritz_finance
         duration: 10
-      - t_title: Core values feedback
-        t_notes: "Highlight employees who have lived the core values this week."
+      - t_title: Other business
+        t_notes: "Anything else the team needs to discuss."
         meeting: :weekly_meeting_template
         author: :openproject_admin
         presenter: :openproject_admin
         duration: 5
-      - t_title: General topics
-        t_notes: "Solving or discussing topics together."
-        meeting: :weekly_meeting_template
-        author: :openproject_admin
-        presenter: :openproject_admin
-        duration: 20

@@ -73,11 +73,11 @@ RSpec.describe ResourceManagement::DevelopmentData::ResourcePlannerSeeder do
     )
 
     {
-      setup_conference_website: setup_website,
-      set_date_and_location_of_conference: set_date,
-      invite_attendees_to_conference: invite_attendees,
-      follow_up_tasks: follow_up,
-      upload_presentations_to_website: upload,
+      delacruz__review_records: setup_website,
+      delacruz__interest_research: set_date,
+      delacruz__judicial_affidavit: invite_attendees,
+      delacruz__discovery: follow_up,
+      delacruz__interrogatories: upload,
       user__wanda_web: wanda,
       user__olga_ops: olga,
       user__adam_admin: adam

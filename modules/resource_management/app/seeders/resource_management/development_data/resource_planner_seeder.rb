@@ -43,11 +43,11 @@ module ResourceManagement
 
       # Work packages (by seed reference) the allocations attach to.
       WORK_PACKAGE_REFERENCES = %i[
-        set_date_and_location_of_conference
-        invite_attendees_to_conference
-        setup_conference_website
-        follow_up_tasks
-        upload_presentations_to_website
+        delacruz__interest_research
+        delacruz__judicial_affidavit
+        delacruz__review_records
+        delacruz__discovery
+        delacruz__interrogatories
       ].freeze
 
       attr_reader :project
@@ -154,26 +154,26 @@ module ResourceManagement
       end
 
       def seed_allocations
-        # Wanda is booked full-time on the website for its whole span, which
-        # already uses up her capacity. The additional (realistic, single-day)
-        # allocation for inviting attendees overlaps it and overbooks her, which
+        # Wanda is booked full-time on the document review for its whole span,
+        # which already uses up her capacity. The additional allocation for the
+        # supplemental judicial affidavit overlaps it and overbooks her, which
         # the user timeline then surfaces.
-        create_explicit_allocation(:setup_conference_website, :user__wanda_web, :full)
-        create_explicit_allocation(:invite_attendees_to_conference, :user__wanda_web, :full)
-        create_explicit_allocation(:set_date_and_location_of_conference, :user__olga_ops, :full)
-        create_explicit_allocation(:follow_up_tasks, :user__adam_admin, :half)
+        create_explicit_allocation(:delacruz__review_records, :user__wanda_web, :full)
+        create_explicit_allocation(:delacruz__judicial_affidavit, :user__wanda_web, :full)
+        create_explicit_allocation(:delacruz__interest_research, :user__olga_ops, :full)
+        create_explicit_allocation(:delacruz__discovery, :user__adam_admin, :half)
         seed_generic_allocation
       end
 
       # A filter-based allocation: no concrete user, just a demand for anyone
-      # matching the "Software Developer" job title. Skipped when the demo user
+      # matching the job title named in the seed data (an associate). Skipped when the demo user
       # custom fields it filters on are absent.
       def seed_generic_allocation
-        work_package = work_packages[:upload_presentations_to_website]
-        filters = developer_filter
+        work_package = work_packages[:delacruz__interrogatories]
+        name = planner_config.lookup("generic_allocation.filter_name")
+        filters = job_title_filter(name)
         return unless work_package && filters
 
-        name = planner_config.lookup("generic_allocation.filter_name")
         placeholder_user = PlaceholderUser.find_by(lastname: name) ||
           PlaceholderUser.create!(name:, user_filter: filters)
 
@@ -204,9 +204,9 @@ module ResourceManagement
         }
       end
 
-      def developer_filter
+      def job_title_filter(job_title)
         custom_field = UserCustomField.for_semantic_key(:job_title)
-        option = custom_field&.custom_options&.find_by(value: "Software Developer")
+        option = custom_field&.custom_options&.find_by(value: job_title)
         return unless option
 
         query = UserQuery.new

@@ -63,119 +63,120 @@ priorities:
     position: 4
 
 departments:
+  # Fictional firm staff. The references keep their original keys so other seeders can find them.
   - reference: :department__marketing_communications
-    t_name: Marketing & Communications
+    t_name: Litigation
     members:
       - reference: :user__marko_marketing
-        firstname: Marko
-        lastname: Marketing
-        job_title: Marketing Manager
-        spoken_languages: [English, German]
-        key_skills: [Marketing & Communications, Public Speaking]
+        firstname: Mark
+        lastname: Mendoza
+        job_title: Senior Associate
+        spoken_languages: [English, Filipino]
+        key_skills: [Litigation, Negotiation]
         job_start_date: "2021-03-01"
       - reference: :user__connie_comms
         firstname: Connie
-        lastname: Comms
-        job_title: Technical Writer
-        spoken_languages: [English, French]
-        key_skills: [Copywriting, Marketing & Communications]
+        lastname: Cruz
+        job_title: Paralegal
+        spoken_languages: [English, Filipino, Cebuano]
+        key_skills: [Legal Writing, Docketing]
         job_start_date: "2022-06-15"
   - reference: :department__public_relations
-    t_name: Public Relations
+    t_name: Labor and Employment
     parent: :department__marketing_communications
     members:
       - reference: :user__petra_press
-        firstname: Petra
-        lastname: Press
-        job_title: Marketing Manager
-        spoken_languages: [English, German]
-        key_skills: [Public Speaking, Stakeholder Management]
+        firstname: Patricia
+        lastname: Pascual
+        job_title: Associate
+        spoken_languages: [English, Filipino]
+        key_skills: [Labor Law, Negotiation]
         job_start_date: "2020-09-01"
       - reference: :user__polly_pr
-        firstname: Polly
-        lastname: PR
-        job_title: Marketing Manager
-        spoken_languages: [English, Spanish]
-        key_skills: [Marketing & Communications, Stakeholder Management]
+        firstname: Paolo
+        lastname: Ramos
+        job_title: Associate
+        spoken_languages: [English, Filipino, Ilocano]
+        key_skills: [Labor Law, Legal Research]
         job_start_date: "2023-01-10"
   - reference: :department__design_content
-    t_name: Design & Content
+    t_name: Appellate Practice
     parent: :department__marketing_communications
     members:
       - reference: :user__dora_design
-        firstname: Dora
-        lastname: Design
-        job_title: UX/UI Designer
-        spoken_languages: [English, Dutch]
-        key_skills: [UX/UI Design, Public Speaking]
+        firstname: Dorothy
+        lastname: Dizon
+        job_title: Associate
+        spoken_languages: [English, Filipino, Hiligaynon]
+        key_skills: [Appellate Practice, Legal Writing]
         job_start_date: "2021-11-02"
       - reference: :user__carl_content
-        firstname: Carl
-        lastname: Content
-        job_title: Technical Writer
-        spoken_languages: [English, German]
-        key_skills: [Copywriting, Marketing & Communications]
+        firstname: Carlo
+        lastname: Castillo
+        job_title: Paralegal
+        spoken_languages: [English, Filipino]
+        key_skills: [Legal Writing, Docketing]
         job_start_date: "2022-02-14"
   - reference: :department__events_operations
-    t_name: Events & Operations
+    t_name: Corporate and Real Estate
     members:
       - reference: :user__evan_events
         firstname: Evan
-        lastname: Events
-        job_title: Event Coordinator
-        spoken_languages: [English, French]
-        key_skills: [Event Planning, Public Speaking]
+        lastname: Estrada
+        job_title: Partner
+        spoken_languages: [English, Filipino, Kapampangan]
+        key_skills: [Corporate Law, Real Estate and Land Titles]
         job_start_date: "2019-05-20"
       - reference: :user__olga_ops
         firstname: Olga
-        lastname: Ops
-        job_title: Event Coordinator
-        spoken_languages: [English, Polish]
-        key_skills: [Event Planning, Budgeting]
+        lastname: Ocampo
+        job_title: Associate
+        spoken_languages: [English, Filipino, Bikol]
+        key_skills: [Real Estate and Land Titles, Notarial Practice]
         job_start_date: "2020-08-17"
   - reference: :department__web_it
-    t_name: Web & IT
+    t_name: Legal Research
     members:
       - reference: :user__wanda_web
         firstname: Wanda
-        lastname: Web
-        job_title: Software Developer
-        spoken_languages: [English, German]
-        key_skills: [Software Development, DevOps]
+        lastname: Villena
+        job_title: Legal Researcher
+        spoken_languages: [English, Filipino]
+        key_skills: [Legal Research, Legal Writing]
         job_start_date: "2021-04-12"
       - reference: :user__ivan_it
         firstname: Ivan
-        lastname: IT
-        job_title: Software Developer
-        spoken_languages: [English, Italian]
-        key_skills: [Software Development, DevOps]
+        lastname: Ilagan
+        job_title: Legal Researcher
+        spoken_languages: [English, Filipino, Waray]
+        key_skills: [Legal Research, Appellate Practice]
         job_start_date: "2018-10-01"
   - reference: :department__finance_administration
-    t_name: Finance & Administration
+    t_name: Finance and Administration
     members:
       - reference: :user__fritz_finance
-        firstname: Fritz
-        lastname: Finance
-        job_title: Project Manager
-        spoken_languages: [English, German]
-        key_skills: [Budgeting, Stakeholder Management]
+        firstname: Fritzie
+        lastname: Fernandez
+        job_title: Office Manager
+        spoken_languages: [English, Filipino]
+        key_skills: [Billing and Collections, Client Relations]
         job_start_date: "2017-07-03"
       - reference: :user__adam_admin
         firstname: Adam
-        lastname: Admin
-        job_title: Project Manager
-        spoken_languages: [English, German]
-        key_skills: [Project Management, Budgeting]
+        lastname: Aquino
+        job_title: Managing Partner
+        spoken_languages: [English, Filipino]
+        key_skills: [Litigation, Client Relations]
         job_start_date: "2019-01-15"
   - reference: :department__quality_assurance
-    t_name: Quality Assurance
+    t_name: Records and Docketing
     members:
       - reference: :user__tessa_tester
         firstname: Tessa
-        lastname: Tester
-        job_title: QA Engineer
-        spoken_languages: [English, Portuguese]
-        key_skills: [Quality Assurance, Agile & Scrum]
+        lastname: Torres
+        job_title: Docket Clerk
+        spoken_languages: [English, Filipino, Cebuano]
+        key_skills: [Docketing, Client Relations]
         job_start_date: "2022-09-05"
 
 project_custom_field_sections:
@@ -184,25 +185,25 @@ project_custom_field_sections:
     position: 1
 
 labels:
-  - reference: :label__website
-    t_name: Website
-  - reference: :label__marketing
-    t_name: Marketing
-  - reference: :label__speakers
-    t_name: Speakers
-  - reference: :label__security
-    t_name: Security
-  - reference: :label__ux
-    t_name: UX
+  - reference: :label__urgent
+    t_name: Urgent
+  - reference: :label__billable
+    t_name: Billable
+  - reference: :label__privileged
+    t_name: Privileged
+  - reference: :label__waiting_on_client
+    t_name: Waiting on client
 
+# Sample Philippine matters. All names, parties, case numbers and facts are fictional.
 projects:
-  demo-project:
-    t_name: Demo project
-    identifier: demo-project
+  dela-cruz-v-bayanihan:
+    t_name: Dela Cruz Trading v. Bayanihan Freight
+    identifier: dela-cruz-v-bayanihan
     status_code: on_track
-    t_status_explanation: All tasks are on schedule. The people involved know their tasks. The system is completely set up.
-    t_description: This is a short summary of the goals of this demo project.
-    # Some people join the project directly, others through their whole department (group).
+    t_status_explanation: The complaint has been filed and served. Bayanihan Freight's answer is due in about three weeks.
+    t_description: |-
+      Civil Case No. R-MKT-25-01234-CV, Regional Trial Court of Makati City, Branch 142. Collection of sum of money and damages. Our client, Dela Cruz Trading (Ma. Lourdes Dela Cruz, proprietor), is suing Bayanihan Freight Services, Inc. for ₱4,850,000 in unpaid delivery credits under a 2-year trucking agreement, plus legal interest and attorney's fees.
+    # Some people join the matter directly, others through their whole department (group).
     members:
       - principal: :user__marko_marketing
         role: :default_role_member
@@ -216,9 +217,9 @@ projects:
         role: :default_role_member
     project_phases:
       - definition: :default_project_phase_initiating
-        duration: 20
+        duration: 10
       - definition: :default_project_phase_planning
-        duration: 30
+        duration: 20
       - definition: :default_project_phase_executing
         duration: 40
       - definition: :default_project_phase_closing
@@ -235,20 +236,30 @@ projects:
       - budgets
       - calendars
     news:
-      - t_title: Welcome to your demo project
+      - t_title: Complaint filed and summons served
         t_summary: |
-          We are glad you joined.
-          In this module you can communicate project news to your team members.
-        t_description: The actual news
+          The complaint was filed with the RTC Makati and the sheriff served summons on Bayanihan Freight.
+          Their answer is due 30 calendar days from service.
+        t_description: Case build-up starts this week. See the work packages under Case build-up for who is doing what.
     types:
       - :default_type_task
       - :default_type_milestone
       - :default_type_summary_task
+      - :legal_type_court_deadline
+      - :legal_type_hearing
+      - :legal_type_filing
+      - :legal_type_legal_research
+      - :legal_type_document_review
+      - :legal_type_client_communication
+      - :legal_type_contract_review
     t_categories:
-      - Category 1 (to be changed in Project settings)
+      - Pleadings
+      - Discovery
+      - Pre-trial
+      - Mediation and JDR
     queries:
-      - t_name: Project plan
-        reference: :demo_project__query__project_plan
+      - t_name: Case plan
+        reference: :delacruz__query__case_plan
         status: open
         timeline: true
         sort_by: id
@@ -262,12 +273,374 @@ projects:
           - status
           - start_date
           - due_date
-          - duration
           - assigned_to
-      - t_name: Milestones
-        reference: :demo_project__query__milestones
-        type: :default_type_milestone
+      - t_name: Deadlines and hearings
+        reference: :delacruz__query__deadlines
+        type:
+          - :legal_type_court_deadline
+          - :legal_type_hearing
+          - :default_type_milestone
         timeline: true
+        sort_by: id
+        columns:
+          - id
+          - type
+          - subject
+          - status
+          - due_date
+      - t_name: Open tasks
+        reference: :delacruz__query__open_tasks
+        status: open
+        hierarchy: true
+        sort_by: id
+        columns:
+          - id
+          - type
+          - subject
+          - status
+          - assigned_to
+          - due_date
+      - t_name: Team planner
+        module: team_planner
+        assigned_to: :openproject_admin
+    boards:
+      kanban:
+        t_name: "Filings Kanban"
+        filters:
+          - type: :legal_type_filing
+        statuses:
+          - :default_status_new
+          - :legal_status_drafting
+          - :legal_status_partner_review
+          - :legal_status_filed
+          - :default_status_closed
+      basic:
+        t_name: "Priorities"
+        lists:
+          - t_name: "This week"
+            work_packages:
+              - :delacruz__review_records
+              - :delacruz__interest_research
+          - t_name: "Next week"
+            work_packages:
+              - :delacruz__interrogatories
+          - t_name: "Waiting on the client"
+            work_packages:
+              - :delacruz__judicial_affidavit
+      parent_child:
+        t_name: "Case breakdown"
+        parents:
+          - :delacruz__pleadings
+          - :delacruz__discovery
+    project-overview:
+      row_count: 4
+      column_count: 2
+      widgets:
+        - identifier: "custom_text"
+          start_row: 1
+          end_row: 3
+          start_column: 1
+          end_column: 2
+          options:
+            t_name: "About this matter"
+            t_text: |
+              **Case:** Civil Case No. R-MKT-25-01234-CV
+              **Court:** Regional Trial Court, Makati City, Branch 142
+              **Client (plaintiff):** Dela Cruz Trading, Ma. Lourdes Dela Cruz, proprietor
+              **Defendant:** Bayanihan Freight Services, Inc. (counsel: Villaruel Tan & Associates)
+              **Amount claimed:** ₱4,850,000 plus legal interest and attorney's fees
+
+              Useful views:
+
+              * [Case plan]({{opSetting:base_url}}/projects/dela-cruz-v-bayanihan/work_packages?query_id=##query.id:delacruz__query__case_plan) shows every task on a timeline.
+              * [Deadlines and hearings]({{opSetting:base_url}}/projects/dela-cruz-v-bayanihan/work_packages?query_id=##query.id:delacruz__query__deadlines) lists the court dates.
+              * [Open tasks]({{opSetting:base_url}}/projects/dela-cruz-v-bayanihan/work_packages?query_id=##query.id:delacruz__query__open_tasks) lists the work still to do.
+        - identifier: "project_status"
+          start_row: 1
+          end_row: 2
+          start_column: 2
+          end_column: 3
+        - identifier: "members"
+          start_row: 2
+          end_row: 3
+          start_column: 2
+          end_column: 3
+          options:
+            name: "Members"
+        - identifier: "work_packages_overview"
+          start_row: 3
+          end_row: 4
+          start_column: 1
+          end_column: 3
+          options:
+            t_name: "Work packages"
+        - identifier: "work_packages_table"
+          start_row: 4
+          end_row: 5
+          start_column: 1
+          end_column: 3
+          options:
+            t_name: "Deadlines and hearings"
+            queryId: "##query.id:delacruz__query__deadlines"
+    # For all dates, the reference is the Monday of the current week
+    # So
+    # * start: 0 references Monday
+    # * start: 4 references Friday
+    # * start: -7 references the Monday of last week
+    work_packages:
+      - start: -21
+        t_subject: "Conflict check: Bayanihan Freight Services, Inc."
+        t_description: No conflict found against the defendant, its officers or its counsel.
+        status: :default_status_closed
+        type: :legal_type_contract_review
+        duration: 1
+        schedule_manually: true
+      - start: -14
+        t_subject: Matter opened and engagement letter signed
+        description:
+        status: :default_status_closed
+        type: :default_type_milestone
+        duration: 1
+        schedule_manually: true
+      - start: -14
+        t_subject: Pleadings
+        reference: :delacruz__pleadings
+        assigned_to: :user__adam_admin
+        description: ""
+        status: :default_status_in_progress
+        type: :default_type_summary_task
+        duration: 38
+        schedule_manually: false
+        children:
+          - start: -14
+            t_subject: Draft and file the complaint and pay docket fees
+            reference: :delacruz__complaint
+            assigned_to: :user__evan_events
+            t_description: |-
+              Causes of action: collection of sum of money, breach of contract and damages.
+              Attach the trucking agreement, the unpaid credit memos and the final demand letter as annexes, with the verification and certification against forum shopping.
+              The judicial affidavits of Ms. Dela Cruz and the bookkeeper are attached to the complaint (Rule 7, Section 6).
+            status: :default_status_closed
+            type: :legal_type_filing
+            duration: 5
+            estimated_hours: 14
+            remaining_hours: 0
+            done_ratio: 100
+            schedule_manually: true
+          - start: -7
+            t_subject: Summons served on Bayanihan Freight by the sheriff
+            description: ""
+            status: :default_status_closed
+            type: :legal_type_court_deadline
+            duration: 1
+            schedule_manually: false
+            relations:
+              - to: :delacruz__complaint
+                type: follows
+          - start: 23
+            t_subject: Answer of Bayanihan Freight due
+            t_description: The answer is due 30 calendar days from service of summons (Rule 11, 2019 Amended Rules of Civil Procedure). If nothing is filed, move to declare the defendant in default.
+            status: :default_status_scheduled
+            type: :legal_type_court_deadline
+            duration: 1
+            schedule_manually: true
+      - start: 0
+        t_subject: Case build-up and discovery requests
+        reference: :delacruz__discovery
+        assigned_to: :department__events_operations
+        description: ""
+        status: :default_status_in_progress
+        type: :default_type_summary_task
+        duration: 11
+        schedule_manually: false
+        children:
+          - start: 0
+            t_subject: Review the client's delivery receipts, invoices and credit memos
+            reference: :delacruz__review_records
+            assigned_to: :user__wanda_web
+            labels:
+              - :label__billable
+              - :label__privileged
+            t_description: |-
+              Build a table of every missed or late delivery with the matching sales invoice and credit memo.
+              *   [x] 2024 delivery receipts
+              *   [ ] 2025 delivery receipts
+              *   [ ] Credit memos and statements of account
+            status: :default_status_in_progress
+            type: :legal_type_document_review
+            duration: 5
+            estimated_hours: 20
+            remaining_hours: 12
+            done_ratio: 40
+            schedule_manually: true
+          - start: 0
+            t_subject: Research legal interest and attorney's fees under the Civil Code
+            reference: :delacruz__interest_research
+            assigned_to: :user__olga_ops
+            labels:
+              - :label__billable
+            t_description: Check the 6% per annum legal interest rule on unpaid sums and when it starts to run (from extrajudicial demand or from filing).
+            status: :default_status_in_progress
+            type: :legal_type_legal_research
+            duration: 4
+            estimated_hours: 12
+            remaining_hours: 8
+            done_ratio: 30
+            schedule_manually: true
+          - start: 1
+            t_subject: Get the dispatcher's signed supplemental judicial affidavit
+            reference: :delacruz__judicial_affidavit
+            assigned_to: :user__marko_marketing
+            labels:
+              - :label__waiting_on_client
+            t_description: Covers the 2025 deliveries the dispatcher handled. Draft sent to the client. Waiting for the dispatcher's signature before a notary and the two missing delivery receipts.
+            status: :legal_status_awaiting_client
+            type: :legal_type_client_communication
+            duration: 3
+            schedule_manually: true
+          - start: 7
+            t_subject: Draft written interrogatories to Bayanihan Freight
+            reference: :delacruz__interrogatories
+            t_description: Ready to serve once Bayanihan Freight files its answer and the issues are joined (Rules 25 and 26).
+            status: :legal_status_drafting
+            type: :legal_type_filing
+            duration: 4
+            estimated_hours: 10
+            remaining_hours: 10
+            done_ratio: 0
+            schedule_manually: false
+            relations:
+              - to: :delacruz__review_records
+                type: follows
+          - start: 7
+            t_subject: Draft the request for admission
+            assigned_to: :user__tessa_tester
+            description: ""
+            status: :default_status_new
+            type: :legal_type_filing
+            duration: 4
+            estimated_hours: 8
+            remaining_hours: 8
+            done_ratio: 0
+            schedule_manually: false
+            relations:
+              - to: :delacruz__review_records
+                type: follows
+      - start: 4
+        t_subject: Send the monthly case update to the client
+        description: ""
+        status: :default_status_new
+        type: :legal_type_client_communication
+        duration: 1
+        schedule_manually: true
+      - start: 24
+        t_subject: Serve the interrogatories and request for admission
+        labels:
+          - :label__urgent
+        t_description: Serve right after the answer is filed, once the issues are joined.
+        status: :default_status_new
+        type: :legal_type_court_deadline
+        duration: 1
+        schedule_manually: true
+      - start: 30
+        t_subject: File the ex parte motion to set the case for pre-trial
+        t_description: The plaintiff must move to set the pre-trial within 5 days after the last pleading is served and filed (Rule 18, Section 1).
+        status: :default_status_new
+        type: :legal_type_filing
+        duration: 1
+        schedule_manually: true
+      - start: 53
+        t_subject: Pre-trial brief and judicial affidavits due
+        t_description: Judicial affidavits of any additional witnesses are due at least 5 days before the pre-trial (Judicial Affidavit Rule, Section 2). The pre-trial brief is due at least 3 calendar days before (Rule 18, Section 6).
+        status: :default_status_new
+        type: :legal_type_court_deadline
+        duration: 1
+        schedule_manually: true
+      - start: 60
+        t_subject: Pre-trial conference
+        t_description: RTC Makati, Branch 142, 8:30 AM. The client must attend or send a representative with a special power of attorney.
+        status: :default_status_scheduled
+        type: :legal_type_hearing
+        duration: 1
+        schedule_manually: true
+      - start: 67
+        t_subject: Court-annexed mediation starts at the Philippine Mediation Center
+        t_description: Mediation runs for up to 30 days.
+        status: :default_status_new
+        type: :default_type_milestone
+        duration: 1
+        schedule_manually: true
+      - start: 102
+        t_subject: Judicial Dispute Resolution (JDR) conference
+        t_description: Only if mediation at the Philippine Mediation Center fails. JDR is before a different judge and runs for up to 15 days.
+        status: :default_status_new
+        type: :legal_type_hearing
+        duration: 1
+        schedule_manually: true
+    t_wiki: |
+      ### Case notes
+
+      _Use this wiki for notes that do not belong to a single task._
+
+      **Key facts**
+
+      * The trucking agreement started on 1 March 2024 and runs for two years.
+      * Bayanihan Freight missed or delayed 41 deliveries between May 2024 and June 2025.
+      * Bayanihan Freight issued credit memos for 17 of them, worth ₱4,850,000, and never paid them.
+      * Final demand letter sent on 15 August 2025 and received the next day.
+
+      **Strategy**
+
+      * Lead with the credit memos. They are Bayanihan Freight's own documents.
+      * Claim legal interest from the date of the final demand.
+
+      **Contacts**
+
+      * Client: Ma. Lourdes Dela Cruz, proprietor of Dela Cruz Trading
+      * Opposing counsel: Atty. Ramon Villaruel, Villaruel Tan & Associates
+  reyes-v-luzon-metalworks:
+    t_name: Reyes v. Luzon Metalworks
+    identifier: reyes-v-luzon-metalworks
+    status_code: at_risk
+    t_status_explanation: The position paper is due soon and we still need the client's signed affidavit.
+    t_description: |-
+      NLRC NCR Case No. 11-14567-25. Illegal dismissal complaint before the Labor Arbiter. Our client, Jose Reyes, a machine operator for 6 years, was dismissed without a notice to explain or a hearing. We are asking for reinstatement with full backwages, or separation pay, plus 13th month pay differentials and attorney's fees.
+    modules:
+      - work_package_tracking
+      - news
+      - gantt
+      - board_view
+      - documents
+      - meetings
+      - costs
+      - calendars
+    news:
+      - t_title: Mandatory conference set
+        t_summary: |
+          The Labor Arbiter set the first mandatory conciliation and mediation conference.
+        t_description: The SEnA conference at DOLE did not end in a settlement, so the complaint was filed with the NLRC.
+    types:
+      - :default_type_task
+      - :default_type_milestone
+      - :default_type_summary_task
+      - :legal_type_court_deadline
+      - :legal_type_hearing
+      - :legal_type_filing
+      - :legal_type_legal_research
+      - :legal_type_document_review
+      - :legal_type_client_communication
+      - :legal_type_contract_review
+    t_categories:
+      - Conciliation
+      - Position papers
+    queries:
+      - t_name: Case plan
+        reference: :reyes__query__plan
+        timeline: true
+        sort_by: id
+        hierarchy: true
+        starred: true
+        module: gantt
         columns:
           - id
           - type
@@ -275,762 +648,419 @@ projects:
           - status
           - start_date
           - due_date
-        sort_by: id
-      - t_name: Tasks
-        reference: :demo_project__query__tasks
+          - assigned_to
+      - t_name: Open items
+        reference: :reyes__query__open_items
         status: open
-        type: :default_type_task
-        hierarchy: true
         sort_by: id
         columns:
           - id
+          - type
           - subject
-          - priority
           - status
-          - assigned_to
-      - t_name: Team planner
-        module: team_planner
-        assigned_to: :openproject_admin
+          - due_date
     boards:
-      kanban:
-        t_name: "Kanban board"
-        filters:
-          - type: :default_type_task
-        statuses:
-          - :default_status_new
-          - :default_status_in_progress
-          - :default_status_closed
-          - :default_status_rejected
       basic:
-        t_name: "Basic board"
+        t_name: "Who has the ball"
         lists:
-          - t_name: "Wish list"
+          - t_name: "With us"
             work_packages:
-              - :setup_conference_website
-              - :upload_presentations_to_website
-          - t_name: "Short list"
+              - :reyes__draft
+          - t_name: "With the client"
             work_packages:
-              - :invite_attendees_to_conference
-          - t_name: "Priority list for today"
+              - :reyes__affidavit
+          - t_name: "For filing at the NLRC"
             work_packages:
-              - :set_date_and_location_of_conference
-          - t_name: "Never"
-            work_packages: []
-      parent_child:
-        t_name: "Work breakdown structure"
+              - :reyes__file
     project-overview:
-      row_count: 6
+      row_count: 2
       column_count: 2
       widgets:
         - identifier: "custom_text"
           start_row: 1
           end_row: 2
           start_column: 1
-          end_column: 3
-          options:
-            t_name: "Welcome"
-            text: '![Teaser](##attachment:"demo_project_teaser.png")'
-          attachments:
-            - demo_project_teaser.png
-        - identifier: "custom_text"
-          start_row: 2
-          end_row: 5
-          start_column: 1
           end_column: 2
           options:
-            t_name: "Getting started"
+            t_name: "About this matter"
             t_text: |
-              We are glad you joined! We suggest to try a few things to get started in OpenProject.
-
-              Discover the most important features with our [Guided Tour]({{opSetting:base_url}}/projects/demo-project/work_packages/?start_onboarding_tour=true).
-
-              _Try the following steps:_
-
-              1. *Invite new members to your project*: &rightarrow; Go to [Members]({{opSetting:base_url}}/projects/demo-project/members) in the project navigation.
-              2. *View the work in your project*: &rightarrow; Go to [Work packages]({{opSetting:base_url}}/projects/demo-project/work_packages) in the project navigation.
-              3. *Create a new work package*: &rightarrow; Go to [Work packages &rightarrow; Create]({{opSetting:base_url}}/projects/demo-project/work_packages/new).
-              4. *Create and update a project plan*: &rightarrow; Go to [Project plan]({{opSetting:base_url}}/projects/demo-project/work_packages?query_id=##query.id:demo_project__query__project_plan) in the project navigation.
-              5. *Activate further modules*: &rightarrow; Go to [Project settings &rightarrow; Modules]({{opSetting:base_url}}/projects/demo-project/settings/modules).
-              6. *Complete your tasks in the project*: &rightarrow; Go to [Work packages &rightarrow; Tasks]({{opSetting:base_url}}/projects/demo-project/work_packages/details/##wp.id:set_date_and_location_of_conference/overview?query_id=##query.id:demo_project__query__tasks).
-
-              Here you will find our [User Guides](https://www.openproject.org/docs/user-guide/).
-              Please let us know if you have any questions or need support. Contact us: [support[at]openproject.com](mailto:support@openproject.com).
+              **Case:** NLRC NCR Case No. 11-14567-25
+              **Forum:** National Labor Relations Commission, NCR Arbitration Branch
+              **Client (complainant):** Jose Reyes
+              **Respondent:** Luzon Metalworks Corp. (counsel: Atty. Carmela Ong)
+              **Claims:** Illegal dismissal, backwages, separation pay, 13th month pay differentials, attorney's fees
         - identifier: "project_status"
+          start_row: 1
+          end_row: 2
+          start_column: 2
+          end_column: 3
+        - identifier: "work_packages_table"
           start_row: 2
           end_row: 3
-          start_column: 2
-          end_column: 3
-        - identifier: "project_description"
-          start_row: 3
-          end_row: 4
-          start_column: 2
-          end_column: 3
-        - identifier: "members"
-          start_row: 4
-          end_row: 5
-          start_column: 2
-          end_column: 3
-          options:
-            name: "Members"
-        - identifier: "work_packages_overview"
-          start_row: 5
-          end_row: 6
           start_column: 1
           end_column: 3
           options:
-            t_name: "Work packages"
-        - identifier: "work_packages_table"
-          start_row: 6
-          end_row: 7
-          start_column: 1
-          end_column: 3
-          options:
-            t_name: "Milestones"
-            queryId: "##query.id:demo_project__query__milestones"
-    # For all dates, the reference is the Monday of the current week
-    # So
-    # * start: 0 references Monday
-    # * start: 4 references Friday
-    # * start: -1 references the last Sunday
+            t_name: "Open items"
+            queryId: "##query.id:reyes__query__open_items"
     work_packages:
-      - start: -1
-        t_subject: Start of project
-        description:
+      - start: -17
+        t_subject: "Conflict check and engagement letter: Luzon Metalworks Corp."
+        t_description: No conflict found. Engagement on an acceptance fee plus a success fee on any monetary award.
         status: :default_status_closed
-        type: :default_type_milestone
+        type: :legal_type_contract_review
+        duration: 1
+        schedule_manually: true
+      - start: -14
+        t_subject: Intake interview with Mr. Reyes
+        description: ""
+        status: :default_status_closed
+        type: :legal_type_client_communication
+        duration: 1
+        schedule_manually: true
+      - start: -10
+        t_subject: "SEnA conference at DOLE: no settlement"
+        description: ""
+        status: :default_status_closed
+        type: :legal_type_hearing
+        duration: 1
+        schedule_manually: true
+      - start: -7
+        t_subject: File the complaint for illegal dismissal at the NLRC
+        description: ""
+        status: :default_status_closed
+        type: :legal_type_filing
+        duration: 1
+        schedule_manually: true
+      - start: 2
+        t_subject: First mandatory conciliation and mediation conference
+        t_description: Before the Labor Arbiter, NLRC NCR, Quezon City, 10:00 AM. Bring the client's computation of backwages.
+        status: :default_status_scheduled
+        type: :legal_type_hearing
         duration: 1
         schedule_manually: true
       - start: 0
-        t_subject: Organize open source conference
-        reference: :organize_open_source_conference
-        assigned_to: :department__events_operations
+        t_subject: Position paper
+        reference: :reyes__position_paper
         description: ""
         status: :default_status_in_progress
         type: :default_type_summary_task
-        duration: 15
+        duration: 9
         schedule_manually: false
         children:
           - start: 0
-            t_subject: Set date and location of conference
-            reference: :set_date_and_location_of_conference
-            assigned_to: :user__olga_ops
+            t_subject: Compile payslips, the termination letter and company memos
+            reference: :reyes__evidence
+            labels:
+              - :label__billable
+            t_description: |-
+              *   [x] Payslips for the last 12 months
+              *   [x] Termination letter
+              *   [ ] Company memos on the incident
+              *   [ ] SSS employment history
+            status: :default_status_in_progress
+            type: :legal_type_document_review
+            duration: 3
+            estimated_hours: 6
+            remaining_hours: 2
+            done_ratio: 70
+            schedule_manually: true
+          - start: 0
+            t_subject: Research jurisprudence on just cause and the twin-notice rule
             description: ""
             status: :default_status_in_progress
-            type: :default_type_task
-            duration: 4
-            schedule_manually: false
-            children:
-              - start: 0
-                t_subject: Send invitation to speakers
-                labels:
-                  - :label__speakers
-                assigned_to: :user__marko_marketing
-                description: ""
-                status: :default_status_in_progress
-                type: :default_type_task
-                duration: 1
-                estimated_hours: 8
-                remaining_hours: 4
-                done_ratio: 50
-              - start: 0
-                t_subject: Contact sponsoring partners
-                assigned_to: :department__finance_administration
-                description: ""
-                status: :default_status_new
-                type: :default_type_task
-                duration: 2
-                estimated_hours: 16
-                remaining_hours: 16
-                done_ratio: 0
-              - start: 0
-                t_subject: Create sponsorship brochure and hand-outs
-                labels:
-                  - :label__marketing
-                assigned_to: :user__marko_marketing
-                description: ""
-                status: :default_status_new
-                type: :default_type_task
-                duration: 4
-                estimated_hours: 32
-                remaining_hours: 32
-                done_ratio: 0
-          - start: 4
-            t_subject: Invite attendees to conference
+            type: :legal_type_legal_research
+            duration: 2
+            estimated_hours: 4
+            remaining_hours: 2
+            done_ratio: 50
+            schedule_manually: true
+          - start: 1
+            t_subject: Get Mr. Reyes's signed affidavit
+            reference: :reyes__affidavit
             labels:
-              - :label__marketing
-            reference: :invite_attendees_to_conference
-            assigned_to: :user__evan_events
+              - :label__waiting_on_client
             description: ""
-            status: :default_status_new
+            status: :legal_status_awaiting_client
+            type: :legal_type_client_communication
+            duration: 3
+            schedule_manually: true
+          - start: 3
+            t_subject: Compute backwages, separation pay and 13th month pay differentials
+            reference: :reyes__computation
+            t_description: Attach the computation to the position paper as an annex.
+            status: :default_status_in_progress
             type: :default_type_task
+            duration: 1
+            schedule_manually: false
+            relations:
+              - to: :reyes__evidence
+                type: follows
+          - start: 4
+            t_subject: Draft the verified position paper
+            reference: :reyes__draft
+            labels:
+              - :label__urgent
+            t_description: The position paper must be verified by Mr. Reyes and attach his affidavit, the documentary evidence and the computation.
+            status: :legal_status_drafting
+            type: :legal_type_filing
             duration: 1
             estimated_hours: 8
             remaining_hours: 8
             done_ratio: 0
             schedule_manually: false
             relations:
-              - to: :set_date_and_location_of_conference
+              - to: :reyes__computation
                 type: follows
-          - start: 4
-            t_subject: Setup conference website
-            labels:
-              - :label__website
-            reference: :setup_conference_website
-            assigned_to: :user__wanda_web
+          - start: 7
+            t_subject: File and serve the position paper
+            reference: :reyes__file
             description: ""
             status: :default_status_new
-            type: :default_type_task
-            duration: 11
-            estimated_hours: 88
-            remaining_hours: 88
-            done_ratio: 0
+            type: :legal_type_filing
+            duration: 2
             schedule_manually: false
             relations:
-              - to: :set_date_and_location_of_conference
+              - to: :reyes__draft
                 type: follows
-      - start: 15
-        t_subject: Test and quality-check the conference website
-        labels:
-          - :label__website
-        assigned_to: :user__tessa_tester
-        description: ""
-        status: :default_status_new
-        type: :default_type_task
-        duration: 3
-        estimated_hours: 24
-        remaining_hours: 24
-        done_ratio: 0
-        schedule_manually: false
-        relations:
-          - to: :setup_conference_website
-            type: follows
-      - start: 15
-        t_subject: Conference
+      - start: 10
+        t_subject: Position paper deadline set by the Labor Arbiter
         description: ""
         status: :default_status_scheduled
-        type: :default_type_milestone
+        type: :legal_type_court_deadline
         duration: 1
-        relations:
-          - to: :organize_open_source_conference
-            type: follows
-        schedule_manually: false
+        schedule_manually: true
       - start: 21
-        t_subject: Follow-up tasks
-        reference: :follow_up_tasks
-        assigned_to: :user__adam_admin
+        t_subject: Reply to the respondent's position paper due
         description: ""
-        status: :default_status_to_be_scheduled
-        type: :default_type_summary_task
-        duration: 11
-        schedule_manually: false
-        children:
-          - start: 21
-            t_subject: Upload presentations to website
-            labels:
-              - :label__website
-              - :label__speakers
-            reference: :upload_presentations_to_website
-            assigned_to: :user__wanda_web
-            description: ""
-            status: :default_status_new
-            type: :default_type_task
-            duration: 10
-            estimated_hours: 80
-            remaining_hours: 80
-            done_ratio: 0
-          - start: 31
-            t_subject: Party for conference supporters :-)
-            assigned_to: :user__olga_ops
-            t_description: |-
-              *   [ ] Beer
-              *   [ ] Snacks
-              *   [ ] Music
-              *   [ ] Even more beer
-            status: :default_status_new
-            type: :default_type_task
-            duration: 1
-            estimated_hours: 8
-            remaining_hours: 8
-            done_ratio: 0
-      - start: 32
-        t_subject: End of project
-        description:
         status: :default_status_new
-        type: :default_type_milestone
+        type: :legal_type_court_deadline
         duration: 1
-        schedule_manually: false
-        relations:
-          - to: :follow_up_tasks
-            type: follows
-    t_wiki: |
-      _In this wiki you can collaboratively create and edit pages and sub-pages to create a project wiki._
-
-      **You can:**
-
-      * Insert text and images, also with copy and paste from other documents
-      * Create a page hierarchy with parent pages
-      * Include wiki pages to the project menu
-      * Use macros to include, e.g. table of contents, work package lists, or Gantt charts
-      * Include wiki pages in other text fields, e.g. project overview page
-      * Include links to other documents
-      * View the change history
-      * View as Markdown
-
-      More information: [https://www.openproject.org/docs/user-guide/wiki/](https://www.openproject.org/docs/user-guide/wiki/)
-  scrum-project:
-    t_name: Scrum project
-    identifier: your-scrum-project
+        schedule_manually: true
+      - start: 63
+        t_subject: Appeal period after the Labor Arbiter's decision
+        t_description: |-
+          A motion for reconsideration of the Labor Arbiter's decision is not allowed. Any appeal goes to the Commission within 10 calendar days from receipt of the decision.
+          If the employer appeals a monetary award, it must post a cash or surety bond equal to the award. Update this date once the decision is received.
+        status: :default_status_new
+        type: :legal_type_court_deadline
+        duration: 1
+        schedule_manually: true
+  santos-title-transfer:
+    t_name: Santos condominium title transfer
+    identifier: santos-title-transfer
     status_code: on_track
-    t_status_explanation: All tasks are on schedule. The people involved know their tasks. The system is completely set up.
-    t_description: This is a short summary of the goals of this demo Scrum project.
+    t_status_explanation: The title is clean. The deed of absolute sale is being drafted.
+    t_description: |-
+      Transfer of title for a condominium unit in Makati City sold by Spouses Antonio and Teresa Santos to our client, Bea Navarro, for ₱6,200,000. We handle the deed of absolute sale, the BIR taxes and eCAR, the local transfer tax, and the new Condominium Certificate of Title at the Registry of Deeds.
     modules:
-      - backlogs
-      - news
       - work_package_tracking
+      - news
       - gantt
-      - board_view
       - documents
       - meetings
-    news:
-      - t_title: Welcome to your Scrum demo project
-        t_summary: |
-          We are glad you joined.
-          In this module you can communicate project news to your team members.
-        description: This is the news content.
-    versions:
-      - name: "1.0"
-        reference: :scrum_project__version__1_0
-        sharing: none
-        status: open
-        start: 14
-        duration: 5
-        wiki:
-          t_title: Release 1.0
-          t_content: |
-            ### Release 1.0
-
-            _Please document here what this release contains._
-
-            * The work packages of this release are the ones with the target version 1.0.
-            * The release date is the date of the *Release v1.0* milestone.
-            * Open the [Roadmap]({{opSetting:base_url}}/projects/your-scrum-project/roadmap) to follow the progress of all versions.
-            * Open [Project settings &rightarrow; Versions]({{opSetting:base_url}}/projects/your-scrum-project/settings/versions) to link another wiki page to a version.
-      - name: "1.1"
-        reference: :scrum_project__version__1_1
-        sharing: none
-        status: open
-        start: 21
-        duration: 5
-      - name: "2.0"
-        reference: :scrum_project__version__2_0
-        sharing: none
-        status: open
-        start: 28
-        duration: 5
+      - costs
+      - calendars
     types:
       - :default_type_task
       - :default_type_milestone
       - :default_type_summary_task
-      - :default_type_epic
-      - :default_type_user_story
-      - :default_type_bug
+      - :legal_type_contract_review
+      - :legal_type_filing
+      - :legal_type_legal_research
+      - :legal_type_document_review
+      - :legal_type_client_communication
     t_categories:
-      - Category 1 (to be changed in Project settings)
+      - Deed of sale
+      - BIR
+      - Registry of Deeds
     queries:
-      - t_name: Project plan
-        module: gantt
-        reference: :scrum_project__query__project_plan
-        status: open
-        sort_by: id
-        type:
-          - :default_type_milestone
-          - :default_type_summary_task
+      - t_name: Transfer timeline
+        reference: :santos__query__timeline
         timeline: true
-      - t_name: Version 1.1
-        status: open
-        version: :scrum_project__version__1_1
-        group_by: status
-        sort_by: status
+        sort_by: id
+        hierarchy: true
+        starred: true
+        module: gantt
         columns:
           - id
           - type
           - subject
-          - priority
           - status
-          - assigned_to
-          - story_points
-      - t_name: Version 1.0
-        status: open
-        version: :scrum_project__version__1_0
-        hierarchy: true
-        columns:
-          - id
-          - type
-          - subject
-          - priority
-          - status
-          - assigned_to
-          - done_ratio
-          - story_points
-      - t_name: Tasks
-        status: open
-        type: :default_type_task
-        hierarchy: true
-    boards:
-      kanban:
-        t_name: "Kanban board"
-        statuses:
-          - :default_status_new
-          - :default_status_in_progress
-          - :default_status_closed
-          - :default_status_rejected
-      basic:
-        t_name: "Task board"
-        lists:
-          - t_name: "Wish list"
-            work_packages:
-              - :new_website
-              - :ssl_certificate
-              - :choose_content_management_system
-          - t_name: "Short list"
-            work_packages:
-              - :new_login_screen
-          - t_name: "Priority list for today"
-            work_packages:
-              - :set_up_staging_environment
-          - t_name: "Never"
-            work_packages:
-              - :wrong_hover_color
-
+          - start_date
+          - due_date
     project-overview:
-      row_count: 6
+      row_count: 2
       column_count: 2
       widgets:
         - identifier: "custom_text"
           start_row: 1
           end_row: 2
           start_column: 1
-          end_column: 3
-          options:
-            t_name: "Welcome"
-            text: '![Teaser](##attachment:"scrum_project_teaser.png")'
-          attachments:
-            - scrum_project_teaser.png
-        - identifier: "custom_text"
-          start_row: 2
-          end_row: 5
-          start_column: 1
           end_column: 2
           options:
-            t_name: "Getting started"
+            t_name: "About this matter"
             t_text: |
-              We are glad you joined! We suggest to try a few things to get started in OpenProject.
+              **Client (buyer):** Bea Navarro
+              **Sellers:** Spouses Antonio and Teresa Santos
+              **Property:** Condominium unit, Makati City, CCT No. 012-2019001234
+              **Price:** ₱6,200,000
 
-              _Try the following steps:_
-
-              1. *Invite new members to your project*: &rightarrow; Go to [Members]({{opSetting:base_url}}/projects/your-scrum-project/members) in the project navigation.
-              2. *View your Product backlog and Sprint backlogs*: &rightarrow; Go to [Backlogs]({{opSetting:base_url}}/projects/your-scrum-project/backlogs) in the project navigation.
-              3. *Create a sprint*: &rightarrow; Go to [Backlogs]({{opSetting:base_url}}/projects/your-scrum-project/backlogs) and click "+ Sprint" to create a new sprint. Move work packages from the backlog to the sprint to plan the work to be done. When ready, click "Start sprint".
-              4. *View your Sprint board*: &rightarrow; Go to [Boards]({{opSetting:base_url}}/projects/your-scrum-project/backlogs) &rightarrow; Open the sprint's board by clicking on the sprint's name.
-              5. *Create a new work package*: &rightarrow; Go to [Work packages &rightarrow; Create]({{opSetting:base_url}}/projects/your-scrum-project/work_packages/new).
-              6. *Create and update a project plan*: &rightarrow; Go to [Project plan](##query:scrum_project__query__project_plan) in the project navigation.
-              7. *Activate further modules*: &rightarrow; Go to [Project settings &rightarrow; Modules]({{opSetting:base_url}}/projects/your-scrum-project/settings/modules).
-
-
-              Here you will find our [User Guides](https://www.openproject.org/docs/user-guide/).
-              Please let us know if you have any questions or need support. Contact us: [support[at]openproject.com](mailto:support@openproject.com).
+              Taxes: capital gains tax (6%) and documentary stamp tax (1.5%) at the BIR, and transfer tax at the Makati City Treasurer's Office.
         - identifier: "project_status"
+          start_row: 1
+          end_row: 2
+          start_column: 2
+          end_column: 3
+        - identifier: "work_packages_table"
           start_row: 2
           end_row: 3
-          start_column: 2
-          end_column: 3
-        - identifier: "project_description"
-          start_row: 3
-          end_row: 4
-          start_column: 2
-          end_column: 3
-        - identifier: "members"
-          start_row: 4
-          end_row: 5
-          start_column: 2
-          end_column: 3
-          options:
-            name: "Members"
-        - identifier: "work_packages_overview"
-          start_row: 5
-          end_row: 6
           start_column: 1
           end_column: 3
           options:
-            t_name: "Work packages"
-        - identifier: "work_packages_table"
-          start_row: 6
-          end_row: 7
-          start_column: 1
-          end_column: 3
-          options:
-            t_name: "Project plan"
-            queryId: "##query.id:scrum_project__query__project_plan"
+            t_name: "Transfer timeline"
+            queryId: "##query.id:santos__query__timeline"
     work_packages:
-      - t_subject: New login screen
-        labels:
-          - :label__security
-          - :label__ux
-        reference: :new_login_screen
-        status: :default_status_in_specification
-        type: :default_type_user_story
-        target_versions:
-          - :scrum_project__version__1_1
-        position: 3
-      - t_subject: Password reset does not send email
-        labels:
-          - :label__security
-        status: :default_status_confirmed
-        type: :default_type_bug
-        target_versions:
-          - :scrum_project__version__1_1
-        observed_in_versions:
-          - :scrum_project__version__1_0
-        position: 1
-      - t_subject: New website
-        labels:
-          - :label__website
-        reference: :new_website
-        status: :default_status_specified
-        type: :default_type_epic
-        start: 0
-        duration: 29
-        schedule_manually: false
-        children:
-          - t_subject: Newsletter registration form
-            labels:
-              - :label__website
-              - :label__marketing
-            status: :default_status_in_progress
-            type: :default_type_user_story
-            target_versions:
-              - :scrum_project__version__1_1
-            position: 6
-          - t_subject: Implement product tour
-            status: :default_status_in_specification
-            type: :default_type_user_story
-            target_versions:
-              - :scrum_project__version__2_0
-            position: 4
-          - t_subject: New landing page
-            status: :default_status_specified
-            type: :default_type_user_story
-            target_versions:
-              - :scrum_project__version__1_0
-            position: 2
-            story_points: 3
-            start: 28
-            duration: 1
-            schedule_manually: false
-            children:
-              - t_subject: Create wireframes for new landing page
-                labels:
-                  - :label__ux
-                status: :default_status_in_progress
-                type: :default_type_task
-                target_versions:
-                  - :scrum_project__version__1_0
-                start: 28
-                duration: 1
-      - t_subject: Contact form
-        status: :default_status_specified
-        type: :default_type_user_story
-        target_versions:
-          - :scrum_project__version__1_0
-        position: 5
-        start: 21
-        duration: 1
-        story_points: 1
-      - t_subject: Feature carousel
-        labels:
-          - :label__marketing
-        status: :default_status_specified
-        type: :default_type_user_story
-        target_versions:
-          - :scrum_project__version__1_0
-        position: 3
-        story_points: 5
-        schedule_manually: false
-        children:
-          - t_subject: Make screenshots for feature tour
-            status: :default_status_closed
-            type: :default_type_task
-            target_versions:
-              - :scrum_project__version__1_0
-      - t_subject: Wrong hover color
-        labels:
-          - :label__ux
-        reference: :wrong_hover_color
-        status: :default_status_rejected
-        type: :default_type_bug
-        observed_in_versions:
-          - :scrum_project__version__1_0
-          - :scrum_project__version__1_1
-        position: 4
-        story_points: 1
-        start: 21
-        duration: 1
-      - t_subject: SSL certificate
-        labels:
-          - :label__security
-        reference: :ssl_certificate
-        status: :default_status_specified
-        type: :default_type_user_story
-        target_versions:
-          - :scrum_project__version__2_0
-        position: 1
-        start: 22
-        duration: 1
-      - t_subject: Set-up Staging environment
-        reference: :set_up_staging_environment
-        status: :default_status_in_specification
-        type: :default_type_user_story
-        target_versions:
-          - :scrum_project__version__2_0
-        position: 2
-        start: 23
-        duration: 1
-      - t_subject: Choose a content management system
-        reference: :choose_content_management_system
-        status: :default_status_specified
-        type: :default_type_user_story
-        position: 7
-        start: 24
-        duration: 1
-      - t_subject: Website navigation structure
-        status: :default_status_specified
-        type: :default_type_user_story
-        target_versions:
-          - :scrum_project__version__1_0
-        position: 7
-        story_points: 3
-        start: 25
-        duration: 1
-        schedule_manually: false
-        children:
-          - t_subject: Set up navigation concept for website.
-            labels:
-              - :label__ux
-            status: :default_status_in_specification
-            type: :default_type_task
-            target_versions:
-              - :scrum_project__version__1_0
-            start: 25
-            duration: 1
-      - t_subject: Internal link structure
+      - start: -10
+        t_subject: "Conflict check and engagement letter: Spouses Santos"
+        t_description: No conflict found. Fixed fee for the transfer, with taxes and registration fees billed at cost.
         status: :default_status_closed
-        type: :default_type_user_story
-        position: 5
-        start: 25
+        type: :legal_type_contract_review
         duration: 1
-      - t_subject: Develop v1.0
-        reference: :develop_v1_0
+        schedule_manually: true
+      - start: -7
+        t_subject: Meet buyer and sellers and collect the owner's copy of the title
+        description: ""
+        status: :default_status_closed
+        type: :legal_type_client_communication
+        duration: 1
+        schedule_manually: true
+      - start: 0
+        t_subject: Get a certified true copy of the title and check for liens
+        reference: :santos__title_check
+        labels:
+          - :label__billable
+        t_description: Request the certified true copy from the Registry of Deeds of Makati City and check the annotations for mortgages, adverse claims or lis pendens.
         status: :default_status_in_progress
+        type: :legal_type_document_review
+        duration: 3
+        estimated_hours: 4
+        remaining_hours: 2
+        done_ratio: 50
+        schedule_manually: true
+      - start: 0
+        t_subject: Compute capital gains tax, documentary stamp tax and transfer tax
+        t_description: The tax base is the highest of the gross selling price, the BIR zonal value and the fair market value in the tax declaration. Capital gains tax is normally the sellers' cost; confirm who pays what in the deed.
+        status: :default_status_new
+        type: :legal_type_legal_research
+        duration: 2
+        estimated_hours: 2
+        remaining_hours: 2
+        done_ratio: 0
+        schedule_manually: true
+      - start: 3
+        t_subject: Prepare the sale documents
+        reference: :santos__documents
+        description: ""
+        status: :default_status_new
         type: :default_type_summary_task
-        target_versions:
-          - :scrum_project__version__1_0
-        start: 14
-        duration: 4
-      - t_subject: Release v1.0
+        duration: 7
+        schedule_manually: false
+        children:
+          - start: 3
+            t_subject: Draft the deed of absolute sale
+            reference: :santos__deed
+            description: ""
+            status: :legal_status_drafting
+            type: :legal_type_contract_review
+            duration: 2
+            estimated_hours: 4
+            remaining_hours: 4
+            done_ratio: 0
+            schedule_manually: false
+            relations:
+              - to: :santos__title_check
+                type: follows
+          - start: 7
+            t_subject: Prepare the BIR forms and supporting documents for the eCAR
+            description: ""
+            status: :default_status_new
+            type: :legal_type_filing
+            duration: 2
+            estimated_hours: 2
+            remaining_hours: 2
+            done_ratio: 0
+            schedule_manually: false
+            relations:
+              - to: :santos__deed
+                type: follows
+          - start: 7
+            t_subject: Get the real property tax clearance and the condominium certificate of management and dues clearance
+            description: ""
+            status: :default_status_new
+            type: :default_type_task
+            duration: 3
+            schedule_manually: false
+            relations:
+              - to: :santos__deed
+                type: follows
+      - start: 10
+        t_subject: Signing and notarization of the deed of absolute sale
+        reference: :santos__signing
+        description: ""
+        status: :default_status_new
+        type: :legal_type_client_communication
+        duration: 2
+        schedule_manually: false
+        relations:
+          - to: :santos__documents
+            type: follows
+      - start: 14
+        t_subject: Pay capital gains tax and documentary stamp tax at the BIR
+        reference: :santos__bir_payment
+        t_description: Capital gains tax is due within 30 days of notarization. Documentary stamp tax is due by the 5th day of the following month.
         status: :default_status_new
         type: :default_type_milestone
-        target_versions:
-          - :scrum_project__version__1_0
-        start: 18
         duration: 1
         schedule_manually: false
         relations:
-          - to: :develop_v1_0
+          - to: :santos__signing
             type: follows
-      - t_subject: Develop v1.1
-        reference: :develop_v1_1
-        status: :default_status_new
-        type: :default_type_summary_task
-        target_versions:
-          - :scrum_project__version__1_1
-        start: 21
-        duration: 4
-      - t_subject: Release v1.1
+      - start: 28
+        t_subject: BIR releases the eCAR
+        reference: :santos__ecar
+        t_description: The eCAR usually takes 2 to 4 weeks after payment and complete submission.
         status: :default_status_new
         type: :default_type_milestone
-        target_versions:
-          - :scrum_project__version__1_1
-        start: 25
         duration: 1
+        schedule_manually: true
+      - start: 29
+        t_subject: Pay transfer tax and register the sale at the Registry of Deeds
+        reference: :santos__registration
+        t_description: Pay the transfer tax at the Makati City Treasurer, then file at the Registry of Deeds for the new CCT in the client's name.
+        status: :default_status_new
+        type: :legal_type_filing
+        duration: 4
         schedule_manually: false
         relations:
-          - to: :develop_v1_1
+          - to: :santos__ecar
             type: follows
-      - t_subject: Develop v2.0
-        reference: :develop_v2_0
+      - start: 35
+        t_subject: Get a new tax declaration from the Makati City Assessor
+        description: ""
         status: :default_status_new
-        type: :default_type_summary_task
-        target_versions:
-          - :scrum_project__version__2_0
-        start: 28
-        duration: 4
-      - t_subject: Release v2.0
+        type: :default_type_task
+        duration: 3
+        schedule_manually: false
+        relations:
+          - to: :santos__registration
+            type: follows
+      - start: 70
+        t_subject: Transfer tax deadline
+        t_description: The local transfer tax is due within 60 days of notarization (Local Government Code, Section 135). Pay it well before this date.
         status: :default_status_new
         type: :default_type_milestone
-        target_versions:
-          - :scrum_project__version__2_0
-        start: 32
         duration: 1
-        schedule_manually: false
-        relations:
-          - to: :develop_v2_0
-            type: follows
-    t_wiki: |
-      ### Sprint planning meeting
-
-      _Please document here topics to the Sprint planning meeting_
-
-      * Time boxed (8 h)
-      * Input: Product Backlog
-      * Output: Sprint Backlog
-
-      * Divided into two additional time boxes of 4 h:
-
-          * The Product Owner presents the [Product Backlog]({{opSetting:base_url}}/projects/your-scrum-project/backlogs) and the priorities to the team and explains the Sprint Goal, to which the team must agree. Together, they prioritize the topics from the Product Backlog which the team will take care of in the next sprint. The team commits to the discussed delivery.
-          * The team plans autonomously (without the Product Owner) in detail and breaks down the tasks from the discussed requirements to consolidate a [Sprint Backlog]({{opSetting:base_url}}/projects/your-scrum-project/backlogs).
-
-
-      ### Daily Scrum meeting
-
-      _Please document here topics to the Daily Scrum meeting_
-
-      * Short, daily status meeting of the team.
-      * Time boxed (max. 15 min).
-      * Stand-up meeting to discuss the following topics from the Task board.
-          * What do I plan to do until the next Daily Scrum?
-          * What has blocked my work (Impediments)?
-      * Scrum Master moderates and notes down Sprint Impediments.
-      * Product Owner may participate may participate in order to stay informed.
-
-      ### Sprint Review meeting
-
-      _Please document here topics to the Sprint Review meeting_
-
-      * Time boxed (4 h).
-      * A maximum of one hour of preparation time per person.
-      * The team shows the product owner and other interested persons what has been achieved in this sprint.
-      * Important: no dummies and no PowerPoint! Just finished product functionality (Increments) should be demonstrated.
-      * Feedback from Product Owner, stakeholders and others is desired and will be included in further work.
-      * Based on the demonstrated functionalities, the Product Owner decides to go live with this increment or to develop it further. This possibility allows an early ROI.
-
-
-      ### Sprint Retrospective
-
-      _Please document here topics to the Sprint Retrospective meeting_
-
-      * Time boxed (3 h).
-      * After Sprint Review, will be moderated by Scrum Master.
-      * The team discusses the sprint: what went well, what needs to be improved to be more productive for the next sprint or even have more fun.
+        schedule_manually: true
 
 statuses:
   - reference: :default_status_new
