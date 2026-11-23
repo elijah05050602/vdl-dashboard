@@ -125,10 +125,17 @@ module LawFirm
         period_to: today,
         client_name: last&.client_name,
         client_address: last&.client_address,
-        client_tin: last&.client_tin,
-        client_withholds: last&.ewt_rate.present?,
-        ewt_rate: last&.ewt_rate || billing_config.ewt_rate
-      }
+        client_tin: last&.client_tin
+      }.merge(default_withholding(last))
+    end
+
+    def default_withholding(last_invoice)
+      terms = EngagementTerms.for(@project)
+      if terms
+        { client_withholds: terms.withholds_ewt, ewt_rate: terms.ewt_rate || billing_config.ewt_rate }
+      else
+        { client_withholds: last_invoice&.ewt_rate.present?, ewt_rate: last_invoice&.ewt_rate || billing_config.ewt_rate }
+      end
     end
 
     def default_period_from(last_invoice, today)

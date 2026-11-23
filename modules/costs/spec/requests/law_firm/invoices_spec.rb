@@ -69,6 +69,15 @@ RSpec.describe "Matter invoices", :skip_csrf, type: :rails_request do
       expect(response.body).to include("Issue invoice")
     end
 
+    it "takes the withholding from the matter's agreed terms" do
+      LawFirm::EngagementTerms.create!(project:, withholds_ewt: true, ewt_rate: 0.15)
+
+      get new_project_invoice_path(project)
+
+      expect(response.body).to include('<option selected="selected" value="0.15">')
+      expect(response.body).to match(/checked="checked"[^>]*id="invoice_client_withholds"/)
+    end
+
     it "previews a draft without using a number" do
       expect { post draft_project_invoices_path(project), params: invoice_params }
         .not_to change(LawFirm::Invoice, :count)
