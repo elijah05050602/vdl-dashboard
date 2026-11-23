@@ -379,6 +379,28 @@ module Settings
         default: 20,
         format: :integer
       },
+      deadline_digest_enabled: {
+        description: "Send each user a daily email with upcoming court deadlines and hearings",
+        default: true
+      },
+      deadline_digest_hour: {
+        description: "Local hour of the day (0-23, in each user's time zone) at which the deadline digest is sent",
+        default: 7
+      },
+      deadline_digest_days_ahead: {
+        description: "Number of days ahead the deadline digest lists the firm's upcoming deadlines for",
+        default: 14
+      },
+      deadline_reminder_days: {
+        format: :array,
+        description: "Days before a deadline on which the people involved get a reminder (0 is the day itself)",
+        default: [14, 7, 3, 1, 0]
+      },
+      deadline_reminder_types: {
+        format: :array,
+        description: "Names of the work package types treated as deadlines in reminders and the digest",
+        default: ["Court deadline", "Hearing"]
+      },
       default_auto_hide_popups: {
         description: "Whether to automatically hide success notifications by default",
         default: true

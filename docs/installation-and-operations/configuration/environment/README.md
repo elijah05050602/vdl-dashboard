@@ -199,6 +199,11 @@ For reference, here is an overview of the latest stable version's environment va
 | `OPENPROJECT_DATABASE__ENCRYPTION__PREVIOUS__KEY` | `nil` | Old value of SECRET_KEY_BASE or of the database encryption key, used to decrypt data while you rotate that key |
 | `OPENPROJECT_DATE__FORMAT` | `nil` | Date |
 | `OPENPROJECT_DAYS__PER__MONTH` | `20` | This will define what is considered a “month” when displaying duration in a more natural way (for example, if a month is 20 days, 60 days would be 3 months. |
+| `OPENPROJECT_DEADLINE__DIGEST__DAYS__AHEAD` | `14` | Number of days ahead the deadline digest lists the firm's upcoming deadlines for |
+| `OPENPROJECT_DEADLINE__DIGEST__ENABLED` | `true` | Send each user a daily email with upcoming court deadlines and hearings |
+| `OPENPROJECT_DEADLINE__DIGEST__HOUR` | `7` | Local hour of the day (0-23, in each user's time zone) at which the deadline digest is sent |
+| `OPENPROJECT_DEADLINE__REMINDER__DAYS` | `[14, 7, 3, 1, 0]` | Days before a deadline on which the people involved get a reminder (0 is the day itself) |
+| `OPENPROJECT_DEADLINE__REMINDER__TYPES` | `["Court deadline", "Hearing"]` | Names of the work package types treated as deadlines in reminders and the digest |
 | `OPENPROJECT_DEFAULT__AUTO__HIDE__POPUPS` | `true` | Whether to automatically hide success notifications by default |
 | `OPENPROJECT_DEFAULT__COMMENT__SORT__ORDER` | `"asc"` | Default sort order for activities |
 | `OPENPROJECT_DEFAULT__LANGUAGE` | `"en"` | Default language |

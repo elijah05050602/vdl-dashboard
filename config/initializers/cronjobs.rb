@@ -67,6 +67,10 @@ Rails.application.config.after_initialize do
         cron: "*/15 * * * *",
         class: Notifications::ScheduleReminderMailsJob.name
       },
+      "LawFirm::ScheduleDeadlineDigestsJob": {
+        cron: "*/15 * * * *",
+        class: LawFirm::ScheduleDeadlineDigestsJob.name
+      },
       "Ldap::SynchronizationJob": {
         cron: "30 23 * * *",
         class: Ldap::SynchronizationJob.name

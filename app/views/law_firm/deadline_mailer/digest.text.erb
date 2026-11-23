@@ -1,0 +1,19 @@
+<%= user_salutation(@user) %>
+<%= t("law_firm.deadline_digest.summary", days: Setting.deadline_digest_days_ahead.to_i) %>
+<%= "-" * 100 %>
+<% [
+     [t("law_firm.deadline_digest.reminders"), @digest.reminders],
+     [t("law_firm.deadline_digest.overdue"), @digest.overdue],
+     [t("law_firm.deadline_digest.upcoming", days: Setting.deadline_digest_days_ahead.to_i), @digest.upcoming]
+   ].each do |title, entries| %>
+<% next if entries.empty? %>
+
+<%= title %>
+<% entries.each do |entry| %>
+* <%= format_date(entry.work_package.due_date) %> (<%= entry.overdue? ? t("law_firm.deadline_digest.days_overdue", count: -entry.days_left) : t("law_firm.deadline_digest.days_left", count: entry.days_left) %>) <%= entry.work_package.type %>: <%= entry.work_package.subject %> [<%= entry.work_package.project %>]
+  <%= work_package_url(entry.work_package) %>
+<% end %>
+<% end %>
+
+<%= "-" * 100 %>
+<%= t("law_firm.deadline_digest.open_dashboard") %>: <%= work_packages_url %>
