@@ -83,7 +83,8 @@ module DemoData
           public: false,
           enabled_module_names: MODULES,
           project_types: Type.all.map { |type| ProjectType.new(type:) },
-          workspace_type: "project"
+          workspace_type: "project",
+          project_custom_field_ids: ProjectCustomField.where(is_for_all: true).pluck(:id)
         )
       end
 
