@@ -111,6 +111,11 @@ expense_types:
     unit_plural: pesos
     rate: 1
 
+# Receivables: an invoice is due this many days after it is issued, unless the
+# matter's billing terms say otherwise. Used for the aging report.
+receivables:
+  payment_terms_days: 15
+
 # Invoices issued from a matter's Invoices page. The firm details below are
 # printed on every invoice and must match the firm's BIR Certificate of
 # Registration (Form 2303) and the Acknowledgement Certificate the BIR issues

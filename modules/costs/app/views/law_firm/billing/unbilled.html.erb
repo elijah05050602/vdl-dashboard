@@ -1,0 +1,125 @@
+<%#-- copyright
+OpenProject is an open source project management software.
+Copyright (C) the OpenProject GmbH
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License version 3.
+
+OpenProject is a fork of ChiliProject, which is a fork of Redmine. The copyright follows:
+Copyright (C) 2006-2013 Jean-Philippe Lang
+Copyright (C) 2010-2013 the ChiliProject Team
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+See COPYRIGHT and LICENSE files for more details.
+
+++#%>
+<% html_title(t("law_firm_billing.tabs.unbilled")) %>
+
+<%=
+  render(Primer::OpenProject::PageHeader.new) do |header|
+    header.with_title { t("law_firm_billing.title") }
+    header.with_breadcrumbs([{ href: project_overview_path(@project.id), text: @project.name }, t("law_firm_billing.title")])
+  end
+%>
+
+<%= law_firm_billing_tabs(@project, :unbilled) %>
+
+<p class="color-fg-muted">
+  <%= t(
+        "law_firm_billing.unbilled_explanation",
+        hours: number_with_precision(@unbilled.hours, precision: 2, strip_insignificant_zeros: true),
+        amount: peso(@unbilled.total)
+      ) %>
+</p>
+
+<% entries = @unbilled.time_entries + @unbilled.cost_entries %>
+<% if entries.empty? %>
+  <p class="color-fg-muted"><%= t("law_firm_billing.nothing_unbilled") %></p>
+<% else %>
+  <div class="generic-table--container mb-4">
+    <div class="generic-table--results-container">
+      <table class="generic-table" data-test-selector="unbilled-table">
+        <thead>
+          <tr>
+            <% %i[spent_on user description quantity amount].each do |column| %>
+              <th class="<%= "currency" if column == :amount %>">
+                <div class="generic-table--sort-header-outer"><div class="generic-table--sort-header">
+                  <span><%= t("law_firm_billing.columns.#{column}") %></span>
+                </div></div>
+              </th>
+            <% end %>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% entries.sort_by { [it.spent_on, it.id] }.each do |entry| %>
+            <% time = entry.is_a?(TimeEntry) %>
+            <tr id="<%= entry.class.name.underscore %>-<%= entry.id %>">
+              <td><%= format_date(entry.spent_on) %></td>
+              <td><%= entry.user&.name %></td>
+              <td>
+                <%= time ? entry.activity&.name : entry.cost_type&.name %>
+                <% if entry.comments.present? %><div class="color-fg-muted f6"><%= entry.comments %></div><% end %>
+              </td>
+              <td>
+                <%= time ? t("law_firm_billing.hours", count: entry.hours.to_d.round(2)) : number_with_precision(entry.units, precision: 2, strip_insignificant_zeros: true) %>
+              </td>
+              <td class="currency">
+                <%= peso(entry.real_costs) %>
+                <% if entry.overridden_costs.present? %>
+                  <div class="color-fg-muted f6"><s><%= peso(entry.costs) %></s></div>
+                <% end %>
+              </td>
+              <td>
+                <% if @can_write_down && entry.real_costs.to_d.positive? %>
+                  <details data-test-selector="write-down-<%= entry.class.name.underscore %>-<%= entry.id %>">
+                    <summary><%= t("law_firm_billing.write_down") %></summary>
+                    <%= form_with url: write_downs_project_billing_path(@project), scope: :write_down, method: :post, data: { turbo: false } do |f| %>
+                      <%= f.hidden_field :entry_type, value: entry.class.name %>
+                      <%= f.hidden_field :entry_id, value: entry.id %>
+                      <%= f.label :new_amount, t("law_firm_billing.fields.new_amount"), class: "form--label" %>
+                      <%= f.number_field :new_amount, step: "0.01", min: "0", required: true, class: "form--text-field" %>
+                      <%= f.label :reason, t("law_firm_billing.fields.reason"), class: "form--label" %>
+                      <%= f.text_field :reason, required: true, class: "form--text-field" %>
+                      <%= f.submit t("law_firm_billing.write_down"), class: "button mt-2" %>
+                    <% end %>
+                  </details>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+<% end %>
+
+<% if @write_downs.any? %>
+  <h2 class="h3 mb-2"><%= t("law_firm_billing.write_downs_heading") %></h2>
+  <ul data-test-selector="write-down-history">
+    <% @write_downs.each do |write_down| %>
+      <li>
+        <%= t(
+              "law_firm_billing.write_down_line",
+              date: format_date(write_down.created_at.to_date),
+              user: write_down.user&.name,
+              from: peso(write_down.original_amount),
+              to: peso(write_down.new_amount),
+              reason: write_down.reason
+            ) %>
+      </li>
+    <% end %>
+  </ul>
+<% end %>

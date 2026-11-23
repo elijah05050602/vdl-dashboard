@@ -1,0 +1,119 @@
+<%#-- copyright
+OpenProject is an open source project management software.
+Copyright (C) the OpenProject GmbH
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License version 3.
+
+OpenProject is a fork of ChiliProject, which is a fork of Redmine. The copyright follows:
+Copyright (C) 2006-2013 Jean-Philippe Lang
+Copyright (C) 2010-2013 the ChiliProject Team
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+See COPYRIGHT and LICENSE files for more details.
+
+++#%>
+<% html_title(t("law_firm_billing.aging.title")) %>
+
+<%=
+  render(Primer::OpenProject::PageHeader.new) do |header|
+    header.with_title { t("law_firm_billing.aging.title") }
+    header.with_description { t("law_firm_billing.aging.description") }
+    header.with_breadcrumbs([{ href: home_path, text: t(:label_home) }, t("law_firm_billing.aging.title")])
+  end
+%>
+
+<div class="d-flex flex-wrap gap-3 mb-4" data-test-selector="aging-buckets">
+  <% LawFirm::Receivable::BUCKETS.each do |bucket| %>
+    <% items = Array(@by_bucket[bucket]) %>
+    <div class="Box p-3" style="min-width: 10rem;">
+      <div class="color-fg-muted f6"><%= t("law_firm_billing.aging.buckets.#{bucket}") %></div>
+      <div class="f3 text-bold"><%= peso(items.sum(0.to_d, &:balance)) %></div>
+      <div class="color-fg-muted f6"><%= t("law_firm_billing.aging.invoice_count", count: items.size) %></div>
+    </div>
+  <% end %>
+</div>
+
+<h2 class="h3 mb-2"><%= t("law_firm_billing.aging.open_heading") %></h2>
+<% if @open.empty? %>
+  <p class="color-fg-muted"><%= t("law_firm_billing.aging.nothing_open") %></p>
+<% else %>
+  <div class="generic-table--container mb-4">
+    <div class="generic-table--results-container">
+      <table class="generic-table" data-test-selector="aging-table">
+        <thead>
+          <tr>
+            <% %i[matter client number issued_on due_on age balance].each do |column| %>
+              <th class="<%= "currency" if column == :balance %>">
+                <div class="generic-table--sort-header-outer"><div class="generic-table--sort-header">
+                  <span><%= t("law_firm_billing.columns.#{column}") %></span>
+                </div></div>
+              </th>
+            <% end %>
+          </tr>
+        </thead>
+        <tbody>
+          <% @open.each do |receivable| %>
+            <tr>
+              <td><%= link_to receivable.project.name, project_billing_path(receivable.project) %></td>
+              <td><%= receivable.client_name %></td>
+              <td><%= receivable.number %></td>
+              <td><%= format_date(receivable.issued_on) %></td>
+              <td><%= format_date(receivable.due_on) %></td>
+              <td><%= t("law_firm_billing.aging.buckets.#{receivable.bucket}") %></td>
+              <td class="currency"><%= peso(receivable.balance) %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+<% end %>
+
+<h2 class="h3 mb-2"><%= t("law_firm_billing.aging.certificates_heading") %></h2>
+<p class="color-fg-muted"><%= t("law_firm_billing.aging.certificates_explanation") %></p>
+<% if @missing_certificates.empty? %>
+  <p class="color-fg-muted"><%= t("law_firm_billing.aging.no_missing_certificates") %></p>
+<% else %>
+  <div class="generic-table--container">
+    <div class="generic-table--results-container">
+      <table class="generic-table" data-test-selector="missing-certificates-table">
+        <thead>
+          <tr>
+            <% %i[matter client number issued_on tax_withheld certified].each do |column| %>
+              <th class="<%= "currency" if %i[tax_withheld certified].include?(column) %>">
+                <div class="generic-table--sort-header-outer"><div class="generic-table--sort-header">
+                  <span><%= t("law_firm_billing.columns.#{column}") %></span>
+                </div></div>
+              </th>
+            <% end %>
+          </tr>
+        </thead>
+        <tbody>
+          <% @missing_certificates.each do |receivable| %>
+            <tr>
+              <td><%= link_to receivable.project.name, project_billing_path(receivable.project) %></td>
+              <td><%= receivable.client_name %></td>
+              <td><%= receivable.number %></td>
+              <td><%= format_date(receivable.issued_on) %></td>
+              <td class="currency"><%= peso(receivable.ewt_amount) %></td>
+              <td class="currency"><%= peso(receivable.certified) %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+<% end %>

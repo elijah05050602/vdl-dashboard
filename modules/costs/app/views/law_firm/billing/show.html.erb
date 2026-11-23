@@ -1,0 +1,213 @@
+<%#-- copyright
+OpenProject is an open source project management software.
+Copyright (C) the OpenProject GmbH
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License version 3.
+
+OpenProject is a fork of ChiliProject, which is a fork of Redmine. The copyright follows:
+Copyright (C) 2006-2013 Jean-Philippe Lang
+Copyright (C) 2010-2013 the ChiliProject Team
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+See COPYRIGHT and LICENSE files for more details.
+
+++#%>
+<% html_title(t("law_firm_billing.title")) %>
+
+<%=
+  render(Primer::OpenProject::PageHeader.new) do |header|
+    header.with_title { t("law_firm_billing.title") }
+    header.with_breadcrumbs([{ href: project_overview_path(@project.id), text: @project.name }, t("law_firm_billing.title")])
+  end
+%>
+
+<%= law_firm_billing_tabs(@project, :show) %>
+
+<% open_receivables = @receivables.select(&:open?) %>
+<% low_retainer = @terms&.retainer_minimum.present? && @retainer_balance < @terms.retainer_minimum %>
+
+<div class="d-flex flex-wrap gap-3 mb-4" data-test-selector="billing-summary">
+  <% [[:unbilled, peso(@unbilled.total)],
+      [:outstanding, peso(open_receivables.sum(0.to_d, &:balance))],
+      [:overdue, peso(open_receivables.select { it.days_overdue.positive? }.sum(0.to_d, &:balance))],
+      [:retainer_balance, peso(@retainer_balance)],
+      [:missing_certificates, @receivables.count(&:certificate_missing?)]].each do |key, value| %>
+    <div class="Box p-3" style="min-width: 10rem;">
+      <div class="color-fg-muted f6"><%= t("law_firm_billing.summary.#{key}") %></div>
+      <div class="f3 text-bold"><%= value %></div>
+    </div>
+  <% end %>
+</div>
+
+<% if low_retainer %>
+  <%=
+    render(Primer::Alpha::Banner.new(scheme: :warning, icon: :alert, mb: 3)) do
+      t("law_firm_billing.low_retainer", balance: peso(@retainer_balance), minimum: peso(@terms.retainer_minimum))
+    end
+  %>
+<% end %>
+
+<h2 class="h3 mb-2"><%= t("law_firm_billing.invoices_heading") %></h2>
+
+<% if @receivables.empty? %>
+  <p class="color-fg-muted"><%= t("law_firm_billing.no_invoices") %></p>
+<% else %>
+  <div class="generic-table--container mb-4">
+    <div class="generic-table--results-container">
+      <table class="generic-table" data-test-selector="receivables-table">
+        <thead>
+          <tr>
+            <% %i[number issued_on due_on amount_due paid balance certificate].each do |column| %>
+              <th class="<%= "currency" if %i[amount_due paid balance].include?(column) %>">
+                <div class="generic-table--sort-header-outer"><div class="generic-table--sort-header">
+                  <span><%= t("law_firm_billing.columns.#{column}") %></span>
+                </div></div>
+              </th>
+            <% end %>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @receivables.reverse_each do |receivable| %>
+            <% invoice = receivable.invoice %>
+            <tr id="receivable-<%= invoice.id %>">
+              <td><%= link_to invoice.number, project_invoice_path(@project, invoice), target: "_blank", rel: "noopener" %></td>
+              <td><%= format_date(invoice.issued_on) %></td>
+              <td>
+                <%= format_date(receivable.due_on) %>
+                <% if receivable.open? && receivable.days_overdue.positive? %>
+                  <%= render(Primer::Beta::Label.new(scheme: :danger)) { t("law_firm_billing.days_overdue", count: receivable.days_overdue) } %>
+                <% end %>
+              </td>
+              <td class="currency"><%= peso(invoice.amount_due) %></td>
+              <td class="currency"><%= peso(receivable.paid) %></td>
+              <td class="currency">
+                <% if receivable.paid? %>
+                  <%= render(Primer::Beta::Label.new(scheme: :success)) { t("law_firm_billing.paid") } %>
+                <% else %>
+                  <%= peso(receivable.balance) %>
+                <% end %>
+              </td>
+              <td>
+                <% if invoice.ewt_amount.to_d.zero? %>
+                  <span class="color-fg-muted"><%= t("law_firm_billing.no_ewt") %></span>
+                <% elsif receivable.certificate_missing? %>
+                  <%= render(Primer::Beta::Label.new(scheme: :attention)) { t("law_firm_billing.certificate_missing", amount: peso(invoice.ewt_amount - receivable.certified)) } %>
+                <% else %>
+                  <%= render(Primer::Beta::Label.new(scheme: :success)) { t("law_firm_billing.certificate_received") } %>
+                <% end %>
+              </td>
+              <td>
+                <% Array(@payments[invoice.id]).each do |payment| %>
+                  <div class="color-fg-muted f6">
+                    <%= t(
+                          "law_firm_billing.payment_line", date: format_date(payment.received_on), amount: peso(payment.amount),
+                                                           method: t("law_firm_billing.methods.#{payment.payment_method}"), reference: payment.reference.presence || "–"
+                        ) %>
+                  </div>
+                <% end %>
+                <% if @can_manage && receivable.open? %>
+                  <details class="mt-1" data-test-selector="record-payment-<%= invoice.id %>">
+                    <summary><%= t("law_firm_billing.record_payment") %></summary>
+                    <%= form_with url: payments_project_billing_path(@project), scope: :payment, method: :post, data: { turbo: false } do |f| %>
+                      <%= f.hidden_field :invoice_id, value: invoice.id %>
+                      <%= f.label :received_on, t("law_firm_billing.fields.received_on"), class: "form--label" %>
+                      <%= f.date_field :received_on, value: Date.current, required: true, class: "form--text-field" %>
+                      <%= f.label :amount, t("law_firm_billing.fields.amount"), class: "form--label" %>
+                      <%= f.number_field :amount, value: receivable.balance.to_s("F"), step: "0.01", min: "0.01", required: true, class: "form--text-field" %>
+                      <%= f.label :payment_method, t("law_firm_billing.fields.method"), class: "form--label" %>
+                      <%= f.select :payment_method, LawFirm::Payment::METHODS.map { [t("law_firm_billing.methods.#{it}"), it] }, {}, class: "form--select" %>
+                      <%= f.label :reference, t("law_firm_billing.fields.reference"), class: "form--label" %>
+                      <%= f.text_field :reference, class: "form--text-field" %>
+                      <%= f.submit t("law_firm_billing.record_payment"), class: "button -primary mt-2" %>
+                    <% end %>
+                  </details>
+                <% end %>
+                <% if @can_manage && receivable.certificate_missing? %>
+                  <details class="mt-1" data-test-selector="record-certificate-<%= invoice.id %>">
+                    <summary><%= t("law_firm_billing.record_certificate") %></summary>
+                    <%= form_with url: certificates_project_billing_path(@project), scope: :certificate, method: :post, data: { turbo: false } do |f| %>
+                      <%= f.hidden_field :invoice_id, value: invoice.id %>
+                      <%= f.label :received_on, t("law_firm_billing.fields.received_on"), class: "form--label" %>
+                      <%= f.date_field :received_on, value: Date.current, required: true, class: "form--text-field" %>
+                      <%= f.label :amount, t("law_firm_billing.fields.tax_withheld"), class: "form--label" %>
+                      <%= f.number_field :amount, value: (invoice.ewt_amount - receivable.certified).to_s("F"), step: "0.01", min: "0.01", required: true, class: "form--text-field" %>
+                      <%= f.label :period, t("law_firm_billing.fields.period"), class: "form--label" %>
+                      <%= f.text_field :period, placeholder: "#{Date.current.year}-Q#{((Date.current.month - 1) / 3) + 1}", class: "form--text-field" %>
+                      <%= f.submit t("law_firm_billing.record_certificate"), class: "button -primary mt-2" %>
+                    <% end %>
+                  </details>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+<% end %>
+
+<h2 class="h3 mb-2"><%= t("law_firm_billing.retainer_heading") %></h2>
+<p class="color-fg-muted"><%= t("law_firm_billing.retainer_explanation") %></p>
+
+<% if @retainer_entries.any? %>
+  <div class="generic-table--container mb-3">
+    <div class="generic-table--results-container">
+      <table class="generic-table" data-test-selector="retainer-table">
+        <thead>
+          <tr>
+            <% %i[entry_on kind reference amount].each do |column| %>
+              <th class="<%= "currency" if column == :amount %>">
+                <div class="generic-table--sort-header-outer"><div class="generic-table--sort-header">
+                  <span><%= t("law_firm_billing.fields.#{column}") %></span>
+                </div></div>
+              </th>
+            <% end %>
+          </tr>
+        </thead>
+        <tbody>
+          <% @retainer_entries.each do |entry| %>
+            <tr>
+              <td><%= format_date(entry.entry_on) %></td>
+              <td><%= t("law_firm_billing.kinds.#{entry.kind}") %></td>
+              <td><%= [entry.reference, entry.note].compact_blank.join(" – ") %></td>
+              <td class="currency"><%= peso(entry.signed_amount) %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+<% end %>
+
+<% if @can_manage %>
+  <details data-test-selector="record-retainer">
+    <summary><%= t("law_firm_billing.record_retainer") %></summary>
+    <%= form_with url: retainer_entries_project_billing_path(@project), scope: :retainer_entry, method: :post, data: { turbo: false } do |f| %>
+      <%= f.label :kind, t("law_firm_billing.fields.kind"), class: "form--label" %>
+      <%= f.select :kind, %w[deposit refund].map { [t("law_firm_billing.kinds.#{it}"), it] }, {}, class: "form--select" %>
+      <%= f.label :entry_on, t("law_firm_billing.fields.entry_on"), class: "form--label" %>
+      <%= f.date_field :entry_on, value: Date.current, required: true, class: "form--text-field" %>
+      <%= f.label :amount, t("law_firm_billing.fields.amount"), class: "form--label" %>
+      <%= f.number_field :amount, step: "0.01", min: "0.01", required: true, class: "form--text-field" %>
+      <%= f.label :reference, t("law_firm_billing.fields.reference"), class: "form--label" %>
+      <%= f.text_field :reference, class: "form--text-field" %>
+      <%= f.label :note, t("law_firm_billing.fields.note"), class: "form--label" %>
+      <%= f.text_field :note, class: "form--text-field" %>
+      <%= f.submit t("law_firm_billing.record_retainer"), class: "button -primary mt-2" %>
+    <% end %>
+  </details>
+<% end %>

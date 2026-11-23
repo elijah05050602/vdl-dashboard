@@ -145,3 +145,37 @@ firm's accountant to confirm these with the firm's Revenue District Office (RDO)
 5. **E-invoicing:** if the firm is ever covered by the BIR Electronic Invoicing System, the
    invoices also need to be sent to the BIR electronically. This is not built in yet.
 6. **Collect BIR Form 2307** from corporate clients for every EWT deducted, to claim the tax credit.
+
+## Receivables, retainers and write-downs
+
+Each matter has a **Receivables** page (left menu, after Invoices). Partners
+can see what each invoice still owes and record what comes in. Associates
+can see the page but not change it.
+
+- **Payments**: record the date, amount, method (bank transfer, check, cash,
+  online or retainer) and a reference such as the check number. A payment
+  cannot be more than what the invoice still owes.
+- **BIR Form 2307**: when the client withheld tax, record each 2307 as it
+  arrives. An invoice stays on the "missing 2307" list until the certificates
+  cover the tax withheld, so the firm can claim the credit at filing time.
+- **Retainer and advances**: deposits, drawdowns and refunds per matter, with
+  a running balance. Paying an invoice with the method "retainer" draws the
+  amount from the retainer automatically and is refused when the balance is
+  too low.
+
+The **Unbilled** tab lists time and costs not yet on an issued invoice. A
+partner with the "Write down unbilled time and costs" permission can lower an
+entry's amount before it is invoiced. The reason, the original amount and who
+did it are kept. Issued invoices never change.
+
+The **Terms** tab holds what was agreed with the client for that matter:
+hourly rates per role (blank means the firm's standard rate), whether the
+client withholds EWT and at what rate, payment terms in days, and a retainer
+minimum. A changed rate applies from today, so time already logged keeps its
+price. New invoices pick up the EWT setting.
+
+**Receivables** in the top menu shows the firm-wide aging: current, 1 to 30,
+31 to 60, 61 to 90 and over 90 days past due, plus every invoice still
+missing a 2307. The due date is the issue date plus the matter's payment
+terms, or `receivables.payment_terms_days` in `config/law_firm_billing.yml`
+(15 days by default).

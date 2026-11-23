@@ -37,7 +37,8 @@ module LawFirm
     def call
       return unless applicable?
 
-      rate = config.hourly_rate_for(member.roles.map(&:name))
+      role_names = member.roles.map(&:name)
+      rate = EngagementTerms.for(project)&.hourly_rate_for(role_names) || config.hourly_rate_for(role_names)
       return if rate.nil?
 
       HourlyRate.transaction(requires_new: true) do
