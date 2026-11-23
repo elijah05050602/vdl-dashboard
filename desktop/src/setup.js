@@ -11,6 +11,10 @@ function setStatus(message, kind) {
   status.className = `status ${kind || ''}`;
 }
 
+function cleanError(error) {
+  return error.message.replace(/^Error invoking remote method '[^']+': (Error: )?/, '');
+}
+
 function busy(on) {
   testButton.disabled = on;
   saveButton.disabled = on;
@@ -22,10 +26,10 @@ async function runTest() {
   try {
     const result = await window.dashboardApp.testUrl(input.value);
     setStatus(result.message, result.ok ? 'ok' : 'bad');
-    return result.ok;
+    return result.ok ? 'ok' : 'unreachable';
   } catch (error) {
-    setStatus(error.message.replace(/^Error invoking remote method '[^']+': (Error: )?/, ''), 'bad');
-    return false;
+    setStatus(cleanError(error), 'bad');
+    return 'invalid';
   } finally {
     busy(false);
   }
@@ -36,12 +40,13 @@ cancelButton.addEventListener('click', () => window.dashboardApp.cancelSettings(
 
 form.addEventListener('submit', async (event) => {
   event.preventDefault();
-  const reachable = await runTest();
-  if (!reachable && !window.confirm('The server could not be reached right now. Save this address anyway?')) return;
+  const result = await runTest();
+  if (result === 'invalid') return;
+  if (result === 'unreachable' && !window.confirm("The server could not be reached right now. Save this address anyway?")) return;
   try {
     await window.dashboardApp.saveUrl(input.value);
   } catch (error) {
-    setStatus(error.message.replace(/^Error invoking remote method '[^']+': (Error: )?/, ''), 'bad');
+    setStatus(cleanError(error), 'bad');
   }
 });
 

@@ -1,10 +1,29 @@
-const { app, BrowserWindow, Menu, ipcMain, net, shell, session } = require('electron');
+const { app, BrowserWindow, Menu, ipcMain, net, protocol, shell, session } = require('electron');
 const fs = require('node:fs');
 const path = require('node:path');
-const { normalizeUrl } = require('./url');
+const { normalizeUrl, isAllowedServerUrl } = require('./url');
 
+const APP_NAME = 'VDL Dashboard';
+const APP_ID = 'com.vdl.dashboard';
 const FALLBACK_SERVER_URL = 'http://localhost:3000';
 const RETRY_SECONDS = 15;
+const LOCAL_ORIGIN = 'app://local';
+const isAppUrl = (url) => Boolean(url) && url.protocol === 'app:' && url.host === 'local';
+const LOCAL_PAGES = new Set(['/setup.html', '/offline.html']);
+const LOCAL_FILES = {
+  '/setup.html': path.join(__dirname, 'setup.html'),
+  '/setup.js': path.join(__dirname, 'setup.js'),
+  '/offline.html': path.join(__dirname, 'offline.html'),
+  '/offline.js': path.join(__dirname, 'offline.js'),
+  '/styles.css': path.join(__dirname, 'styles.css'),
+  '/icon.png': path.join(__dirname, '..', 'build', 'icon.png'),
+};
+const CONTENT_TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.png': 'image/png' };
+const LOCAL_CSP = "default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; form-action 'none'; base-uri 'none'; frame-ancestors 'none'";
+
+protocol.registerSchemesAsPrivileged([
+  { scheme: 'app', privileges: { standard: true, secure: true, supportFetchAPI: false } },
+]);
 
 let mainWindow = null;
 let config = {};
@@ -20,13 +39,14 @@ function readJson(file) {
 }
 
 function defaultServerUrl() {
-  return process.env.LAW_FIRM_DASHBOARD_URL
+  return process.env.VDL_DASHBOARD_URL
     || readJson(path.join(__dirname, 'default-server.json')).serverUrl
     || FALLBACK_SERVER_URL;
 }
 
 function loadConfig() {
   config = readJson(configPath());
+  if (config.serverUrl && !isAllowedServerUrl(config.serverUrl)) delete config.serverUrl;
 }
 
 function saveConfig() {
@@ -34,24 +54,52 @@ function saveConfig() {
   fs.writeFileSync(configPath(), JSON.stringify(config, null, 2));
 }
 
-function serverOrigin() {
+function parseUrl(value) {
   try {
-    return new URL(config.serverUrl).origin;
+    return new URL(value);
   } catch {
     return null;
   }
 }
 
-function isLocalPage(frameUrl) {
-  return typeof frameUrl === 'string' && frameUrl.startsWith('file://');
+function serverOrigin() {
+  return config.serverUrl ? parseUrl(config.serverUrl)?.origin : null;
+}
+
+function isSameOrigin(target) {
+  const origin = serverOrigin();
+  return Boolean(origin) && parseUrl(target)?.origin === origin;
+}
+
+function isLocalPage(target) {
+  const url = parseUrl(target);
+  return isAppUrl(url) && LOCAL_PAGES.has(url.pathname);
+}
+
+function registerLocalProtocol() {
+  protocol.handle('app', async (request) => {
+    const url = parseUrl(request.url);
+    const file = isAppUrl(url) ? LOCAL_FILES[url.pathname] : null;
+    if (!file) return new Response('Not found', { status: 404 });
+    const body = await fs.promises.readFile(file);
+    return new Response(body, {
+      headers: {
+        'content-type': CONTENT_TYPES[path.extname(file)],
+        'content-security-policy': LOCAL_CSP,
+        'x-content-type-options': 'nosniff',
+      },
+    });
+  });
 }
 
 function showLocalPage(page, query = {}) {
-  mainWindow.loadFile(path.join(__dirname, page), { query });
+  const url = new URL(page, LOCAL_ORIGIN);
+  Object.entries(query).forEach(([key, value]) => url.searchParams.set(key, value));
+  mainWindow.loadURL(url.toString());
 }
 
 function openSettings({ firstRun = false } = {}) {
-  showLocalPage('setup.html', { firstRun: firstRun ? '1' : '0' });
+  showLocalPage('/setup.html', { firstRun: firstRun ? '1' : '0' });
 }
 
 function openDashboard() {
@@ -60,7 +108,7 @@ function openDashboard() {
 }
 
 function showOffline(errorDescription, failedUrl) {
-  showLocalPage('offline.html', {
+  showLocalPage('/offline.html', {
     error: errorDescription || 'The server did not respond.',
     url: failedUrl || config.serverUrl || '',
     retry: String(RETRY_SECONDS),
@@ -74,11 +122,10 @@ async function testConnection(rawUrl) {
   try {
     const response = await net.fetch(url, { signal: controller.signal, redirect: 'follow' });
     const body = await response.text();
-    const looksRight = /openproject|law firm dashboard/i.test(body);
+    const looksRight = /openproject|vdl dashboard/i.test(body);
     return {
       ok: response.status < 500,
       url,
-      status: response.status,
       message: looksRight
         ? 'Connected. The dashboard is answering at this address.'
         : `The server answered (status ${response.status}), but it does not look like the dashboard. Double-check the address.`,
@@ -98,7 +145,9 @@ async function testConnection(rawUrl) {
 
 function registerIpc() {
   const guard = (handler) => (event, ...args) => {
-    if (!isLocalPage(event.senderFrame?.url)) throw new Error('Not allowed');
+    if (event.sender !== mainWindow?.webContents || !isLocalPage(event.senderFrame?.url)) {
+      throw new Error('Not allowed');
+    }
     return handler(...args);
   };
 
@@ -122,13 +171,21 @@ function registerIpc() {
   ipcMain.handle('app:cancel-settings', guard(() => openDashboard()));
 }
 
+function openExternal(target) {
+  const url = parseUrl(target);
+  if (url && ['https:', 'http:', 'mailto:', 'tel:'].includes(url.protocol)) shell.openExternal(url.toString());
+}
+
 function buildMenu() {
   const template = [
     {
       label: 'File',
       submenu: [
         { label: 'Server settings…', accelerator: 'CmdOrCtrl+,', click: () => openSettings() },
-        { label: 'Open in web browser', click: () => config.serverUrl && shell.openExternal(mainWindow.webContents.getURL().startsWith('http') ? mainWindow.webContents.getURL() : config.serverUrl) },
+        {
+          label: 'Open in web browser',
+          click: () => openExternal(isSameOrigin(mainWindow.webContents.getURL()) ? mainWindow.webContents.getURL() : config.serverUrl),
+        },
         { type: 'separator' },
         { role: 'quit', label: 'Exit' },
       ],
@@ -158,7 +215,7 @@ function buildMenu() {
     {
       label: 'Help',
       submenu: [
-        { label: `Law Firm Dashboard ${app.getVersion()}`, enabled: false },
+        { label: `${APP_NAME} ${app.getVersion()}`, enabled: false },
         { label: 'Server settings…', click: () => openSettings() },
       ],
     },
@@ -183,12 +240,36 @@ function rememberBounds() {
   saveConfig();
 }
 
-function isSameOrigin(target) {
-  try {
-    return new URL(target).origin === serverOrigin();
-  } catch {
-    return false;
-  }
+const secureWebPreferences = {
+  contextIsolation: true,
+  nodeIntegration: false,
+  nodeIntegrationInSubFrames: false,
+  sandbox: true,
+  webSecurity: true,
+  allowRunningInsecureContent: false,
+  webviewTag: false,
+  spellcheck: true,
+};
+
+function lockDownNavigation(contents) {
+  contents.setWindowOpenHandler(({ url }) => {
+    if (isSameOrigin(url)) {
+      return {
+        action: 'allow',
+        overrideBrowserWindowOptions: { autoHideMenuBar: true, webPreferences: secureWebPreferences },
+      };
+    }
+    openExternal(url);
+    return { action: 'deny' };
+  });
+
+  const guardNavigation = (event, url) => {
+    if (isSameOrigin(url)) return;
+    event.preventDefault();
+    openExternal(url);
+  };
+  contents.on('will-navigate', guardNavigation);
+  contents.on('will-redirect', guardNavigation);
 }
 
 function createWindow() {
@@ -196,17 +277,11 @@ function createWindow() {
     ...restoreBounds(),
     minWidth: 900,
     minHeight: 600,
-    title: 'Law Firm Dashboard',
+    title: APP_NAME,
     icon: path.join(__dirname, '..', 'build', 'icon.png'),
-    backgroundColor: '#0f2140',
+    backgroundColor: '#2E2829',
     show: false,
-    webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
-      contextIsolation: true,
-      nodeIntegration: false,
-      sandbox: true,
-      spellcheck: true,
-    },
+    webPreferences: { ...secureWebPreferences, preload: path.join(__dirname, 'preload.js') },
   });
 
   if (config.windowMaximized) mainWindow.maximize();
@@ -214,36 +289,17 @@ function createWindow() {
   mainWindow.on('close', rememberBounds);
 
   const { webContents } = mainWindow;
-
-  webContents.setWindowOpenHandler(({ url }) => {
-    if (isSameOrigin(url)) {
-      return {
-        action: 'allow',
-        overrideBrowserWindowOptions: {
-          autoHideMenuBar: true,
-          webPreferences: { contextIsolation: true, nodeIntegration: false, sandbox: true },
-        },
-      };
-    }
-    if (/^(https?|mailto|tel):/i.test(url)) shell.openExternal(url);
-    return { action: 'deny' };
-  });
-
-  webContents.on('will-navigate', (event, url) => {
-    if (url.startsWith('file://') || isSameOrigin(url)) return;
-    event.preventDefault();
-    if (/^(https?|mailto|tel):/i.test(url)) shell.openExternal(url);
-  });
+  lockDownNavigation(webContents);
 
   webContents.on('did-fail-load', (_event, errorCode, errorDescription, validatedURL, isMainFrame) => {
-    if (!isMainFrame || errorCode === -3) return;
+    if (!isMainFrame || errorCode === -3 || isLocalPage(validatedURL)) return;
     showOffline(errorDescription, validatedURL);
   });
 
   webContents.on('page-title-updated', (event, title) => {
     event.preventDefault();
-    const clean = title && !title.startsWith('file://') ? title : '';
-    mainWindow.setTitle(clean ? `${clean} – Law Firm Dashboard` : 'Law Firm Dashboard');
+    const clean = isLocalPage(webContents.getURL()) ? '' : title;
+    mainWindow.setTitle(clean ? `${clean} – ${APP_NAME}` : APP_NAME);
   });
 
   openDashboard();
@@ -258,12 +314,23 @@ if (!app.requestSingleInstanceLock()) {
     mainWindow.focus();
   });
 
+  app.on('web-contents-created', (_event, contents) => {
+    contents.on('will-attach-webview', (event) => event.preventDefault());
+    if (contents.getType() === 'window' && mainWindow && contents !== mainWindow.webContents) {
+      lockDownNavigation(contents);
+    }
+  });
+
   app.whenReady().then(() => {
-    app.setAppUserModelId('com.lawfirm.dashboard');
+    app.setAppUserModelId(APP_ID);
+    registerLocalProtocol();
     session.defaultSession.setPermissionRequestHandler((webContents, permission, callback) => {
       const allowed = ['clipboard-sanitized-write', 'notifications', 'fullscreen'];
       callback(allowed.includes(permission) && isSameOrigin(webContents.getURL()));
     });
+    session.defaultSession.setPermissionCheckHandler((_webContents, permission, requestingOrigin) => (
+      ['clipboard-sanitized-write', 'notifications', 'fullscreen'].includes(permission) && requestingOrigin === serverOrigin()
+    ));
     loadConfig();
     registerIpc();
     buildMenu();

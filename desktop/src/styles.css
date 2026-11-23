@@ -1,7 +1,8 @@
 :root {
-  --navy: #0f2140;
-  --navy-2: #1f3a5f;
-  --gold: #d4a943;
+  --charcoal: #2e2829;
+  --navy: #1f3a5f;
+  --charcoal-2: #4a4142;
+  --gold: #c9a45c;
   --text: #1c2433;
   --muted: #5b6577;
   --ok: #1d7a46;
@@ -12,7 +13,7 @@
 html, body { height: 100%; margin: 0; }
 body {
   font-family: "Segoe UI", system-ui, sans-serif;
-  background: linear-gradient(160deg, var(--navy-2), var(--navy));
+  background: linear-gradient(160deg, var(--charcoal-2), var(--charcoal));
   color: var(--text);
   display: grid;
   place-items: center;
@@ -26,8 +27,8 @@ body {
   padding: 36px 40px 32px;
 }
 .brand { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; }
-.brand img { width: 52px; height: 52px; }
-.brand h1 { font-size: 22px; margin: 0; color: var(--navy); }
+.brand img { width: 56px; height: 56px; border-radius: 12px; }
+.brand h1 { font-size: 22px; margin: 0; color: var(--charcoal); }
 .brand p { margin: 2px 0 0; color: var(--muted); font-size: 13px; }
 h2 { font-size: 17px; margin: 0 0 6px; }
 p.lead { margin: 0 0 18px; color: var(--muted); line-height: 1.5; font-size: 14px; }
@@ -55,7 +56,7 @@ button {
   color: var(--text);
 }
 button.primary { background: var(--navy); border-color: var(--navy); color: #fff; }
-button.primary:hover { background: var(--navy-2); }
+button.primary:hover { background: #2b4b76; }
 button:disabled { opacity: .6; cursor: default; }
 .spacer { flex: 1; }
 .status { margin-top: 16px; font-size: 13px; min-height: 18px; line-height: 1.45; }
@@ -63,4 +64,5 @@ button:disabled { opacity: .6; cursor: default; }
 .status.bad { color: var(--bad); }
 .footer { margin-top: 22px; font-size: 11px; color: var(--muted); text-align: right; }
 code { background: #f1f3f7; padding: 1px 5px; border-radius: 4px; word-break: break-all; }
+.hint code { white-space: nowrap; word-break: normal; }
 [hidden] { display: none !important; }

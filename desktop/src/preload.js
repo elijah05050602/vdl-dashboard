@@ -1,6 +1,6 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
-if (window.location.protocol === 'file:') {
+if (window.location.protocol === 'app:' && window.location.host === 'local') {
   contextBridge.exposeInMainWorld('dashboardApp', {
     getConfig: () => ipcRenderer.invoke('app:get-config'),
     testUrl: (url) => ipcRenderer.invoke('app:test-url', url),

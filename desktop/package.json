@@ -1,12 +1,12 @@
 {
-  "name": "law-firm-dashboard-desktop",
-  "productName": "Law Firm Dashboard",
+  "name": "vdl-dashboard-desktop",
+  "productName": "VDL Dashboard",
   "version": "1.0.0",
-  "description": "Windows desktop app for the Law Firm Dashboard",
+  "description": "Windows desktop app for the VDL Dashboard",
   "main": "src/main.js",
   "private": true,
   "license": "GPL-3.0-only",
-  "author": "Law Firm Dashboard",
+  "author": "Law Offices of Villanueva, Dorin & Lozano",
   "scripts": {
     "start": "electron .",
     "test": "node --test test/*.test.js",
@@ -17,8 +17,8 @@
     "electron-builder": "26.18.1"
   },
   "build": {
-    "appId": "com.lawfirm.dashboard",
-    "productName": "Law Firm Dashboard",
+    "appId": "com.vdl.dashboard",
+    "productName": "VDL Dashboard",
     "directories": {
       "output": "dist",
       "buildResources": "build"
@@ -31,7 +31,7 @@
     "win": {
       "target": "nsis",
       "icon": "build/icon.ico",
-      "artifactName": "Law-Firm-Dashboard-Setup-${version}.${ext}"
+      "artifactName": "VDL-Dashboard-Setup-${version}.${ext}"
     },
     "nsis": {
       "oneClick": false,
@@ -39,10 +39,20 @@
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "Law Firm Dashboard",
-      "uninstallDisplayName": "Law Firm Dashboard",
+      "shortcutName": "VDL Dashboard",
+      "uninstallDisplayName": "VDL Dashboard",
       "installerIcon": "build/icon.ico",
       "uninstallerIcon": "build/icon.ico"
+    },
+    "electronFuses": {
+      "runAsNode": false,
+      "enableCookieEncryption": true,
+      "enableNodeOptionsEnvironmentVariable": false,
+      "enableNodeCliInspectArguments": false,
+      "enableEmbeddedAsarIntegrityValidation": true,
+      "onlyLoadAppFromAsar": true,
+      "loadBrowserProcessSpecificV8Snapshot": false,
+      "grantFileProtocolExtraPrivileges": false
     }
   }
 }
