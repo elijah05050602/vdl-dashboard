@@ -5035,22 +5035,22 @@ en:
 
   law_firm:
     deadline_digest:
-      subject:
-        zero: "%{app_title} - Upcoming deadlines"
-        one: "%{app_title} - 1 deadline needs your attention"
-        other: "%{app_title} - %{count} deadlines need your attention"
-      summary: "Here are the court deadlines and hearings for the next %{days} days."
-      open_dashboard: "Open the dashboard"
-      reminders: "Your deadlines that need attention"
-      overdue: "Overdue at the firm"
-      upcoming: "Coming up in the next %{days} days"
       days_left:
-        zero: "Due today"
         one: "Due tomorrow"
         other: "In %{count} days"
+        zero: "Due today"
       days_overdue:
         one: "1 day overdue"
         other: "%{count} days overdue"
+      open_dashboard: "Open the dashboard"
+      overdue: "Overdue at the firm"
+      reminders: "Your deadlines that need attention"
+      subject:
+        one: "%{app_title} - 1 deadline needs your attention"
+        other: "%{app_title} - %{count} deadlines need your attention"
+        zero: "%{app_title} - Upcoming deadlines"
+      summary: "Here are the court deadlines and hearings for the next %{days} days."
+      upcoming: "Coming up in the next %{days} days"
 
   ldap_auth_sources:
     attribute_texts:

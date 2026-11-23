@@ -30,6 +30,7 @@
 module LawFirm
   class DeadlineMailer < ApplicationMailer
     include OpenProject::StaticRouting::UrlHelpers
+
     helper :mail_layout,
            :mail_notification
 
