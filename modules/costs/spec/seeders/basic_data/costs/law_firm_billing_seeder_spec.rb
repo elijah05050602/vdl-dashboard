@@ -35,16 +35,18 @@ RSpec.describe BasicData::Costs::LawFirmBillingSeeder do
   let(:seed_data) { Source::SeedData.new({}) }
   let(:config) do
     LawFirm::BillingConfig.new(
-      "currency" => "$",
+      "currency" => "₱",
+      "currency_format" => "%u %n",
+      "vat_rate" => 0.12,
       "default_project_modules" => %w[costs budgets],
       "billing_roles" => [
-        { "name" => "Partner", "hourly_rate" => 450, "permissions" => :partner },
-        { "name" => "Paralegal", "hourly_rate" => 150, "permissions" => :timekeeper }
+        { "name" => "Partner", "hourly_rate" => 8000, "permissions" => :partner },
+        { "name" => "Paralegal", "hourly_rate" => 1500, "permissions" => :timekeeper }
       ],
       "non_billable_activities" => ["Administrative (non-billable)", "Pro bono (non-billable)"],
       "expense_types" => [
-        { "name" => "Court filing fee", "unit" => "dollar", "unit_plural" => "dollars", "rate" => 1, "default" => true },
-        { "name" => "Photocopies", "unit" => "page", "unit_plural" => "pages", "rate" => 0.25 }
+        { "name" => "Acceptance fee", "unit" => "peso", "unit_plural" => "pesos", "rate" => 1, "default" => true },
+        { "name" => "Appearance fee", "unit" => "hearing", "unit_plural" => "hearings", "rate" => 5000 }
       ]
     )
   end
@@ -74,22 +76,23 @@ RSpec.describe BasicData::Costs::LawFirmBillingSeeder do
   it "creates the expense types with their rates" do
     seeder.seed!
 
-    expect(CostType.find_by(name: "Court filing fee")).to have_attributes(default: true, for_all_projects: true)
-    expect(CostType.find_by(name: "Photocopies").current_rate).to eq 0.25
+    expect(CostType.find_by(name: "Acceptance fee")).to have_attributes(default: true, for_all_projects: true)
+    expect(CostType.find_by(name: "Appearance fee").current_rate).to eq 5000
   end
 
   it "switches on time and budgets for new matters and sets the currency" do
     seeder.seed!
 
     expect(Setting.default_projects_modules).to include("costs", "budgets")
-    expect(Setting.costs_currency).to eq "$"
+    expect(Setting.costs_currency).to eq "₱"
+    expect(Setting.costs_currency_format).to eq "%u %n"
   end
 
   it "keeps a currency that was already chosen" do
-    Setting.costs_currency = "₱"
+    Setting.costs_currency = "PHP"
     seeder.seed!
 
-    expect(Setting.costs_currency).to eq "₱"
+    expect(Setting.costs_currency).to eq "PHP"
   end
 
   it "leaves settings alone that are set through the environment" do
@@ -109,7 +112,7 @@ RSpec.describe BasicData::Costs::LawFirmBillingSeeder do
                                         pivot_rows: %w[project_id user_id], pivot_columns: %w[tyear tmonth])
     expect(billable.query.filters.map { [it.name, it.operator, it.values] })
       .to eq([[:activity_id, "!", non_billable_ids]])
-    expect(CostReport.find_by(name: "Billable amounts by matter").unit_id).to eq 0
+    expect(CostReport.find_by(name: "Billable amounts by matter (excl. 12% VAT)").unit_id).to eq 0
     expect(CostReport.find_by(name: "Non-billable time by person").query.filters.first.operator).to eq "="
   end
 

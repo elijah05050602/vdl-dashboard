@@ -1,14 +1,27 @@
-# Law firm billing defaults.
+# Law firm billing defaults for a Philippine law office.
 #
 # Read by the law firm billing seeder (bin/rails db:seed) and when people are
 # added to a matter. Edit the numbers here, then run `bin/rails db:seed` again:
 # existing records are left alone, only missing ones are added.
+#
+# All amounts are in Philippine pesos and exclude VAT.
 
-# Applied only while the currency has not been changed in
-# Administration > Time and costs.
-currency: "$"
+# Applied only while the currency is still OpenProject's default (€) and can
+# be changed in Administration > Time and costs.
+currency: "₱"
+currency_format: "%u %n"
 
-# Project modules switched on for new matters, so time, expenses, budgets and
+# Value-added tax on professional fees. Amounts in OpenProject stay
+# VAT-exclusive; add VAT when invoicing.
+vat_rate: 0.12
+
+# Expanded withholding tax (EWT) that corporate clients withhold from
+# professional fees and remit to the BIR (they give the firm BIR Form 2307).
+# For a law firm partnership it is 10%, or 15% once a client's payments to the
+# firm exceed ₱720,000 in the year. Like VAT, it is applied when invoicing.
+ewt_rate: 0.10
+
+# Project modules switched on for new matters, so time, fees, budgets and
 # cost reports are available without extra setup.
 default_project_modules:
   - costs
@@ -20,16 +33,19 @@ default_project_modules:
 # the highest rate wins. Rates set by hand are never overwritten.
 billing_roles:
   - name: Partner
-    hourly_rate: 450
+    hourly_rate: 8000
     permissions: :partner
+  - name: Senior associate
+    hourly_rate: 5000
+    permissions: :timekeeper
   - name: Associate
-    hourly_rate: 300
+    hourly_rate: 3500
     permissions: :timekeeper
   - name: Paralegal
-    hourly_rate: 150
+    hourly_rate: 1500
     permissions: :timekeeper
   - name: Legal assistant
-    hourly_rate: 90
+    hourly_rate: 800
     permissions: :timekeeper
 
 # Time logged with these activities is non-billable. Every other activity is
@@ -39,30 +55,49 @@ non_billable_activities:
   - Pro bono (non-billable)
   - Business development (non-billable)
 
-# Expense types for disbursements billed to the client, with their unit rate.
+# Fees and disbursements billed to the client, logged on a matter with
+# "Log unit costs". A rate of 1 per peso means the amount is entered directly.
 expense_types:
-  - name: Court filing fee
-    unit: dollar
-    unit_plural: dollars
+  # Professional fees
+  - name: Acceptance fee
+    unit: peso
+    unit_plural: pesos
     rate: 1
     default: true
-  - name: Service of process
-    unit: service
-    unit_plural: services
-    rate: 75
+  - name: Appearance fee
+    unit: hearing
+    unit_plural: hearings
+    rate: 5000
+  - name: Monthly retainer
+    unit: month
+    unit_plural: months
+    rate: 30000
+  - name: Fixed fee
+    unit: peso
+    unit_plural: pesos
+    rate: 1
+  - name: Success fee
+    unit: peso
+    unit_plural: pesos
+    rate: 1
+  # Disbursements
+  - name: Docket and filing fees
+    unit: peso
+    unit_plural: pesos
+    rate: 1
+  - name: Notarial fee
+    unit: document
+    unit_plural: documents
+    rate: 300
   - name: Photocopies
     unit: page
     unit_plural: pages
-    rate: 0.25
-  - name: Mileage
-    unit: mile
-    unit_plural: miles
-    rate: 0.7
+    rate: 3
   - name: Courier
     unit: delivery
     unit_plural: deliveries
-    rate: 25
-  - name: Expert witness
-    unit: hour
-    unit_plural: hours
-    rate: 250
+    rate: 150
+  - name: Transportation
+    unit: peso
+    unit_plural: pesos
+    rate: 1

@@ -59,6 +59,9 @@ module BasicData
         return unless Setting.costs_currency == Settings::Definition[:costs_currency].default
 
         Setting.costs_currency = config.currency
+        if config.currency_format && writable_setting?(:costs_currency_format)
+          Setting.costs_currency_format = config.currency_format
+        end
       end
 
       def seed_default_project_modules
@@ -122,10 +125,16 @@ module BasicData
 
         seed_report("Billable hours by matter", rows: %w[project_id user_id], unit: HOURS_UNIT,
                                                 filter: ["activity_id", "!", non_billable_ids])
-        seed_report("Billable amounts by matter", rows: %w[project_id user_id], unit: MONEY_UNIT,
+        seed_report(billable_amounts_report_name, rows: %w[project_id user_id], unit: MONEY_UNIT,
                                                   filter: ["activity_id", "!", non_billable_ids])
         seed_report("Non-billable time by person", rows: %w[user_id activity_id], unit: HOURS_UNIT,
                                                    filter: ["activity_id", "=", non_billable_ids])
+      end
+
+      def billable_amounts_report_name
+        return "Billable amounts by matter" unless config.vat_percentage
+
+        "Billable amounts by matter (excl. #{config.vat_percentage}% VAT)"
       end
 
       def seed_report(name, rows:, unit:, filter:)

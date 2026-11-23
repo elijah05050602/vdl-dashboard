@@ -67,7 +67,7 @@ RSpec.describe RootSeeder,
       expect(View.where(type: "team_planner").count).to eq 1
       expect(View.where(type: "gantt").count).to eq 2
       expect(Query.count).to eq 28
-      expect(ProjectRole.count).to eq 9
+      expect(ProjectRole.count).to eq 10
       expect(WorkPackageRole.count).to eq 3
       expect(GlobalRole.count).to eq 2
       expect(Grids::Overview.count).to eq 2
@@ -225,7 +225,7 @@ RSpec.describe RootSeeder,
     include_examples "it creates records", model: DocumentType, expected_count: 6
     include_examples "it creates records", model: GlobalRole, expected_count: 2
     include_examples "it creates records", model: WorkPackageRole, expected_count: 3
-    include_examples "it creates records", model: ProjectRole, expected_count: 9
+    include_examples "it creates records", model: ProjectRole, expected_count: 10
     include_examples "it creates records", model: ProjectQueryRole, expected_count: 2
     include_examples "it creates records", model: IssuePriority, expected_count: 4
     include_examples "it creates records", model: Status, expected_count: 21
@@ -406,7 +406,7 @@ RSpec.describe RootSeeder,
         expect(View.where(type: "team_planner").count).to eq 1
         expect(View.where(type: "gantt").count).to eq 2
         expect(Query.count).to eq 28
-        expect(ProjectRole.count).to eq 9
+        expect(ProjectRole.count).to eq 10
         expect(WorkPackageRole.count).to eq 3
         expect(GlobalRole.count).to eq 2
         expect(Grids::Overview.count).to eq 2

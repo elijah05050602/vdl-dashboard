@@ -39,8 +39,8 @@ RSpec.describe LawFirm::ApplyRoleRateService, type: :model do
   let(:config) do
     LawFirm::BillingConfig.new(
       "billing_roles" => [
-        { "name" => "Partner", "hourly_rate" => 450 },
-        { "name" => "Paralegal", "hourly_rate" => 150 }
+        { "name" => "Partner", "hourly_rate" => 8000 },
+        { "name" => "Paralegal", "hourly_rate" => 1500 }
       ]
     )
   end
@@ -51,7 +51,7 @@ RSpec.describe LawFirm::ApplyRoleRateService, type: :model do
 
   it "gives the member the hourly rate of their role on the matter" do
     expect { call }.to change(HourlyRate, :count).by(1)
-    expect(HourlyRate.last).to have_attributes(user_id: user.id, project_id: project.id, rate: 150,
+    expect(HourlyRate.last).to have_attributes(user_id: user.id, project_id: project.id, rate: 1500,
                                                valid_from: Date.current)
   end
 
@@ -60,7 +60,7 @@ RSpec.describe LawFirm::ApplyRoleRateService, type: :model do
 
     it "uses the highest rate" do
       call
-      expect(HourlyRate.last.rate).to eq 450
+      expect(HourlyRate.last.rate).to eq 8000
     end
   end
 
@@ -73,7 +73,7 @@ RSpec.describe LawFirm::ApplyRoleRateService, type: :model do
     it "starts the rate at the first logged day so that time is priced too" do
       call
       expect(HourlyRate.last.valid_from).to eq 10.days.ago.to_date
-      expect(time_entry.reload.costs).to eq 300
+      expect(time_entry.reload.costs).to eq 3000
     end
   end
 
@@ -111,7 +111,7 @@ RSpec.describe LawFirm::ApplyRoleRateService, type: :model do
         .new(user: admin)
         .call(project:, principal: user, roles: [partner_role])
 
-      expect(HourlyRate.find_by(user_id: user.id, project_id: project.id).rate).to eq 450
+      expect(HourlyRate.find_by(user_id: user.id, project_id: project.id).rate).to eq 8000
     end
   end
 end

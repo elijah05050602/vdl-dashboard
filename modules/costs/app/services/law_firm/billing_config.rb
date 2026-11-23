@@ -84,6 +84,22 @@ module LawFirm
       @data["currency"].presence
     end
 
+    def currency_format
+      @data["currency_format"].presence
+    end
+
+    def vat_rate
+      BigDecimal(@data["vat_rate"].to_s) if @data["vat_rate"].present?
+    end
+
+    def ewt_rate
+      BigDecimal(@data["ewt_rate"].to_s) if @data["ewt_rate"].present?
+    end
+
+    def vat_percentage
+      (vat_rate * 100).to_i if vat_rate
+    end
+
     def default_project_modules
       Array(@data["default_project_modules"]).map(&:to_s)
     end
