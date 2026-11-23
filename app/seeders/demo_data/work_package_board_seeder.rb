@@ -42,7 +42,7 @@ module DemoData
     end
 
     def seed_data!
-      # Seed only for those projects that provide a `kanban` key, i.e. 'demo-project' in standard edition.
+      # Seed only for those projects that provide a `kanban` key, i.e. 'harlow-v-brightline' in standard edition.
       if board_data = project_data.lookup("boards.kanban")
         print_status "    ↳ Creating demo status board" do
           seed_kanban_board(board_data)
@@ -181,7 +181,7 @@ module DemoData
     end
 
     def seed_parent_child_board(board_data)
-      widgets = seed_parent_child_board_widgets
+      widgets = seed_parent_child_board_widgets(board_data.lookup("parents"))
       board =
         ::Boards::Grid.new(
           project:,
@@ -194,8 +194,8 @@ module DemoData
       board.save!
     end
 
-    def seed_parent_child_board_widgets
-      seed_parent_child_board_queries.each_with_index.map do |query, i|
+    def seed_parent_child_board_widgets(parent_references)
+      seed_parent_child_board_queries(parent_references).each_with_index.map do |query, i|
         Grids::Widget.new start_row: 1, end_row: 2,
                           start_column: i + 1, end_column: i + 2,
                           options: { query_id: query.id,
@@ -204,11 +204,8 @@ module DemoData
       end
     end
 
-    def seed_parent_child_board_queries
-      parents = [seed_data.find_reference(:organize_open_source_conference),
-                 seed_data.find_reference(:follow_up_tasks)]
-
-      parents.map do |parent|
+    def seed_parent_child_board_queries(parent_references)
+      seed_data.find_references(parent_references).map do |parent|
         Query.new_default(project:, user: admin_user).tap do |query|
           # Make it public so that new members can see it too
           query.public = true

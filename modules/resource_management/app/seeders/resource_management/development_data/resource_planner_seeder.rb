@@ -43,11 +43,11 @@ module ResourceManagement
 
       # Work packages (by seed reference) the allocations attach to.
       WORK_PACKAGE_REFERENCES = %i[
-        set_date_and_location_of_conference
-        invite_attendees_to_conference
-        setup_conference_website
-        follow_up_tasks
-        upload_presentations_to_website
+        harlow__damages_research
+        harlow__declaration
+        harlow__review_logs
+        harlow__discovery
+        harlow__interrogatories
       ].freeze
 
       attr_reader :project
@@ -158,10 +158,10 @@ module ResourceManagement
         # already uses up her capacity. The additional (realistic, single-day)
         # allocation for inviting attendees overlaps it and overbooks her, which
         # the user timeline then surfaces.
-        create_explicit_allocation(:setup_conference_website, :user__wanda_web, :full)
-        create_explicit_allocation(:invite_attendees_to_conference, :user__wanda_web, :full)
-        create_explicit_allocation(:set_date_and_location_of_conference, :user__olga_ops, :full)
-        create_explicit_allocation(:follow_up_tasks, :user__adam_admin, :half)
+        create_explicit_allocation(:harlow__review_logs, :user__wanda_web, :full)
+        create_explicit_allocation(:harlow__declaration, :user__wanda_web, :full)
+        create_explicit_allocation(:harlow__damages_research, :user__olga_ops, :full)
+        create_explicit_allocation(:harlow__discovery, :user__adam_admin, :half)
         seed_generic_allocation
       end
 
@@ -169,7 +169,7 @@ module ResourceManagement
       # matching the "Software Developer" job title. Skipped when the demo user
       # custom fields it filters on are absent.
       def seed_generic_allocation
-        work_package = work_packages[:upload_presentations_to_website]
+        work_package = work_packages[:harlow__interrogatories]
         filters = developer_filter
         return unless work_package && filters
 

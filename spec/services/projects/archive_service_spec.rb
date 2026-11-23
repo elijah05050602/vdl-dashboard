@@ -140,7 +140,7 @@ RSpec.describe Projects::ArchiveService do
   end
 
   context "with the seeded demo project" do
-    let(:demo_project) { create(:project, name: "Demo project", identifier: "demo-project", public: true) }
+    let(:demo_project) { create(:project, name: "Harlow v. Brightline Logistics", identifier: "harlow-v-brightline", public: true) }
     let(:instance) { described_class.new(user:, model: demo_project) }
 
     it "saves in a Setting that the demo project was modified (regression #52826)" do

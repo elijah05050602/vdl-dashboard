@@ -73,11 +73,11 @@ RSpec.describe ResourceManagement::DevelopmentData::ResourcePlannerSeeder do
     )
 
     {
-      setup_conference_website: setup_website,
-      set_date_and_location_of_conference: set_date,
-      invite_attendees_to_conference: invite_attendees,
-      follow_up_tasks: follow_up,
-      upload_presentations_to_website: upload,
+      harlow__review_logs: setup_website,
+      harlow__damages_research: set_date,
+      harlow__declaration: invite_attendees,
+      harlow__discovery: follow_up,
+      harlow__interrogatories: upload,
       user__wanda_web: wanda,
       user__olga_ops: olga,
       user__adam_admin: adam

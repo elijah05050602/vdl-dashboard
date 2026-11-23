@@ -55,8 +55,8 @@ RSpec.describe "boards onboarding tour",
   let(:demo_project) do
     create(:project,
            :with_internal_wiki,
-           name: "Demo project",
-           identifier: "demo-project",
+           name: "Harlow v. Brightline Logistics",
+           identifier: "harlow-v-brightline",
            public: true,
            enabled_module_names: %w[work_package_tracking gantt board_view]).reload
   end

@@ -51,7 +51,7 @@ RSpec.describe Projects::UnarchiveService do
 
   context "with the seeded demo project" do
     let(:demo_project) do
-      create(:project, name: "Demo project", identifier: "demo-project", public: true, active: false)
+      create(:project, name: "Harlow v. Brightline Logistics", identifier: "harlow-v-brightline", public: true, active: false)
     end
     let(:instance) { described_class.new(user:, model: demo_project) }
 

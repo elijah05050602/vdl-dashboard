@@ -184,25 +184,25 @@ project_custom_field_sections:
     position: 1
 
 labels:
-  - reference: :label__website
-    t_name: Website
-  - reference: :label__marketing
-    t_name: Marketing
-  - reference: :label__speakers
-    t_name: Speakers
-  - reference: :label__security
-    t_name: Security
-  - reference: :label__ux
-    t_name: UX
+  - reference: :label__urgent
+    t_name: Urgent
+  - reference: :label__billable
+    t_name: Billable
+  - reference: :label__privileged
+    t_name: Privileged
+  - reference: :label__waiting_on_client
+    t_name: Waiting on client
 
+# Sample matters. All names, parties and facts are fictional.
 projects:
-  demo-project:
-    t_name: Demo project
-    identifier: demo-project
+  harlow-v-brightline:
+    t_name: Harlow v. Brightline Logistics
+    identifier: harlow-v-brightline
     status_code: on_track
-    t_status_explanation: All tasks are on schedule. The people involved know their tasks. The system is completely set up.
-    t_description: This is a short summary of the goals of this demo project.
-    # Some people join the project directly, others through their whole department (group).
+    t_status_explanation: Pleadings are complete and discovery has started. The next court date is the case management conference.
+    t_description: |-
+      Breach of contract suit. Our client, Dana Harlow (Harlow Home Goods), is suing Brightline Logistics for missed deliveries and unpaid credits under a 2-year freight agreement. Claimed damages are about $184,000 plus interest.
+    # Some people join the matter directly, others through their whole department (group).
     members:
       - principal: :user__marko_marketing
         role: :default_role_member
@@ -216,9 +216,9 @@ projects:
         role: :default_role_member
     project_phases:
       - definition: :default_project_phase_initiating
-        duration: 20
+        duration: 10
       - definition: :default_project_phase_planning
-        duration: 30
+        duration: 20
       - definition: :default_project_phase_executing
         duration: 40
       - definition: :default_project_phase_closing
@@ -235,20 +235,29 @@ projects:
       - budgets
       - calendars
     news:
-      - t_title: Welcome to your demo project
+      - t_title: Complaint filed and served
         t_summary: |
-          We are glad you joined.
-          In this module you can communicate project news to your team members.
-        t_description: The actual news
+          The complaint was filed and Brightline Logistics has been served.
+          Their answer is due in two weeks.
+        t_description: Discovery starts this week. See the Discovery work packages for who is doing what.
     types:
       - :default_type_task
       - :default_type_milestone
       - :default_type_summary_task
+      - :legal_type_court_deadline
+      - :legal_type_hearing
+      - :legal_type_filing
+      - :legal_type_legal_research
+      - :legal_type_document_review
+      - :legal_type_client_communication
     t_categories:
-      - Category 1 (to be changed in Project settings)
+      - Pleadings
+      - Discovery
+      - Motions
+      - Settlement
     queries:
-      - t_name: Project plan
-        reference: :demo_project__query__project_plan
+      - t_name: Case plan
+        reference: :harlow__query__case_plan
         status: open
         timeline: true
         sort_by: id
@@ -262,12 +271,346 @@ projects:
           - status
           - start_date
           - due_date
-          - duration
           - assigned_to
-      - t_name: Milestones
-        reference: :demo_project__query__milestones
-        type: :default_type_milestone
+      - t_name: Deadlines and hearings
+        reference: :harlow__query__deadlines
+        type:
+          - :legal_type_court_deadline
+          - :legal_type_hearing
+          - :default_type_milestone
         timeline: true
+        sort_by: id
+        columns:
+          - id
+          - type
+          - subject
+          - status
+          - due_date
+      - t_name: Open tasks
+        reference: :harlow__query__open_tasks
+        status: open
+        hierarchy: true
+        sort_by: id
+        columns:
+          - id
+          - type
+          - subject
+          - status
+          - assigned_to
+          - due_date
+      - t_name: Team planner
+        module: team_planner
+        assigned_to: :openproject_admin
+    boards:
+      kanban:
+        t_name: "Filings board"
+        filters:
+          - type: :legal_type_filing
+        statuses:
+          - :default_status_new
+          - :legal_status_drafting
+          - :legal_status_partner_review
+          - :legal_status_filed
+          - :default_status_closed
+      basic:
+        t_name: "Priorities"
+        lists:
+          - t_name: "This week"
+            work_packages:
+              - :harlow__review_logs
+              - :harlow__damages_research
+          - t_name: "Next week"
+            work_packages:
+              - :harlow__interrogatories
+          - t_name: "Waiting on the client"
+            work_packages:
+              - :harlow__declaration
+      parent_child:
+        t_name: "Case breakdown"
+        parents:
+          - :harlow__pleadings
+          - :harlow__discovery
+    project-overview:
+      row_count: 4
+      column_count: 2
+      widgets:
+        - identifier: "custom_text"
+          start_row: 1
+          end_row: 3
+          start_column: 1
+          end_column: 2
+          options:
+            t_name: "About this matter"
+            t_text: |
+              **Client:** Dana Harlow, Harlow Home Goods
+              **Opposing party:** Brightline Logistics (counsel: Reyes & Okafor)
+              **Court:** Superior Court, Civil Division
+              **Matter type:** Commercial litigation, plaintiff
+
+              Useful views:
+
+              * [Case plan]({{opSetting:base_url}}/projects/harlow-v-brightline/work_packages?query_id=##query.id:harlow__query__case_plan) shows every task on a timeline.
+              * [Deadlines and hearings]({{opSetting:base_url}}/projects/harlow-v-brightline/work_packages?query_id=##query.id:harlow__query__deadlines) lists the court dates.
+              * [Open tasks]({{opSetting:base_url}}/projects/harlow-v-brightline/work_packages?query_id=##query.id:harlow__query__open_tasks) lists the work still to do.
+        - identifier: "project_status"
+          start_row: 1
+          end_row: 2
+          start_column: 2
+          end_column: 3
+        - identifier: "members"
+          start_row: 2
+          end_row: 3
+          start_column: 2
+          end_column: 3
+          options:
+            name: "Members"
+        - identifier: "work_packages_overview"
+          start_row: 3
+          end_row: 4
+          start_column: 1
+          end_column: 3
+          options:
+            t_name: "Work packages"
+        - identifier: "work_packages_table"
+          start_row: 4
+          end_row: 5
+          start_column: 1
+          end_column: 3
+          options:
+            t_name: "Deadlines and hearings"
+            queryId: "##query.id:harlow__query__deadlines"
+    # For all dates, the reference is the Monday of the current week
+    # So
+    # * start: 0 references Monday
+    # * start: 4 references Friday
+    # * start: -7 references the Monday of last week
+    work_packages:
+      - start: -14
+        t_subject: Matter opened
+        description:
+        status: :default_status_closed
+        type: :default_type_milestone
+        duration: 1
+        schedule_manually: true
+      - start: -14
+        t_subject: Pleadings
+        reference: :harlow__pleadings
+        assigned_to: :user__adam_admin
+        description: ""
+        status: :default_status_in_progress
+        type: :default_type_summary_task
+        duration: 29
+        schedule_manually: false
+        children:
+          - start: -14
+            t_subject: Draft and file the complaint
+            reference: :harlow__complaint
+            assigned_to: :user__evan_events
+            t_description: |-
+              Counts: breach of contract, breach of the implied covenant of good faith, and account stated.
+              Attach the freight agreement and the unpaid credit memos as exhibits.
+            status: :default_status_closed
+            type: :legal_type_filing
+            duration: 5
+            estimated_hours: 14
+            remaining_hours: 0
+            done_ratio: 100
+            schedule_manually: true
+          - start: -7
+            t_subject: Serve the summons and complaint
+            description: ""
+            status: :default_status_closed
+            type: :legal_type_court_deadline
+            duration: 1
+            schedule_manually: false
+            relations:
+              - to: :harlow__complaint
+                type: follows
+          - start: 14
+            t_subject: Brightline's answer due
+            t_description: Answer is due 21 days after service. If nothing is filed, prepare a request for entry of default.
+            status: :default_status_scheduled
+            type: :legal_type_court_deadline
+            duration: 1
+            schedule_manually: true
+      - start: 0
+        t_subject: Discovery
+        reference: :harlow__discovery
+        assigned_to: :department__events_operations
+        description: ""
+        status: :default_status_in_progress
+        type: :default_type_summary_task
+        duration: 12
+        schedule_manually: false
+        children:
+          - start: 0
+            t_subject: Review the client's shipping logs and invoices
+            reference: :harlow__review_logs
+            assigned_to: :user__wanda_web
+            labels:
+              - :label__billable
+              - :label__privileged
+            t_description: |-
+              Build a table of every missed or late delivery with the matching invoice and credit memo.
+              *   [x] 2024 shipping logs
+              *   [ ] 2025 shipping logs
+              *   [ ] Credit memos
+            status: :default_status_in_progress
+            type: :legal_type_document_review
+            duration: 5
+            estimated_hours: 20
+            remaining_hours: 12
+            done_ratio: 40
+            schedule_manually: true
+          - start: 0
+            t_subject: Research damages and interest for late payment
+            reference: :harlow__damages_research
+            assigned_to: :user__olga_ops
+            labels:
+              - :label__billable
+            description: ""
+            status: :default_status_in_progress
+            type: :legal_type_legal_research
+            duration: 4
+            estimated_hours: 12
+            remaining_hours: 8
+            done_ratio: 30
+            schedule_manually: true
+          - start: 1
+            t_subject: Get a signed declaration from Ms. Harlow
+            reference: :harlow__declaration
+            assigned_to: :user__marko_marketing
+            labels:
+              - :label__waiting_on_client
+            t_description: Draft sent to the client. Waiting for her signature and the two missing delivery receipts.
+            status: :legal_status_awaiting_client
+            type: :legal_type_client_communication
+            duration: 3
+            schedule_manually: true
+          - start: 7
+            t_subject: Draft the first set of interrogatories
+            reference: :harlow__interrogatories
+            description: ""
+            status: :legal_status_drafting
+            type: :legal_type_filing
+            duration: 4
+            estimated_hours: 10
+            remaining_hours: 10
+            done_ratio: 0
+            schedule_manually: false
+            relations:
+              - to: :harlow__review_logs
+                type: follows
+          - start: 7
+            t_subject: Draft requests for production of documents
+            assigned_to: :user__tessa_tester
+            description: ""
+            status: :default_status_new
+            type: :legal_type_filing
+            duration: 4
+            estimated_hours: 8
+            remaining_hours: 8
+            done_ratio: 0
+            schedule_manually: false
+            relations:
+              - to: :harlow__review_logs
+                type: follows
+          - start: 11
+            t_subject: Initial disclosures due
+            labels:
+              - :label__urgent
+            description: ""
+            status: :default_status_scheduled
+            type: :legal_type_court_deadline
+            duration: 1
+            schedule_manually: true
+      - start: 4
+        t_subject: Send the monthly case update to the client
+        description: ""
+        status: :default_status_new
+        type: :legal_type_client_communication
+        duration: 1
+        schedule_manually: true
+      - start: 18
+        t_subject: Case management conference
+        t_description: Department 12, 9:00 AM. Bring the proposed discovery plan and trial-date availability.
+        status: :default_status_scheduled
+        type: :legal_type_hearing
+        duration: 1
+        schedule_manually: true
+      - start: 32
+        t_subject: Hearing on motion to compel discovery
+        t_description: Only needed if Brightline does not answer the interrogatories on time.
+        status: :default_status_new
+        type: :legal_type_hearing
+        duration: 1
+        schedule_manually: true
+      - start: 39
+        t_subject: Court-ordered mediation
+        description: ""
+        status: :default_status_new
+        type: :default_type_milestone
+        duration: 1
+        schedule_manually: true
+    t_wiki: |
+      ### Case notes
+
+      _Use this wiki for notes that do not belong to a single task._
+
+      **Key facts**
+
+      * The freight agreement started on 1 March 2024 and runs for two years.
+      * Brightline missed or delayed 41 deliveries between May 2024 and June 2025.
+      * Brightline issued credit memos for 17 of them and never paid them.
+
+      **Strategy**
+
+      * Lead with the account stated claim. The credit memos are Brightline's own documents.
+      * Ask for prejudgment interest from the date of each credit memo.
+
+      **Contacts**
+
+      * Client: Dana Harlow, owner of Harlow Home Goods
+      * Opposing counsel: Priya Okafor, Reyes & Okafor
+  northwind-supply-agreement:
+    t_name: Northwind Bakery supply agreement
+    identifier: northwind-supply-agreement
+    status_code: at_risk
+    t_status_explanation: The supplier wants a 90-day termination notice. The client needs at least 180 days, so this point is still open.
+    t_description: |-
+      Negotiating a 3-year master supply agreement between our client, Northwind Bakery Co., and its flour supplier, Golden Field Mills. Key points are price adjustments, delivery windows, food-safety warranties and termination.
+    modules:
+      - work_package_tracking
+      - news
+      - gantt
+      - board_view
+      - documents
+      - meetings
+      - costs
+      - calendars
+    news:
+      - t_title: First draft received from Golden Field Mills
+        t_summary: |
+          The supplier's counsel sent their first draft of the master supply agreement.
+        t_description: Review starts this week. The termination clause is the main concern.
+    types:
+      - :default_type_task
+      - :default_type_milestone
+      - :default_type_summary_task
+      - :legal_type_contract_review
+      - :legal_type_legal_research
+      - :legal_type_client_communication
+    t_categories:
+      - Negotiation
+      - Compliance
+    queries:
+      - t_name: Negotiation plan
+        reference: :northwind__query__plan
+        timeline: true
+        sort_by: id
+        hierarchy: true
+        starred: true
+        module: gantt
         columns:
           - id
           - type
@@ -275,762 +618,346 @@ projects:
           - status
           - start_date
           - due_date
-        sort_by: id
-      - t_name: Tasks
-        reference: :demo_project__query__tasks
+          - assigned_to
+      - t_name: Open items
+        reference: :northwind__query__open_items
         status: open
-        type: :default_type_task
-        hierarchy: true
         sort_by: id
         columns:
           - id
+          - type
           - subject
-          - priority
           - status
-          - assigned_to
-      - t_name: Team planner
-        module: team_planner
-        assigned_to: :openproject_admin
+          - due_date
     boards:
-      kanban:
-        t_name: "Kanban board"
-        filters:
-          - type: :default_type_task
-        statuses:
-          - :default_status_new
-          - :default_status_in_progress
-          - :default_status_closed
-          - :default_status_rejected
       basic:
-        t_name: "Basic board"
+        t_name: "Who has the ball"
         lists:
-          - t_name: "Wish list"
+          - t_name: "With us"
             work_packages:
-              - :setup_conference_website
-              - :upload_presentations_to_website
-          - t_name: "Short list"
+              - :northwind__redline
+          - t_name: "With the client"
             work_packages:
-              - :invite_attendees_to_conference
-          - t_name: "Priority list for today"
+              - :northwind__volumes
+          - t_name: "With the other side"
             work_packages:
-              - :set_date_and_location_of_conference
-          - t_name: "Never"
-            work_packages: []
-      parent_child:
-        t_name: "Work breakdown structure"
+              - :northwind__call
     project-overview:
-      row_count: 6
+      row_count: 2
       column_count: 2
       widgets:
         - identifier: "custom_text"
           start_row: 1
           end_row: 2
           start_column: 1
-          end_column: 3
-          options:
-            t_name: "Welcome"
-            text: '![Teaser](##attachment:"demo_project_teaser.png")'
-          attachments:
-            - demo_project_teaser.png
-        - identifier: "custom_text"
-          start_row: 2
-          end_row: 5
-          start_column: 1
           end_column: 2
           options:
-            t_name: "Getting started"
+            t_name: "About this matter"
             t_text: |
-              We are glad you joined! We suggest to try a few things to get started in OpenProject.
+              **Client:** Northwind Bakery Co.
+              **Other side:** Golden Field Mills (counsel: Marsh Whitley LLP)
+              **Matter type:** Commercial contract negotiation
 
-              Discover the most important features with our [Guided Tour]({{opSetting:base_url}}/projects/demo-project/work_packages/?start_onboarding_tour=true).
-
-              _Try the following steps:_
-
-              1. *Invite new members to your project*: &rightarrow; Go to [Members]({{opSetting:base_url}}/projects/demo-project/members) in the project navigation.
-              2. *View the work in your project*: &rightarrow; Go to [Work packages]({{opSetting:base_url}}/projects/demo-project/work_packages) in the project navigation.
-              3. *Create a new work package*: &rightarrow; Go to [Work packages &rightarrow; Create]({{opSetting:base_url}}/projects/demo-project/work_packages/new).
-              4. *Create and update a project plan*: &rightarrow; Go to [Project plan]({{opSetting:base_url}}/projects/demo-project/work_packages?query_id=##query.id:demo_project__query__project_plan) in the project navigation.
-              5. *Activate further modules*: &rightarrow; Go to [Project settings &rightarrow; Modules]({{opSetting:base_url}}/projects/demo-project/settings/modules).
-              6. *Complete your tasks in the project*: &rightarrow; Go to [Work packages &rightarrow; Tasks]({{opSetting:base_url}}/projects/demo-project/work_packages/details/##wp.id:set_date_and_location_of_conference/overview?query_id=##query.id:demo_project__query__tasks).
-
-              Here you will find our [User Guides](https://www.openproject.org/docs/user-guide/).
-              Please let us know if you have any questions or need support. Contact us: [support[at]openproject.com](mailto:support@openproject.com).
+              Open points: price adjustment formula, delivery windows, recall costs, termination notice.
         - identifier: "project_status"
+          start_row: 1
+          end_row: 2
+          start_column: 2
+          end_column: 3
+        - identifier: "work_packages_table"
           start_row: 2
           end_row: 3
-          start_column: 2
-          end_column: 3
-        - identifier: "project_description"
-          start_row: 3
-          end_row: 4
-          start_column: 2
-          end_column: 3
-        - identifier: "members"
-          start_row: 4
-          end_row: 5
-          start_column: 2
-          end_column: 3
-          options:
-            name: "Members"
-        - identifier: "work_packages_overview"
-          start_row: 5
-          end_row: 6
           start_column: 1
           end_column: 3
           options:
-            t_name: "Work packages"
-        - identifier: "work_packages_table"
-          start_row: 6
-          end_row: 7
-          start_column: 1
-          end_column: 3
-          options:
-            t_name: "Milestones"
-            queryId: "##query.id:demo_project__query__milestones"
-    # For all dates, the reference is the Monday of the current week
-    # So
-    # * start: 0 references Monday
-    # * start: 4 references Friday
-    # * start: -1 references the last Sunday
+            t_name: "Open items"
+            queryId: "##query.id:northwind__query__open_items"
     work_packages:
-      - start: -1
-        t_subject: Start of project
-        description:
+      - start: -7
+        t_subject: "Intake and conflict check: Golden Field Mills"
+        description: ""
         status: :default_status_closed
-        type: :default_type_milestone
-        duration: 1
+        type: :legal_type_contract_review
+        duration: 2
         schedule_manually: true
       - start: 0
-        t_subject: Organize open source conference
-        reference: :organize_open_source_conference
-        assigned_to: :department__events_operations
+        t_subject: Negotiate the master supply agreement
+        reference: :northwind__negotiation
         description: ""
         status: :default_status_in_progress
         type: :default_type_summary_task
-        duration: 15
+        duration: 10
         schedule_manually: false
         children:
           - start: 0
-            t_subject: Set date and location of conference
-            reference: :set_date_and_location_of_conference
-            assigned_to: :user__olga_ops
+            t_subject: Review the supplier's first draft
+            reference: :northwind__first_review
+            labels:
+              - :label__billable
+            t_description: |-
+              Flag every clause that differs from the client's standard terms.
+              *   [x] Price and payment
+              *   [x] Delivery and acceptance
+              *   [ ] Warranties and recalls
+              *   [ ] Term and termination
+            status: :legal_status_partner_review
+            type: :legal_type_contract_review
+            duration: 3
+            estimated_hours: 9
+            remaining_hours: 2
+            done_ratio: 80
+            schedule_manually: true
+          - start: 0
+            t_subject: Check food-safety warranty and recall obligations
             description: ""
             status: :default_status_in_progress
-            type: :default_type_task
-            duration: 4
-            schedule_manually: false
-            children:
-              - start: 0
-                t_subject: Send invitation to speakers
-                labels:
-                  - :label__speakers
-                assigned_to: :user__marko_marketing
-                description: ""
-                status: :default_status_in_progress
-                type: :default_type_task
-                duration: 1
-                estimated_hours: 8
-                remaining_hours: 4
-                done_ratio: 50
-              - start: 0
-                t_subject: Contact sponsoring partners
-                assigned_to: :department__finance_administration
-                description: ""
-                status: :default_status_new
-                type: :default_type_task
-                duration: 2
-                estimated_hours: 16
-                remaining_hours: 16
-                done_ratio: 0
-              - start: 0
-                t_subject: Create sponsorship brochure and hand-outs
-                labels:
-                  - :label__marketing
-                assigned_to: :user__marko_marketing
-                description: ""
-                status: :default_status_new
-                type: :default_type_task
-                duration: 4
-                estimated_hours: 32
-                remaining_hours: 32
-                done_ratio: 0
-          - start: 4
-            t_subject: Invite attendees to conference
+            type: :legal_type_legal_research
+            duration: 2
+            estimated_hours: 4
+            remaining_hours: 2
+            done_ratio: 50
+            schedule_manually: true
+          - start: 1
+            t_subject: Confirm volumes and delivery windows with the client
+            reference: :northwind__volumes
             labels:
-              - :label__marketing
-            reference: :invite_attendees_to_conference
-            assigned_to: :user__evan_events
+              - :label__waiting_on_client
+            description: ""
+            status: :legal_status_awaiting_client
+            type: :legal_type_client_communication
+            duration: 3
+            schedule_manually: true
+          - start: 3
+            t_subject: Redline price, delivery and termination clauses
+            reference: :northwind__redline
+            labels:
+              - :label__urgent
+            description: ""
+            status: :legal_status_drafting
+            type: :legal_type_contract_review
+            duration: 2
+            estimated_hours: 6
+            remaining_hours: 6
+            done_ratio: 0
+            schedule_manually: false
+            relations:
+              - to: :northwind__first_review
+                type: follows
+          - start: 7
+            t_subject: Negotiation call with Golden Field Mills' counsel
+            reference: :northwind__call
             description: ""
             status: :default_status_new
             type: :default_type_task
             duration: 1
-            estimated_hours: 8
-            remaining_hours: 8
-            done_ratio: 0
             schedule_manually: false
             relations:
-              - to: :set_date_and_location_of_conference
+              - to: :northwind__redline
                 type: follows
-          - start: 4
-            t_subject: Setup conference website
-            labels:
-              - :label__website
-            reference: :setup_conference_website
-            assigned_to: :user__wanda_web
+          - start: 8
+            t_subject: Final partner sign-off on the agreed text
+            reference: :northwind__final
             description: ""
             status: :default_status_new
             type: :default_type_task
-            duration: 11
-            estimated_hours: 88
-            remaining_hours: 88
-            done_ratio: 0
+            duration: 2
             schedule_manually: false
             relations:
-              - to: :set_date_and_location_of_conference
+              - to: :northwind__call
                 type: follows
-      - start: 15
-        t_subject: Test and quality-check the conference website
-        labels:
-          - :label__website
-        assigned_to: :user__tessa_tester
+      - start: 10
+        t_subject: Target signing date
         description: ""
-        status: :default_status_new
-        type: :default_type_task
-        duration: 3
-        estimated_hours: 24
-        remaining_hours: 24
-        done_ratio: 0
-        schedule_manually: false
-        relations:
-          - to: :setup_conference_website
-            type: follows
-      - start: 15
-        t_subject: Conference
-        description: ""
-        status: :default_status_scheduled
-        type: :default_type_milestone
-        duration: 1
-        relations:
-          - to: :organize_open_source_conference
-            type: follows
-        schedule_manually: false
-      - start: 21
-        t_subject: Follow-up tasks
-        reference: :follow_up_tasks
-        assigned_to: :user__adam_admin
-        description: ""
-        status: :default_status_to_be_scheduled
-        type: :default_type_summary_task
-        duration: 11
-        schedule_manually: false
-        children:
-          - start: 21
-            t_subject: Upload presentations to website
-            labels:
-              - :label__website
-              - :label__speakers
-            reference: :upload_presentations_to_website
-            assigned_to: :user__wanda_web
-            description: ""
-            status: :default_status_new
-            type: :default_type_task
-            duration: 10
-            estimated_hours: 80
-            remaining_hours: 80
-            done_ratio: 0
-          - start: 31
-            t_subject: Party for conference supporters :-)
-            assigned_to: :user__olga_ops
-            t_description: |-
-              *   [ ] Beer
-              *   [ ] Snacks
-              *   [ ] Music
-              *   [ ] Even more beer
-            status: :default_status_new
-            type: :default_type_task
-            duration: 1
-            estimated_hours: 8
-            remaining_hours: 8
-            done_ratio: 0
-      - start: 32
-        t_subject: End of project
-        description:
         status: :default_status_new
         type: :default_type_milestone
         duration: 1
         schedule_manually: false
         relations:
-          - to: :follow_up_tasks
+          - to: :northwind__final
             type: follows
-    t_wiki: |
-      _In this wiki you can collaboratively create and edit pages and sub-pages to create a project wiki._
-
-      **You can:**
-
-      * Insert text and images, also with copy and paste from other documents
-      * Create a page hierarchy with parent pages
-      * Include wiki pages to the project menu
-      * Use macros to include, e.g. table of contents, work package lists, or Gantt charts
-      * Include wiki pages in other text fields, e.g. project overview page
-      * Include links to other documents
-      * View the change history
-      * View as Markdown
-
-      More information: [https://www.openproject.org/docs/user-guide/wiki/](https://www.openproject.org/docs/user-guide/wiki/)
-  scrum-project:
-    t_name: Scrum project
-    identifier: your-scrum-project
+  ellison-estate-plan:
+    t_name: Ellison estate plan
+    identifier: ellison-estate-plan
     status_code: on_track
-    t_status_explanation: All tasks are on schedule. The people involved know their tasks. The system is completely set up.
-    t_description: This is a short summary of the goals of this demo Scrum project.
+    t_status_explanation: Asset review is under way. Drafting starts later this week.
+    t_description: |-
+      Estate plan for Margaret Ellison: a revocable living trust, a pour-over will, a durable power of attorney and a health care directive. Assets include her home, a brokerage account and a cabin in another state.
     modules:
-      - backlogs
-      - news
       - work_package_tracking
+      - news
       - gantt
-      - board_view
       - documents
       - meetings
-    news:
-      - t_title: Welcome to your Scrum demo project
-        t_summary: |
-          We are glad you joined.
-          In this module you can communicate project news to your team members.
-        description: This is the news content.
-    versions:
-      - name: "1.0"
-        reference: :scrum_project__version__1_0
-        sharing: none
-        status: open
-        start: 14
-        duration: 5
-        wiki:
-          t_title: Release 1.0
-          t_content: |
-            ### Release 1.0
-
-            _Please document here what this release contains._
-
-            * The work packages of this release are the ones with the target version 1.0.
-            * The release date is the date of the *Release v1.0* milestone.
-            * Open the [Roadmap]({{opSetting:base_url}}/projects/your-scrum-project/roadmap) to follow the progress of all versions.
-            * Open [Project settings &rightarrow; Versions]({{opSetting:base_url}}/projects/your-scrum-project/settings/versions) to link another wiki page to a version.
-      - name: "1.1"
-        reference: :scrum_project__version__1_1
-        sharing: none
-        status: open
-        start: 21
-        duration: 5
-      - name: "2.0"
-        reference: :scrum_project__version__2_0
-        sharing: none
-        status: open
-        start: 28
-        duration: 5
+      - costs
+      - calendars
     types:
       - :default_type_task
       - :default_type_milestone
       - :default_type_summary_task
-      - :default_type_epic
-      - :default_type_user_story
-      - :default_type_bug
+      - :legal_type_filing
+      - :legal_type_legal_research
+      - :legal_type_document_review
+      - :legal_type_client_communication
     t_categories:
-      - Category 1 (to be changed in Project settings)
+      - Trust
+      - Will
+      - Funding
     queries:
-      - t_name: Project plan
-        module: gantt
-        reference: :scrum_project__query__project_plan
-        status: open
-        sort_by: id
-        type:
-          - :default_type_milestone
-          - :default_type_summary_task
+      - t_name: Estate plan timeline
+        reference: :ellison__query__timeline
         timeline: true
-      - t_name: Version 1.1
-        status: open
-        version: :scrum_project__version__1_1
-        group_by: status
-        sort_by: status
+        sort_by: id
+        hierarchy: true
+        starred: true
+        module: gantt
         columns:
           - id
           - type
           - subject
-          - priority
           - status
-          - assigned_to
-          - story_points
-      - t_name: Version 1.0
-        status: open
-        version: :scrum_project__version__1_0
-        hierarchy: true
-        columns:
-          - id
-          - type
-          - subject
-          - priority
-          - status
-          - assigned_to
-          - done_ratio
-          - story_points
-      - t_name: Tasks
-        status: open
-        type: :default_type_task
-        hierarchy: true
-    boards:
-      kanban:
-        t_name: "Kanban board"
-        statuses:
-          - :default_status_new
-          - :default_status_in_progress
-          - :default_status_closed
-          - :default_status_rejected
-      basic:
-        t_name: "Task board"
-        lists:
-          - t_name: "Wish list"
-            work_packages:
-              - :new_website
-              - :ssl_certificate
-              - :choose_content_management_system
-          - t_name: "Short list"
-            work_packages:
-              - :new_login_screen
-          - t_name: "Priority list for today"
-            work_packages:
-              - :set_up_staging_environment
-          - t_name: "Never"
-            work_packages:
-              - :wrong_hover_color
-
+          - start_date
+          - due_date
     project-overview:
-      row_count: 6
+      row_count: 2
       column_count: 2
       widgets:
         - identifier: "custom_text"
           start_row: 1
           end_row: 2
           start_column: 1
-          end_column: 3
-          options:
-            t_name: "Welcome"
-            text: '![Teaser](##attachment:"scrum_project_teaser.png")'
-          attachments:
-            - scrum_project_teaser.png
-        - identifier: "custom_text"
-          start_row: 2
-          end_row: 5
-          start_column: 1
           end_column: 2
           options:
-            t_name: "Getting started"
+            t_name: "About this matter"
             t_text: |
-              We are glad you joined! We suggest to try a few things to get started in OpenProject.
+              **Client:** Margaret Ellison
+              **Matter type:** Estate planning
 
-              _Try the following steps:_
-
-              1. *Invite new members to your project*: &rightarrow; Go to [Members]({{opSetting:base_url}}/projects/your-scrum-project/members) in the project navigation.
-              2. *View your Product backlog and Sprint backlogs*: &rightarrow; Go to [Backlogs]({{opSetting:base_url}}/projects/your-scrum-project/backlogs) in the project navigation.
-              3. *Create a sprint*: &rightarrow; Go to [Backlogs]({{opSetting:base_url}}/projects/your-scrum-project/backlogs) and click "+ Sprint" to create a new sprint. Move work packages from the backlog to the sprint to plan the work to be done. When ready, click "Start sprint".
-              4. *View your Sprint board*: &rightarrow; Go to [Boards]({{opSetting:base_url}}/projects/your-scrum-project/backlogs) &rightarrow; Open the sprint's board by clicking on the sprint's name.
-              5. *Create a new work package*: &rightarrow; Go to [Work packages &rightarrow; Create]({{opSetting:base_url}}/projects/your-scrum-project/work_packages/new).
-              6. *Create and update a project plan*: &rightarrow; Go to [Project plan](##query:scrum_project__query__project_plan) in the project navigation.
-              7. *Activate further modules*: &rightarrow; Go to [Project settings &rightarrow; Modules]({{opSetting:base_url}}/projects/your-scrum-project/settings/modules).
-
-
-              Here you will find our [User Guides](https://www.openproject.org/docs/user-guide/).
-              Please let us know if you have any questions or need support. Contact us: [support[at]openproject.com](mailto:support@openproject.com).
+              Documents: revocable living trust, pour-over will, durable power of attorney, health care directive.
         - identifier: "project_status"
+          start_row: 1
+          end_row: 2
+          start_column: 2
+          end_column: 3
+        - identifier: "work_packages_table"
           start_row: 2
           end_row: 3
-          start_column: 2
-          end_column: 3
-        - identifier: "project_description"
-          start_row: 3
-          end_row: 4
-          start_column: 2
-          end_column: 3
-        - identifier: "members"
-          start_row: 4
-          end_row: 5
-          start_column: 2
-          end_column: 3
-          options:
-            name: "Members"
-        - identifier: "work_packages_overview"
-          start_row: 5
-          end_row: 6
           start_column: 1
           end_column: 3
           options:
-            t_name: "Work packages"
-        - identifier: "work_packages_table"
-          start_row: 6
-          end_row: 7
-          start_column: 1
-          end_column: 3
-          options:
-            t_name: "Project plan"
-            queryId: "##query.id:scrum_project__query__project_plan"
+            t_name: "Estate plan timeline"
+            queryId: "##query.id:ellison__query__timeline"
     work_packages:
-      - t_subject: New login screen
-        labels:
-          - :label__security
-          - :label__ux
-        reference: :new_login_screen
-        status: :default_status_in_specification
-        type: :default_type_user_story
-        target_versions:
-          - :scrum_project__version__1_1
-        position: 3
-      - t_subject: Password reset does not send email
-        labels:
-          - :label__security
-        status: :default_status_confirmed
-        type: :default_type_bug
-        target_versions:
-          - :scrum_project__version__1_1
-        observed_in_versions:
-          - :scrum_project__version__1_0
-        position: 1
-      - t_subject: New website
-        labels:
-          - :label__website
-        reference: :new_website
-        status: :default_status_specified
-        type: :default_type_epic
-        start: 0
-        duration: 29
-        schedule_manually: false
-        children:
-          - t_subject: Newsletter registration form
-            labels:
-              - :label__website
-              - :label__marketing
-            status: :default_status_in_progress
-            type: :default_type_user_story
-            target_versions:
-              - :scrum_project__version__1_1
-            position: 6
-          - t_subject: Implement product tour
-            status: :default_status_in_specification
-            type: :default_type_user_story
-            target_versions:
-              - :scrum_project__version__2_0
-            position: 4
-          - t_subject: New landing page
-            status: :default_status_specified
-            type: :default_type_user_story
-            target_versions:
-              - :scrum_project__version__1_0
-            position: 2
-            story_points: 3
-            start: 28
-            duration: 1
-            schedule_manually: false
-            children:
-              - t_subject: Create wireframes for new landing page
-                labels:
-                  - :label__ux
-                status: :default_status_in_progress
-                type: :default_type_task
-                target_versions:
-                  - :scrum_project__version__1_0
-                start: 28
-                duration: 1
-      - t_subject: Contact form
-        status: :default_status_specified
-        type: :default_type_user_story
-        target_versions:
-          - :scrum_project__version__1_0
-        position: 5
-        start: 21
-        duration: 1
-        story_points: 1
-      - t_subject: Feature carousel
-        labels:
-          - :label__marketing
-        status: :default_status_specified
-        type: :default_type_user_story
-        target_versions:
-          - :scrum_project__version__1_0
-        position: 3
-        story_points: 5
-        schedule_manually: false
-        children:
-          - t_subject: Make screenshots for feature tour
-            status: :default_status_closed
-            type: :default_type_task
-            target_versions:
-              - :scrum_project__version__1_0
-      - t_subject: Wrong hover color
-        labels:
-          - :label__ux
-        reference: :wrong_hover_color
-        status: :default_status_rejected
-        type: :default_type_bug
-        observed_in_versions:
-          - :scrum_project__version__1_0
-          - :scrum_project__version__1_1
-        position: 4
-        story_points: 1
-        start: 21
-        duration: 1
-      - t_subject: SSL certificate
-        labels:
-          - :label__security
-        reference: :ssl_certificate
-        status: :default_status_specified
-        type: :default_type_user_story
-        target_versions:
-          - :scrum_project__version__2_0
-        position: 1
-        start: 22
-        duration: 1
-      - t_subject: Set-up Staging environment
-        reference: :set_up_staging_environment
-        status: :default_status_in_specification
-        type: :default_type_user_story
-        target_versions:
-          - :scrum_project__version__2_0
-        position: 2
-        start: 23
-        duration: 1
-      - t_subject: Choose a content management system
-        reference: :choose_content_management_system
-        status: :default_status_specified
-        type: :default_type_user_story
-        position: 7
-        start: 24
-        duration: 1
-      - t_subject: Website navigation structure
-        status: :default_status_specified
-        type: :default_type_user_story
-        target_versions:
-          - :scrum_project__version__1_0
-        position: 7
-        story_points: 3
-        start: 25
-        duration: 1
-        schedule_manually: false
-        children:
-          - t_subject: Set up navigation concept for website.
-            labels:
-              - :label__ux
-            status: :default_status_in_specification
-            type: :default_type_task
-            target_versions:
-              - :scrum_project__version__1_0
-            start: 25
-            duration: 1
-      - t_subject: Internal link structure
+      - start: -7
+        t_subject: Initial consultation and asset questionnaire
+        description: ""
         status: :default_status_closed
-        type: :default_type_user_story
-        position: 5
-        start: 25
+        type: :legal_type_client_communication
         duration: 1
-      - t_subject: Develop v1.0
-        reference: :develop_v1_0
+        schedule_manually: true
+      - start: 0
+        t_subject: Review deeds, account statements and beneficiary designations
+        reference: :ellison__asset_review
+        labels:
+          - :label__billable
+        description: ""
         status: :default_status_in_progress
+        type: :legal_type_document_review
+        duration: 3
+        estimated_hours: 6
+        remaining_hours: 3
+        done_ratio: 50
+        schedule_manually: true
+      - start: 0
+        t_subject: Confirm probate options for the out-of-state cabin
+        description: ""
+        status: :default_status_new
+        type: :legal_type_legal_research
+        duration: 2
+        estimated_hours: 3
+        remaining_hours: 3
+        done_ratio: 0
+        schedule_manually: true
+      - start: 3
+        t_subject: Draft the estate documents
+        reference: :ellison__drafting
+        description: ""
+        status: :default_status_new
         type: :default_type_summary_task
-        target_versions:
-          - :scrum_project__version__1_0
-        start: 14
-        duration: 4
-      - t_subject: Release v1.0
+        duration: 7
+        schedule_manually: false
+        children:
+          - start: 3
+            t_subject: Draft the revocable living trust
+            reference: :ellison__trust
+            description: ""
+            status: :legal_status_drafting
+            type: :legal_type_filing
+            duration: 2
+            estimated_hours: 8
+            remaining_hours: 8
+            done_ratio: 0
+            schedule_manually: false
+            relations:
+              - to: :ellison__asset_review
+                type: follows
+          - start: 7
+            t_subject: Draft the pour-over will
+            description: ""
+            status: :default_status_new
+            type: :legal_type_filing
+            duration: 2
+            estimated_hours: 2
+            remaining_hours: 2
+            done_ratio: 0
+            schedule_manually: false
+            relations:
+              - to: :ellison__trust
+                type: follows
+          - start: 7
+            t_subject: Draft the power of attorney and health care directive
+            description: ""
+            status: :default_status_new
+            type: :legal_type_filing
+            duration: 3
+            estimated_hours: 3
+            remaining_hours: 3
+            done_ratio: 0
+            schedule_manually: false
+            relations:
+              - to: :ellison__trust
+                type: follows
+      - start: 10
+        t_subject: Client review of the draft documents
+        reference: :ellison__client_review
+        description: ""
+        status: :default_status_new
+        type: :legal_type_client_communication
+        duration: 2
+        schedule_manually: false
+        relations:
+          - to: :ellison__drafting
+            type: follows
+      - start: 14
+        t_subject: Signing and notarization appointment
+        reference: :ellison__signing
+        description: ""
         status: :default_status_new
         type: :default_type_milestone
-        target_versions:
-          - :scrum_project__version__1_0
-        start: 18
         duration: 1
         schedule_manually: false
         relations:
-          - to: :develop_v1_0
+          - to: :ellison__client_review
             type: follows
-      - t_subject: Develop v1.1
-        reference: :develop_v1_1
+      - start: 15
+        t_subject: Move the home and brokerage account into the trust
+        description: ""
         status: :default_status_new
-        type: :default_type_summary_task
-        target_versions:
-          - :scrum_project__version__1_1
-        start: 21
+        type: :default_type_task
         duration: 4
-      - t_subject: Release v1.1
-        status: :default_status_new
-        type: :default_type_milestone
-        target_versions:
-          - :scrum_project__version__1_1
-        start: 25
-        duration: 1
         schedule_manually: false
         relations:
-          - to: :develop_v1_1
+          - to: :ellison__signing
             type: follows
-      - t_subject: Develop v2.0
-        reference: :develop_v2_0
-        status: :default_status_new
-        type: :default_type_summary_task
-        target_versions:
-          - :scrum_project__version__2_0
-        start: 28
-        duration: 4
-      - t_subject: Release v2.0
-        status: :default_status_new
-        type: :default_type_milestone
-        target_versions:
-          - :scrum_project__version__2_0
-        start: 32
-        duration: 1
-        schedule_manually: false
-        relations:
-          - to: :develop_v2_0
-            type: follows
-    t_wiki: |
-      ### Sprint planning meeting
-
-      _Please document here topics to the Sprint planning meeting_
-
-      * Time boxed (8 h)
-      * Input: Product Backlog
-      * Output: Sprint Backlog
-
-      * Divided into two additional time boxes of 4 h:
-
-          * The Product Owner presents the [Product Backlog]({{opSetting:base_url}}/projects/your-scrum-project/backlogs) and the priorities to the team and explains the Sprint Goal, to which the team must agree. Together, they prioritize the topics from the Product Backlog which the team will take care of in the next sprint. The team commits to the discussed delivery.
-          * The team plans autonomously (without the Product Owner) in detail and breaks down the tasks from the discussed requirements to consolidate a [Sprint Backlog]({{opSetting:base_url}}/projects/your-scrum-project/backlogs).
-
-
-      ### Daily Scrum meeting
-
-      _Please document here topics to the Daily Scrum meeting_
-
-      * Short, daily status meeting of the team.
-      * Time boxed (max. 15 min).
-      * Stand-up meeting to discuss the following topics from the Task board.
-          * What do I plan to do until the next Daily Scrum?
-          * What has blocked my work (Impediments)?
-      * Scrum Master moderates and notes down Sprint Impediments.
-      * Product Owner may participate may participate in order to stay informed.
-
-      ### Sprint Review meeting
-
-      _Please document here topics to the Sprint Review meeting_
-
-      * Time boxed (4 h).
-      * A maximum of one hour of preparation time per person.
-      * The team shows the product owner and other interested persons what has been achieved in this sprint.
-      * Important: no dummies and no PowerPoint! Just finished product functionality (Increments) should be demonstrated.
-      * Feedback from Product Owner, stakeholders and others is desired and will be included in further work.
-      * Based on the demonstrated functionalities, the Product Owner decides to go live with this increment or to develop it further. This possibility allows an early ROI.
-
-
-      ### Sprint Retrospective
-
-      _Please document here topics to the Sprint Retrospective meeting_
-
-      * Time boxed (3 h).
-      * After Sprint Review, will be moderated by Scrum Master.
-      * The team discusses the sprint: what went well, what needs to be improved to be more productive for the next sprint or even have more fun.
 
 statuses:
   - reference: :default_status_new

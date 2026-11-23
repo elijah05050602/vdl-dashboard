@@ -71,7 +71,7 @@ RSpec.describe RootSeeder,
       expect(WorkPackageRole.count).to eq 3
       expect(GlobalRole.count).to eq 2
       expect(Grids::Overview.count).to eq 2
-      expect(Version.count).to eq 3
+      expect(Version.count).to eq 0
       expect(Boards::Grid.count).to eq 5
       expect(Boards::Grid.count { |grid| grid.options.has_key?(:filters) }).to eq 1
       expect(Project::PhaseDefinition.count).to eq 4
@@ -82,27 +82,6 @@ RSpec.describe RootSeeder,
       expected_variants = %i[default_type_task default_type_milestone default_type_summary_task]
         .map { root_seeder.seed_data.find_reference(it).default_variant }
       expect(TypeVariant.enabled_in_new_projects).to match_array(expected_variants)
-    end
-
-    it "dates the versions like their release milestones" do
-      monday = Date.current.monday
-
-      expect(Version.pluck(:name, :start_date, :effective_date))
-        .to contain_exactly(["1.0", monday + 14.days, monday + 18.days],
-                            ["1.1", monday + 21.days, monday + 25.days],
-                            ["2.0", monday + 28.days, monday + 32.days])
-    end
-
-    it "links work packages to their target version" do
-      count_by_version = WorkPackage.joins(:target_versions).group("versions.name").count
-
-      expect(count_by_version).to eq("1.0" => 9, "1.1" => 5, "2.0" => 5)
-    end
-
-    it "links bugs to the versions they were observed in" do
-      count_by_version = WorkPackage.joins(:observed_in_versions).group("versions.name").count
-
-      expect(count_by_version).to eq("1.0" => 2, "1.1" => 1)
     end
 
     it "adds the backlogs, board, costs, and meetings modules to the default_projects_modules setting" do
@@ -269,7 +248,7 @@ RSpec.describe RootSeeder,
     end
 
     it "adds members to the demo project directly and through their department" do
-      demo_project = Project.find_by(identifier: "demo-project")
+      demo_project = Project.find_by(identifier: "harlow-v-brightline")
 
       marko = root_seeder.seed_data.find_reference(:user__marko_marketing) # direct member
       finance = root_seeder.seed_data.find_reference(:department__finance_administration) # group member
@@ -290,11 +269,11 @@ RSpec.describe RootSeeder,
       data = root_seeder.seed_data
 
       # Assigned to an individual user (direct project member).
-      expect(data.find_reference(:setup_conference_website).assigned_to)
+      expect(data.find_reference(:harlow__review_logs).assigned_to)
         .to eq(data.find_reference(:user__wanda_web))
 
       # Assigned to a whole department (group member of the project).
-      expect(data.find_reference(:organize_open_source_conference).assigned_to)
+      expect(data.find_reference(:harlow__discovery).assigned_to)
         .to eq(data.find_reference(:department__events_operations))
     end
 
@@ -321,8 +300,8 @@ RSpec.describe RootSeeder,
 
       qa_work_package = WorkPackage.find_by(assigned_to: tessa)
       expect(qa_work_package).to be_present
-      # The QA task follows the website setup task.
-      website = data.find_reference(:setup_conference_website)
+      # The QA task follows the document review task.
+      website = data.find_reference(:harlow__review_logs)
       expect(Relation.follows.exists?(from_id: qa_work_package.id, to_id: website.id)).to be true
     end
 
@@ -333,7 +312,7 @@ RSpec.describe RootSeeder,
     end
 
     it "adds a resource planner with its views and allocations to the demo project" do
-      demo_project = Project.find_by(identifier: "demo-project")
+      demo_project = Project.find_by(identifier: "harlow-v-brightline")
 
       expect(demo_project.enabled_module_names).to include("resource_management")
       planners = ResourcePlanner.where(project: demo_project)
@@ -401,7 +380,7 @@ RSpec.describe RootSeeder,
         expect(WorkPackageRole.count).to eq 3
         expect(GlobalRole.count).to eq 2
         expect(Grids::Overview.count).to eq 2
-        expect(Version.count).to eq 3
+        expect(Version.count).to eq 0
         expect(Boards::Grid.count).to eq 5
         expect(Project::PhaseDefinition.count).to eq 4
       end
