@@ -32,6 +32,7 @@ See COPYRIGHT and LICENSE files for more details.
   render Primer::OpenProject::PageHeader.new do |header|
     header.with_title { t(:label_conflict_check) }
     header.with_description { t("conflict_check.caption") }
+    header.with_breadcrumbs([{ href: home_path, text: t(:label_home) }, t(:label_conflict_check)])
   end
 %>
 
