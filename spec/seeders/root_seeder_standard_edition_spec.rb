@@ -229,7 +229,7 @@ RSpec.describe RootSeeder,
       )
 
       fritz = root_seeder.seed_data.find_reference(:user__fritz_finance)
-      expect(fritz).to have_attributes(login: "fritz.finance", mail: "fritz.finance@example.com", status: "invited")
+      expect(fritz).to have_attributes(login: "fritzie.fernandez", mail: "fritzie.fernandez@example.com", status: "invited")
       expect(root_seeder.seed_data.find_reference(:department__finance_administration).users)
         .to include(fritz)
     end
@@ -241,9 +241,9 @@ RSpec.describe RootSeeder,
       skills = UserCustomField.find_by!(name: "Key skills")
       job_start_date = UserCustomField.find_by!(name: "Job start date")
 
-      expect(fritz.typed_custom_value_for(job_title)).to eq("Project Manager")
-      expect(fritz.typed_custom_value_for(languages)).to contain_exactly("English", "German")
-      expect(fritz.typed_custom_value_for(skills)).to contain_exactly("Budgeting", "Stakeholder Management")
+      expect(fritz.typed_custom_value_for(job_title)).to eq("Office Manager")
+      expect(fritz.typed_custom_value_for(languages)).to contain_exactly("English", "Filipino")
+      expect(fritz.typed_custom_value_for(skills)).to contain_exactly("Billing and Collections", "Client Relations")
       expect(fritz.typed_custom_value_for(job_start_date)).to eq(Date.new(2017, 7, 3))
     end
 

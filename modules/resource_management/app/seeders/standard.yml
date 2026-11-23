@@ -39,4 +39,4 @@ projects:
       user_timeline:
         t_name: Team timeline
       generic_allocation:
-        t_filter_name: Software Developer
+        t_filter_name: Associate

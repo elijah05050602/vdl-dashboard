@@ -166,14 +166,14 @@ module ResourceManagement
       end
 
       # A filter-based allocation: no concrete user, just a demand for anyone
-      # matching the "Software Developer" job title. Skipped when the demo user
+      # matching the job title named in the seed data (an associate). Skipped when the demo user
       # custom fields it filters on are absent.
       def seed_generic_allocation
         work_package = work_packages[:delacruz__interrogatories]
-        filters = developer_filter
+        name = planner_config.lookup("generic_allocation.filter_name")
+        filters = job_title_filter(name)
         return unless work_package && filters
 
-        name = planner_config.lookup("generic_allocation.filter_name")
         placeholder_user = PlaceholderUser.find_by(lastname: name) ||
           PlaceholderUser.create!(name:, user_filter: filters)
 
@@ -204,9 +204,9 @@ module ResourceManagement
         }
       end
 
-      def developer_filter
+      def job_title_filter(job_title)
         custom_field = UserCustomField.for_semantic_key(:job_title)
-        option = custom_field&.custom_options&.find_by(value: "Software Developer")
+        option = custom_field&.custom_options&.find_by(value: job_title)
         return unless option
 
         query = UserQuery.new
