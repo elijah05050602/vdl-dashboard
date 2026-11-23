@@ -28,6 +28,7 @@
 #++
 
 require "open_project/plugins"
+require "open_project/law_firm/navigation"
 
 module OpenProject::LawFirm
   class Engine < ::Rails::Engine
@@ -45,6 +46,15 @@ module OpenProject::LawFirm
     initializer "openproject_law_firm.matter_terminology" do |app|
       unless Rails.env.test? || ENV["OPENPROJECT_LAW_FIRM_MATTER_TERMINOLOGY"] == "false"
         app.config.i18n.load_path << config.root.join("config/matter_terminology/en.yml").to_s
+      end
+    end
+
+    # Upstream specs expect the stock menu and home page, so this stays off in
+    # the test environment.
+    config.after_initialize do
+      if OpenProject::LawFirm::Navigation.enabled?
+        OpenProject::LawFirm::Navigation.apply!
+        OpenProject::LawFirm::Navigation.simplify_homescreen!
       end
     end
   end

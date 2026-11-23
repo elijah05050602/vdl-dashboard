@@ -403,6 +403,10 @@ module Settings
       },
       default_projects_modules: {
         default: -> { OpenProject::AccessControl.default_project_modules.map(&:to_s) },
+        default_by_env: {
+          development: %w[work_package_tracking gantt calendar_view board_view costs meetings documents],
+          production: %w[work_package_tracking gantt calendar_view board_view costs meetings documents]
+        },
         allowed: -> { OpenProject::AccessControl.available_project_modules.map(&:to_s) }
       },
       default_projects_public: {
@@ -426,6 +430,7 @@ module Settings
       development_highlight_enabled: {
         description: "Enable highlighting of development environment",
         default: -> { Rails.env.development? },
+        default_by_env: { development: false },
         format: :boolean
       },
       diff_max_lines_displayed: {
@@ -487,7 +492,8 @@ module Settings
       },
       ee_hide_banners: {
         description: "Hide the Enterprise enterprise banners",
-        default: false
+        default: false,
+        default_by_env: { development: true, production: true }
       },
       enable_internal_assets_server: {
         description: "Serve assets through the Rails internal asset server",
@@ -1261,7 +1267,8 @@ module Settings
       },
       show_community_links: {
         description: "Enable or disable links to OpenProject community instances",
-        default: true
+        default: true,
+        default_by_env: { development: false, production: false }
       },
       show_product_version: {
         description: "Show product version information in the administration section",

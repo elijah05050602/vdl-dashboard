@@ -1,0 +1,66 @@
+#-- copyright
+# OpenProject is an open source project management software.
+# Copyright (C) the OpenProject GmbH
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License version 3.
+#
+# OpenProject is a fork of ChiliProject, which is a fork of Redmine. The copyright follows:
+# Copyright (C) 2006-2013 Jean-Philippe Lang
+# Copyright (C) 2010-2013 the ChiliProject Team
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+#
+# See COPYRIGHT and LICENSE files for more details.
+#++
+---
+en:
+  law_firm:
+    firm_setup:
+      board_name: "Firm board"
+      project_description: "The firm itself. Create each client matter as a sub-matter of VDL Firm so its work shows on the firm board."
+      project_name: "VDL Firm"
+      welcome_text: |
+        Start from **Firm shortcuts** on this page, or from the menu on the left.
+
+        * **New matter** opens a matter under VDL Firm, so its work appears on the **Firm board**. You can also start from a ready-made matter template.
+        * **Court deadlines** lists every open court deadline and hearing in the next 30 days, across all matters.
+        * **Firm board** shows all work by stage: Intake, Conflict check, Drafting, Partner review, Awaiting client, Filed, Awaiting court and Closed. Drag a card to move it to the next stage.
+        * Log your hours in **My time**, and issue BIR invoices from a matter's **Invoices** page.
+      welcome_title: "Law Offices of Villanueva, Dorin & Lozano"
+    navigation:
+      court_deadlines: "Court deadlines"
+      firm_board: "Firm board"
+      firm_board_missing: "The firm board isn't set up yet. An administrator can create it with: bin/rails law_firm:setup_firm"
+    shortcuts:
+      billing_reports:
+        description: "Billable hours and costs by matter, lawyer or client."
+        label: "Time and billing reports"
+      court_deadlines:
+        description: "Open court deadlines and hearings for the next 30 days."
+        label: "Court deadlines"
+      firm_board:
+        description: "All work across the firm's matters, by stage."
+        label: "Firm board"
+      matters:
+        description: "Every active matter of the firm."
+        label: "Matters"
+      my_time:
+        description: "Log and review your hours."
+        label: "My time"
+      new_matter:
+        description: "Open a new client matter under VDL Firm."
+        label: "New matter"
+      title: "Firm shortcuts"
