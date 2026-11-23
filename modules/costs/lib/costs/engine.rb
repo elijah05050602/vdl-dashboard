@@ -193,6 +193,18 @@ module Costs
       ::Settings::Definition.add "time_entries_past_month_grace_days", default: 0, format: :integer, allowed: (0..)
     end
 
+    initializer "costs.law_firm_role_rates" do
+      Rails.application.config.after_initialize do
+        [OpenProject::Events::MEMBER_CREATED, OpenProject::Events::MEMBER_UPDATED].each do |event|
+          OpenProject::Notifications.subscribe(event) do |payload|
+            ::LawFirm::ApplyRoleRateService.new(payload[:member]).call
+          rescue StandardError => e
+            Rails.logger.error("Failed to apply law firm role rate: #{e.message}")
+          end
+        end
+      end
+    end
+
     activity_provider :time_entries, class_name: "Activities::TimeEntryActivityProvider", default: false
 
     replace_principal_references "CostEntry" => %i[logged_by_id user_id]

@@ -67,7 +67,7 @@ RSpec.describe RootSeeder,
       expect(View.where(type: "team_planner").count).to eq 1
       expect(View.where(type: "gantt").count).to eq 2
       expect(Query.count).to eq 28
-      expect(ProjectRole.count).to eq 5
+      expect(ProjectRole.count).to eq 9
       expect(WorkPackageRole.count).to eq 3
       expect(GlobalRole.count).to eq 2
       expect(Grids::Overview.count).to eq 2
@@ -78,8 +78,11 @@ RSpec.describe RootSeeder,
       expect(DocumentType.count).to be >= 3 # at least the 3 default types
     end
 
-    it "starts new projects with the task, milestone and summary task types" do
-      expected_variants = %i[default_type_task default_type_milestone default_type_summary_task]
+    it "starts new projects with the task, milestone, summary task and legal types" do
+      expected_variants = %i[default_type_task default_type_milestone default_type_summary_task
+                             legal_type_court_deadline legal_type_hearing legal_type_filing
+                             legal_type_legal_research legal_type_document_review
+                             legal_type_client_communication legal_type_contract_review]
         .map { root_seeder.seed_data.find_reference(it).default_variant }
       expect(TypeVariant.enabled_in_new_projects).to match_array(expected_variants)
     end
@@ -222,12 +225,18 @@ RSpec.describe RootSeeder,
     include_examples "it creates records", model: DocumentType, expected_count: 6
     include_examples "it creates records", model: GlobalRole, expected_count: 2
     include_examples "it creates records", model: WorkPackageRole, expected_count: 3
-    include_examples "it creates records", model: ProjectRole, expected_count: 5
+    include_examples "it creates records", model: ProjectRole, expected_count: 9
     include_examples "it creates records", model: ProjectQueryRole, expected_count: 2
     include_examples "it creates records", model: IssuePriority, expected_count: 4
-    include_examples "it creates records", model: Status, expected_count: 14
-    include_examples "it creates records", model: TimeEntryActivity, expected_count: 6
-    include_examples "it creates records", model: Workflows::StatusTransition, expected_count: 1758
+    include_examples "it creates records", model: Status, expected_count: 21
+
+    # The 8 standard activities plus the law firm non-billable ones, of which
+    # "Administrative (non-billable)" is already standard unless it was translated.
+    it "creates the standard and non-billable time entry activities" do
+      expect(TimeEntryActivity.count).to be_between(10, 11)
+    end
+
+    include_examples "it creates records", model: Workflows::StatusTransition, expected_count: 2490
     include_examples "it creates records", model: RecurringMeeting, expected_count: 1
     include_examples "it creates records", model: AI::TextAction, expected_count: 11
     include_examples "it is compatible with the automatic scheduling mode"
@@ -397,7 +406,7 @@ RSpec.describe RootSeeder,
         expect(View.where(type: "team_planner").count).to eq 1
         expect(View.where(type: "gantt").count).to eq 2
         expect(Query.count).to eq 28
-        expect(ProjectRole.count).to eq 5
+        expect(ProjectRole.count).to eq 9
         expect(WorkPackageRole.count).to eq 3
         expect(GlobalRole.count).to eq 2
         expect(Grids::Overview.count).to eq 2

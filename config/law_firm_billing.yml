@@ -1,0 +1,68 @@
+# Law firm billing defaults.
+#
+# Read by the law firm billing seeder (bin/rails db:seed) and when people are
+# added to a matter. Edit the numbers here, then run `bin/rails db:seed` again:
+# existing records are left alone, only missing ones are added.
+
+# Applied only while the currency has not been changed in
+# Administration > Time and costs.
+currency: "$"
+
+# Project modules switched on for new matters, so time, expenses, budgets and
+# cost reports are available without extra setup.
+default_project_modules:
+  - costs
+  - budgets
+
+# Project roles a person can hold on a matter. When someone is added to a
+# matter with one of these roles and has no hourly rate there yet, the rate
+# below becomes their hourly rate on that matter. If they hold several roles,
+# the highest rate wins. Rates set by hand are never overwritten.
+billing_roles:
+  - name: Partner
+    hourly_rate: 450
+    permissions: :partner
+  - name: Associate
+    hourly_rate: 300
+    permissions: :timekeeper
+  - name: Paralegal
+    hourly_rate: 150
+    permissions: :timekeeper
+  - name: Legal assistant
+    hourly_rate: 90
+    permissions: :timekeeper
+
+# Time logged with these activities is non-billable. Every other activity is
+# billable. Missing activities are created.
+non_billable_activities:
+  - Administrative (non-billable)
+  - Pro bono (non-billable)
+  - Business development (non-billable)
+
+# Expense types for disbursements billed to the client, with their unit rate.
+expense_types:
+  - name: Court filing fee
+    unit: dollar
+    unit_plural: dollars
+    rate: 1
+    default: true
+  - name: Service of process
+    unit: service
+    unit_plural: services
+    rate: 75
+  - name: Photocopies
+    unit: page
+    unit_plural: pages
+    rate: 0.25
+  - name: Mileage
+    unit: mile
+    unit_plural: miles
+    rate: 0.7
+  - name: Courier
+    unit: delivery
+    unit_plural: deliveries
+    rate: 25
+  - name: Expert witness
+    unit: hour
+    unit_plural: hours
+    rate: 250
