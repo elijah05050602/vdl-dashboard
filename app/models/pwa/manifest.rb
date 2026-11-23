@@ -45,12 +45,6 @@ module Pwa
         start_url: root,
         scope: root,
         display: "standalone",
-        prefer_related_applications: true,
-        related_applications: [
-          { platform: "play",
-            id: "org.openproject.app",
-            url: OpenProject::Static::Links.url_for(:mobile_app_play_store) }
-        ],
         theme_color: @helpers.header_bg_color,
         background_color: BACKGROUND_COLOR,
         icons:
