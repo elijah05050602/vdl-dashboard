@@ -44,7 +44,7 @@ See COPYRIGHT and LICENSE files for more details.
 
 <%= form_with model: @terms, scope: :engagement_terms, url: terms_project_billing_path(@project), method: :patch,
               data: { turbo: false, test_selector: "terms-form" }, class: "form" do |f| %>
-  <fieldset <%= "disabled" unless @can_manage %>>
+  <%= tag.fieldset disabled: !@can_manage do %>
     <section class="form--section">
       <h3 class="form--section-title"><%= t("law_firm_billing.terms.rates_heading") %></h3>
       <% config = LawFirm::BillingConfig.current %>
@@ -106,5 +106,5 @@ See COPYRIGHT and LICENSE files for more details.
     <% if @can_manage %>
       <%= f.submit t("law_firm_billing.terms.save"), class: "button -primary" %>
     <% end %>
-  </fieldset>
+  <% end %>
 <% end %>
