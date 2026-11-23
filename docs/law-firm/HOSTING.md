@@ -182,7 +182,7 @@ rm /etc/nginx/sites-enabled/default
 nginx -t && systemctl reload nginx
 
 # 3. Reload nginx after each automatic renewal.
-echo 'systemctl reload nginx' > /etc/letsencrypt/renewal-hooks/deploy/reload-nginx.sh
+printf '#!/bin/sh\nsystemctl reload nginx\n' > /etc/letsencrypt/renewal-hooks/deploy/reload-nginx.sh
 chmod +x /etc/letsencrypt/renewal-hooks/deploy/reload-nginx.sh
 ```
 
