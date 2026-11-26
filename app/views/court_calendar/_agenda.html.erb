@@ -1,0 +1,103 @@
+<%#-- copyright
+OpenProject is an open source project management software.
+Copyright (C) the OpenProject GmbH
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License version 3.
+
+OpenProject is a fork of ChiliProject, which is a fork of Redmine. The copyright follows:
+Copyright (C) 2006-2013 Jean-Philippe Lang
+Copyright (C) 2010-2013 the ChiliProject Team
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+See COPYRIGHT and LICENSE files for more details.
+
+++#%>
+
+<% if calendar.entries.empty? %>
+  <%= render Primer::Beta::Blankslate.new(border: true, test_selector: "court-calendar-empty") do |blankslate| %>
+    <% blankslate.with_visual_icon(icon: :law) %>
+    <% blankslate.with_heading(tag: :h3) { t("court_calendar.empty_heading") } %>
+    <% blankslate.with_description { t("court_calendar.empty_description") } %>
+  <% end %>
+<% end %>
+
+<% calendar.days.each do |day| %>
+  <% entries = calendar.entries_on(day) %>
+  <% next if calendar.entries.empty? || (entries.empty? && !calendar.working_day?(day)) %>
+  <%= render Primer::Beta::BorderBox.new(mb: 3, test_selector: "court-calendar-day") do |box| %>
+    <% box.with_header do %>
+      <%= render Primer::Box.new(display: :flex, align_items: :center, style: "gap: 8px;") do %>
+        <%= link_to I18n.l(day, format: "%A, %B %-d"), court_calendar_link(view: "day", date: day.iso8601),
+                    class: "Link--primary text-bold" %>
+        <% if day == current_user.today %>
+          <%= render(Primer::Beta::Label.new(scheme: :accent)) { t("court_calendar.today") } %>
+        <% end %>
+        <% if (holiday = calendar.holiday_name(day)) %>
+          <%= render(Primer::Beta::Label.new(scheme: :attention)) { holiday } %>
+        <% elsif !calendar.working_day?(day) %>
+          <%= render(Primer::Beta::Label.new(scheme: :secondary)) { t("court_calendar.non_working_day") } %>
+        <% end %>
+      <% end %>
+    <% end %>
+    <% if entries.empty? %>
+      <% box.with_row do %>
+        <%= render(Primer::Beta::Text.new(color: :muted)) { t("court_calendar.no_hearings_on_day") } %>
+      <% end %>
+    <% end %>
+    <% entries.each do |entry| %>
+      <% box.with_row(
+           classes: ["court-calendar--entry", ("-closed" if entry.closed?)].compact.join(" "),
+           test_selector: "court-calendar-entry"
+         ) do %>
+        <%= render Primer::Box.new(display: :flex, style: "gap: 16px;") do %>
+          <%= render Primer::Box.new(style: "min-width: 72px;", font_weight: :bold) do %>
+            <%= entry.time || t("court_calendar.no_time") %>
+          <% end %>
+          <%= render Primer::Box.new(flex: 1) do %>
+            <div>
+              <%= link_to entry.work_package.subject, work_package_path(entry.work_package), class: "text-bold" %>
+              <% if entry.kind %>
+                <%= render(Primer::Beta::Label.new(scheme: :accent, ml: 1)) { entry.kind } %>
+              <% end %>
+              <%= render(Primer::Beta::Label.new(scheme: entry.closed? ? :secondary : :default, ml: 1)) { entry.work_package.status.name } %>
+            </div>
+            <div>
+              <%= render(Primer::Beta::Octicon.new(icon: :briefcase, color: :muted, mr: 1)) %>
+              <%= link_to entry.work_package.project.name, project_path(entry.work_package.project) %>
+            </div>
+            <% court_line = [entry.court, entry.branch, entry.courtroom].compact_blank %>
+            <% if court_line.any? || entry.judge.present? %>
+              <div>
+                <%= render(Primer::Beta::Octicon.new(icon: :law, color: :muted, mr: 1)) %>
+                <%= court_line.join(" · ") %>
+                <% if entry.judge.present? %>
+                  <%= render(Primer::Beta::Text.new(color: :muted)) { t("court_calendar.judge", name: entry.judge) } %>
+                <% end %>
+              </div>
+            <% end %>
+            <div>
+              <%= render(Primer::Beta::Octicon.new(icon: :person, color: :muted, mr: 1)) %>
+              <%= entry.lawyer&.name || t("court_calendar.no_lawyer") %>
+              <% if entry.appearance %>
+                <%= render(Primer::Beta::Text.new(color: :muted)) { "· #{entry.appearance}" } %>
+              <% end %>
+            </div>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+<% end %>

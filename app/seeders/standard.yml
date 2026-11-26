@@ -1312,6 +1312,89 @@ type_configuration:
         attributes:
           - observed_in_versions
 
+hearing_details:
+  type: :legal_type_hearing
+  t_group_name: Hearing details
+  custom_fields:
+    - t_name: Hearing time
+      field_format: list
+      possible_values:
+          - "7:00 AM"
+          - "7:30 AM"
+          - "8:00 AM"
+          - "8:30 AM"
+          - "9:00 AM"
+          - "9:30 AM"
+          - "10:00 AM"
+          - "10:30 AM"
+          - "11:00 AM"
+          - "11:30 AM"
+          - "12:00 PM"
+          - "12:30 PM"
+          - "1:00 PM"
+          - "1:30 PM"
+          - "2:00 PM"
+          - "2:30 PM"
+          - "3:00 PM"
+          - "3:30 PM"
+          - "4:00 PM"
+          - "4:30 PM"
+          - "5:00 PM"
+          - "5:30 PM"
+          - "6:00 PM"
+    - t_name: Hearing kind
+      field_format: list
+      t_possible_values:
+        - Arraignment
+        - Pre-trial
+        - Court-annexed mediation (CAM)
+        - Judicial dispute resolution (JDR)
+        - Trial
+        - Motion hearing
+        - Preliminary conference
+        - Mandatory conference
+        - Clarificatory hearing
+        - Oral arguments
+        - Promulgation
+        - Other
+    - t_name: Court
+      field_format: list
+      t_possible_values:
+        - Supreme Court
+        - Court of Appeals
+        - Sandiganbayan
+        - Court of Tax Appeals
+        - Regional Trial Court
+        - Metropolitan Trial Court
+        - Municipal Trial Court in Cities
+        - Municipal Trial Court
+        - Municipal Circuit Trial Court
+        - Shari'a District Court
+        - Shari'a Circuit Court
+        - NLRC Labor Arbiter
+        - NLRC Commission
+        - NCMB or DOLE (SEnA)
+        - Office of the Prosecutor
+        - Office of the Ombudsman
+        - SEC
+        - DARAB
+        - Other agency
+    - t_name: Branch and station
+      field_format: string
+      searchable: true
+    - t_name: Courtroom or sala
+      field_format: string
+    - t_name: Presiding judge
+      field_format: string
+      searchable: true
+    - t_name: Appearance
+      field_format: list
+      t_possible_values:
+        - In person
+        - Videoconference
+    - t_name: Appearing lawyer
+      field_format: user
+
 workflows:
   - type: :default_type_task
     statuses:

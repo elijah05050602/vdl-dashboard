@@ -1,0 +1,140 @@
+<%#-- copyright
+OpenProject is an open source project management software.
+Copyright (C) the OpenProject GmbH
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License version 3.
+
+OpenProject is a fork of ChiliProject, which is a fork of Redmine. The copyright follows:
+Copyright (C) 2006-2013 Jean-Philippe Lang
+Copyright (C) 2010-2013 the ChiliProject Team
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+See COPYRIGHT and LICENSE files for more details.
+
+++#%>
+
+<% html_title t(:label_court_calendar) -%>
+
+<% content_for :header_tags do %>
+  <style>
+    .court-calendar--scroll { overflow-x: auto; }
+    .court-calendar--grid { width: 100%; min-width: 720px; table-layout: fixed; border-collapse: collapse; }
+    .court-calendar--grid th { padding: 4px; font-weight: 600; text-align: left; color: var(--fgColor-muted); }
+    .court-calendar--grid td { height: 112px; padding: 4px; vertical-align: top; border: 1px solid var(--borderColor-default); }
+    .court-calendar--grid td.-non-working { background: var(--bgColor-muted); }
+    .court-calendar--grid td.-outside { background: var(--bgColor-muted); color: var(--fgColor-muted); }
+    .court-calendar--day-number { display: inline-block; min-width: 22px; padding: 0 4px; border-radius: 11px; color: inherit; }
+    .court-calendar--day-number.-today { background: var(--bgColor-accent-emphasis); color: var(--fgColor-onEmphasis); }
+    .court-calendar--holiday { display: block; font-size: 11px; color: var(--fgColor-attention); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .court-calendar--chip { display: block; margin-top: 2px; padding: 1px 4px; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border-left: 3px solid var(--borderColor-accent-emphasis); border-radius: 3px; background: var(--bgColor-accent-muted); color: var(--fgColor-default); }
+    .court-calendar--chip.-closed { opacity: 0.6; border-left-color: var(--borderColor-default); background: var(--bgColor-muted); }
+    .court-calendar--entry.-closed { opacity: 0.7; }
+  </style>
+<% end %>
+
+<%=
+  render Primer::OpenProject::PageHeader.new do |header|
+    header.with_title { t(:label_court_calendar) }
+    header.with_description { t("court_calendar.caption") }
+  end
+%>
+
+<% unless @calendar.configured? %>
+  <%= render Primer::Alpha::Banner.new(scheme: :warning, icon: :alert, mb: 3, test_selector: "court-calendar-not-configured") do %>
+    <%= t("court_calendar.not_configured", type: LawFirm::Hearings::TYPE_NAME) %>
+  <% end %>
+<% end %>
+
+<%= form_tag court_calendar_path, method: :get do %>
+  <%= hidden_field_tag :view, @calendar.view %>
+  <%= hidden_field_tag :date, @calendar.date.iso8601 %>
+  <%= render Primer::Box.new(display: :flex, flex_wrap: :wrap, align_items: :flex_end, mb: 3, style: "gap: 8px;") do %>
+    <%= render(
+          Primer::Alpha::Select.new(
+            name: :lawyer, label: t("court_calendar.filter_lawyer"), input_width: :medium,
+            data: { test_selector: "court-calendar-lawyer" }
+          )
+        ) do |lawyer_select| %>
+      <% lawyer_select.option(value: "", label: t("court_calendar.all_lawyers")) %>
+      <% @calendar.lawyer_options.each do |principal| %>
+        <% lawyer_select.option(value: principal.id, label: principal.name, selected: @calendar.lawyer_id == principal.id) %>
+      <% end %>
+    <% end %>
+    <%= render(
+          Primer::Alpha::Select.new(
+            name: :court, label: t("court_calendar.filter_court"), input_width: :medium,
+            data: { test_selector: "court-calendar-court" }
+          )
+        ) do |court_select| %>
+      <% court_select.option(value: "", label: t("court_calendar.all_courts")) %>
+      <% @calendar.court_options.each do |option| %>
+        <% court_select.option(value: option.id, label: option.value, selected: @calendar.court_id == option.id) %>
+      <% end %>
+    <% end %>
+    <%= render Primer::Beta::Button.new(type: :submit) do %>
+      <%= t("court_calendar.apply") %>
+    <% end %>
+    <%= render Primer::Beta::Button.new(tag: :a, href: court_calendar_link(lawyer: current_user.id), scheme: :invisible) do %>
+      <%= t("court_calendar.my_hearings") %>
+    <% end %>
+  <% end %>
+<% end %>
+
+<%= render Primer::Box.new(display: :flex, flex_wrap: :wrap, align_items: :center, justify_content: :space_between, mb: 2, style: "gap: 8px;") do %>
+  <%= render Primer::Box.new(display: :flex, align_items: :center, style: "gap: 8px;") do %>
+    <%= render(
+          Primer::Beta::IconButton.new(
+            tag: :a, href: court_calendar_link(date: @calendar.previous_date.iso8601),
+            icon: :"chevron-left", "aria-label": t("court_calendar.previous")
+          )
+        ) %>
+    <%= render(Primer::Beta::Button.new(tag: :a, href: court_calendar_link(date: current_user.today.iso8601))) do %>
+      <%= t("court_calendar.today") %>
+    <% end %>
+    <%= render(
+          Primer::Beta::IconButton.new(
+            tag: :a, href: court_calendar_link(date: @calendar.next_date.iso8601),
+            icon: :"chevron-right", "aria-label": t("court_calendar.next")
+          )
+        ) %>
+    <%= render Primer::Beta::Heading.new(tag: :h2, font_size: 3, test_selector: "court-calendar-period") do %>
+      <%= render partial: "court_calendar/period_title", locals: { calendar: @calendar } %>
+    <% end %>
+  <% end %>
+  <%= render Primer::Box.new(display: :flex, style: "gap: 4px;", test_selector: "court-calendar-views") do %>
+    <% LawFirm::CourtCalendar::VIEWS.each do |view| %>
+      <%= render(
+            Primer::Beta::Button.new(
+              tag: :a, href: court_calendar_link(view:),
+              scheme: view == @calendar.view ? :primary : :default,
+              "aria-current": (view == @calendar.view ? "page" : nil)
+            )
+          ) do %>
+        <%= t("court_calendar.views.#{view}") %>
+      <% end %>
+    <% end %>
+  <% end %>
+<% end %>
+
+<% if @calendar.view == "month" %>
+  <%= render partial: "court_calendar/month", locals: { calendar: @calendar } %>
+<% else %>
+  <%= render partial: "court_calendar/agenda", locals: { calendar: @calendar } %>
+<% end %>
+
+<%= render Primer::Beta::Text.new(tag: :p, color: :subtle, font_size: :small, mt: 3) do %>
+  <%= t("court_calendar.footnote") %>
+<% end %>

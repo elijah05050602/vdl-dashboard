@@ -482,6 +482,8 @@ Rails.application.routes.draw do
 
   get "(projects/:project_id)/search" => "search#index", as: "search"
 
+  get "/court_calendar" => "court_calendar#show", as: :court_calendar
+
   # only providing routes for journals when there are multiple subclasses of journals
   # all subclasses will look for the journals routes
   resources :journals, only: :index do
